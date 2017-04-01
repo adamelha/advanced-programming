@@ -110,6 +110,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cmd_parser.h" />
+    <ClInclude Include="file_parser.h" />
+    <ClInclude Include="IBattleshipGameAlgo.h" />
+    <ClInclude Include="macros.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cmd_parser.cpp" />
+    <ClCompile Include="file_parser.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
