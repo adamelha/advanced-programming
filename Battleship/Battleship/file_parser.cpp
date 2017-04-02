@@ -16,41 +16,8 @@ fileParser_t FileParser::parse()
 	if (status != FILE_PARSER_OK) return status;
 
 	status = this->parseFiles();
-	if (status != FILE_PARSER_OK) return status;
+	return status;
 	
-}
-
-// Print all error messages accumulated in errorMsgs array
-void FileParser::printErrorMsg()
-{
-	size_t i;
-
-	// Print all file parser error messages
-	for (i = 0; i < NUM_OF_ERR_MSGS; i++)
-	{
-		if (errorMsgs[i] != nullptr)
-		{
-			cout << *errorMsgs[i];
-		}
-	}
-
-	// TODO: Print all board error messages
-
-}
-
-// Destructor
-FileParser::~FileParser()
-{
-	size_t i;
-
-	// Free allocated msg strings
-	for (i = 0; i < NUM_OF_ERR_MSGS; i++)
-	{
-		if (errorMsgs[i] != NULL)
-		{
-			delete errorMsgs[i];
-		}
-	}
 }
 
 // Getters of content of files
