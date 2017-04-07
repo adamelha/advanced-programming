@@ -1,6 +1,0 @@
-﻿  main.cpp
-  file_parser.cpp
-c:\users\adam\desktop\לימודים\סימסטר ח\נושאים מתקדמים בתכנות\advanced-programming\battleship\battleship\file_parser.cpp(137): warning C4244: 'argument': conversion from 'std::streamoff' to 'unsigned int', possible loss of data
-  Generating Code...
-  Battleship.vcxproj -> C:\Users\Adam\Desktop\לימודים\סימסטר ח\נושאים מתקדמים בתכנות\advanced-programming\Battleship\Debug\Battleship.exe
-  Battleship.vcxproj -> C:\Users\Adam\Desktop\לימודים\סימסטר ח\נושאים מתקדמים בתכנות\advanced-programming\Battleship\Debug\Battleship.pdb (Partial PDB)
