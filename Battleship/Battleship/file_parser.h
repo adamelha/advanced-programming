@@ -2,6 +2,7 @@
 
 #include <string>
 #include "error_class.h"
+#include "status.h"
 #define BOARD_REGEX				"*.sboard"
 #define ATTACK_A_REGEX			"*.attack-a"
 #define ATTACK_B_REGEX			"*.attack-b"
@@ -25,19 +26,18 @@
 #define MAX_MSG_SIZE			256
 using namespace std;
 
-enum fileParser_t { FILE_PARSER_OK, FILE_PARSER_ERROR };
 
 class FileParser : public ErrorClass {
 public:
-	fileParser_t parse();
+	status_t parse();
 	string getBoard();
 	string getAttackA();
 	string getAttackB();
 	FileParser(string filesPath) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS), filesPath(filesPath) {}
 
 private:
-	fileParser_t parsePaths();
-	fileParser_t parseFiles();
+	status_t parsePaths();
+	status_t parseFiles();
 	void pathToFileString(string path, string &fileStringOut);
 
 	string filesPath, boardFileName, attackAFileName, attackBFileName;

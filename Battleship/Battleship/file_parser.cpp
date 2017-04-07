@@ -4,16 +4,17 @@
 #include <streambuf>
 #include <Windows.h>
 #include "macros.h"
+#include "status.h"
 
 /***************Public Methods***************/
 
 // Parse files
-fileParser_t FileParser::parse()
+status_t FileParser::parse()
 {
-	fileParser_t status;
+	status_t status;
 
 	status = this->parsePaths();
-	if (status != FILE_PARSER_OK) return status;
+	if (status != STATUS_OK) return status;
 
 	status = this->parseFiles();
 	return status;
@@ -39,13 +40,13 @@ string FileParser::getAttackB()
 
 
 /***************Private Methods***************/
-fileParser_t FileParser::parsePaths()
+status_t FileParser::parsePaths()
 {
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
 	DWORD ftyp;
 	string boardAbsPath, attackAAbsPath, attackBAbsPath, slash;
-	fileParser_t status = FILE_PARSER_OK;
+	status_t status = STATUS_OK;
 
 	// If path is relative or ends with '\', no need to add '\\' 
 	if (this->filesPath.length() == 0 || this->filesPath[this->filesPath.length() - 1] == '\\')
@@ -69,7 +70,7 @@ fileParser_t FileParser::parsePaths()
 		if (ftyp == INVALID_FILE_ATTRIBUTES || !(ftyp & FILE_ATTRIBUTE_DIRECTORY))
 		{
 			this->errorMsgs[WRONG_PATH_IDX] = new string(WRONG_PATH_MSG);
-			return FILE_PARSER_ERROR;
+			return STATUS_ERROR;
 		}
 	}
 	//TODO : must parse and check that path exists 
@@ -78,7 +79,7 @@ fileParser_t FileParser::parsePaths()
 	hFind = FindFirstFile((boardAbsPath).c_str(), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		status = FILE_PARSER_ERROR;
+		status = STATUS_ERROR;
 		this->errorMsgs[MISSING_BOARD_IDX] = new string(MISSING_BOARD_MSG);
 	}
 	else {
@@ -91,7 +92,7 @@ fileParser_t FileParser::parsePaths()
 	hFind = FindFirstFile((attackAAbsPath).c_str(), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		status = FILE_PARSER_ERROR;
+		status = STATUS_ERROR;
 		this->errorMsgs[MISSING_ATTACK_A_IDX] = new string(MISSING_ATTACK_A_MSG);
 	}
 	else {
@@ -104,7 +105,7 @@ fileParser_t FileParser::parsePaths()
 	hFind = FindFirstFile((attackBAbsPath).c_str(), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		status = FILE_PARSER_ERROR;
+		status = STATUS_ERROR;
 		this->errorMsgs[MISSING_ATTACK_B_IDX] = new string(MISSING_ATTACK_B_MSG);
 
 	}
@@ -118,13 +119,13 @@ fileParser_t FileParser::parsePaths()
 }
 
 //TODO: must return fail status in case of failure
-fileParser_t FileParser::parseFiles()
+status_t FileParser::parseFiles()
 {
 	pathToFileString(this->boardPath, this->board);
 	pathToFileString(this->attackAPath, this->attackA);
 	pathToFileString(this->attackBPath, this->attackB);
 	
-	return FILE_PARSER_OK;
+	return STATUS_OK;
 }
 
 //TODO: must return fail status in case of failure

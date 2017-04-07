@@ -116,6 +116,7 @@
     <ClInclude Include="file_parser.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="macros.h" />
+    <ClInclude Include="status.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />

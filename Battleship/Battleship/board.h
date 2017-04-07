@@ -2,6 +2,7 @@
 
 #include <string>
 #include "error_class.h"
+#include "status.h"
 #define BOARD_SIZE						10
 #define NUM_OF_BOARD_ERR_MSGS		8
 
@@ -20,11 +21,9 @@ public:
 
 /**** Board Class *****/
 
-enum Board_t { BOARD_OK, BOARD_ERROR, BOARD_FILE_NOT_VALID };
-
 class Board : public ErrorClass {
 public:
-	Board_t parse();
+	status_t parse();
 	string getFilesPath();
 	char getCharFromBoard(Point p);
 	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), boardStringFromFile(boardStringFromFile) {}

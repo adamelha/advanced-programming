@@ -4,9 +4,9 @@
 using namespace std;
 
 //TODO: does not work when path from command line has spaces. Need fix?
-cmdParser_t CmdParser::parse()
+status_t CmdParser::parse()
 {
-	cmdParser_t status = CMD_PARSER_OK;
+	status_t status = STATUS_OK;
 	
 	switch (this->argc)
 	{
@@ -20,7 +20,7 @@ cmdParser_t CmdParser::parse()
 
 	default:
 		std::cout << "Too many arguments given.";
-		status = CMD_PARSER_TOO_MANY_ARGS;
+		status = STATUS_ERROR;
 	}
 	
 	return status;

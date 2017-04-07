@@ -3,10 +3,11 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "status.h"
 
 /***************Public Methods***************/
 
-Board_t Board::parse()
+status_t Board::parse()
 {
 	vector<string> rowList;
 	size_t i;
@@ -27,7 +28,7 @@ Board_t Board::parse()
 	if (lineNumber < BOARD_SIZE)
 	{
 		errorMsgs[BOARD_DIMENSIONS_INVALID_IDX] = new string(BOARD_DIMENSIONS_INVALID);
-		return BOARD_FILE_NOT_VALID;
+		return STATUS_INVALID_BOARD;
 	}
 
 	// Read from rowList to board
@@ -55,7 +56,7 @@ Board_t Board::parse()
 			if (y != BOARD_SIZE)
 			{
 				errorMsgs[BOARD_DIMENSIONS_INVALID_IDX] = new string(BOARD_DIMENSIONS_INVALID);
-				return BOARD_FILE_NOT_VALID;
+				return STATUS_INVALID_BOARD;
 			}
 		}
 
