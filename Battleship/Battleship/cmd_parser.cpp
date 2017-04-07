@@ -1,6 +1,6 @@
 #include "cmd_parser.h"
 #include <iostream>
-
+#include "macros.h"
 using namespace std;
 
 //TODO: does not work when path from command line has spaces. Need fix?
@@ -19,8 +19,7 @@ status_t CmdParser::parse()
 		break;
 
 	default:
-		std::cout << "Too many arguments given.";
-		status = STATUS_ERROR;
+		ERROR_PRINT("Too many arguments given.", STATUS_ERROR);
 	}
 	
 	return status;

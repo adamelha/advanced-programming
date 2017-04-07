@@ -63,7 +63,9 @@ status_t Board::parse()
 		y = 0;
 	}
 
-	//TODO: Now must check board for errors and collect error messages
+	// Check board for errors and collect error messages
+
+
 }
 
 
