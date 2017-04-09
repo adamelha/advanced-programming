@@ -69,7 +69,7 @@ status_t FileParser::parsePaths()
 		ftyp = GetFileAttributesA(this->filesPath.c_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES || !(ftyp & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			this->errorMsgs[WRONG_PATH_IDX] = new string(WRONG_PATH_MSG);
+			addErrorMsg(WRONG_PATH_IDX, WRONG_PATH_MSG);
 			return STATUS_ERROR;
 		}
 	}
@@ -80,7 +80,7 @@ status_t FileParser::parsePaths()
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		status = STATUS_ERROR;
-		this->errorMsgs[MISSING_BOARD_IDX] = new string(MISSING_BOARD_MSG);
+		addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
 	}
 	else {
 		DEBUG_PRINT("The first board file found is %s\n", FindFileData.cFileName);
@@ -93,7 +93,7 @@ status_t FileParser::parsePaths()
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		status = STATUS_ERROR;
-		this->errorMsgs[MISSING_ATTACK_A_IDX] = new string(MISSING_ATTACK_A_MSG);
+		addErrorMsg(MISSING_ATTACK_A_IDX, MISSING_ATTACK_A_MSG);
 	}
 	else {
 		DEBUG_PRINT("The first attacker A file found is %s\n", FindFileData.cFileName);
@@ -106,8 +106,7 @@ status_t FileParser::parsePaths()
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		status = STATUS_ERROR;
-		this->errorMsgs[MISSING_ATTACK_B_IDX] = new string(MISSING_ATTACK_B_MSG);
-
+		addErrorMsg(MISSING_ATTACK_B_IDX, MISSING_ATTACK_B_MSG);
 	}
 	else {
 		DEBUG_PRINT("The first attacker B file found is %s\n", FindFileData.cFileName);

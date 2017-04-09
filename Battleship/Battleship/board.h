@@ -3,6 +3,12 @@
 #include <string>
 #include "error_class.h"
 #include "status.h"
+#include "point.h"
+#include "ships.h"
+#include <ctype.h>
+
+#define IS_PLAYER_A(c)	(isupper(c))
+
 #define BOARD_SIZE						10
 #define NUM_OF_BOARD_ERR_MSGS		8
 
@@ -10,13 +16,6 @@
 #define BOARD_DIMENSIONS_INVALID_IDX	0
 
 using namespace std;
-
-/**** Point Class *****/
-class Point {
-public:
-	uint32_t x, y;
-	Point(uint32_t x, uint32_t y) : x(x), y(y) {}
-};
 
 
 /**** Board Class *****/
@@ -32,5 +31,8 @@ private:
 	char board[BOARD_SIZE][BOARD_SIZE];
 	string boardStringFromFile;
 	void setCharOnBoard(Point p, char val);
+	bool checkAdjacentShips(const Ship &ship);
+	bool checkSurroundingPoint(const Ship &ship, Point surroundingPoint);
+	status_t const isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_SIZE]);
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
 };
