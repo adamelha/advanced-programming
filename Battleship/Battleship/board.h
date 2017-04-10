@@ -6,6 +6,7 @@
 #include "point.h"
 #include "ships.h"
 #include <ctype.h>
+#include <vector>
 
 #define IS_PLAYER_A(c)	(isupper(c))
 
@@ -25,8 +26,9 @@ public:
 	status_t parse();
 	string getFilesPath();
 	char getCharFromBoard(Point p);
-	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), boardStringFromFile(boardStringFromFile) {}
-
+	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile) {}
+	int numberOfPlayerAShips, numberOfPlayerBShips;
+	vector<Ship*> shipListA, shipListB;
 private:
 	char board[BOARD_SIZE][BOARD_SIZE];
 	string boardStringFromFile;

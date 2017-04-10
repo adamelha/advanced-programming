@@ -26,7 +26,7 @@ using namespace std;
 
 class Ship {
 public:
-	Ship(size_t sizeOfShip) : pointList(new Point[sizeOfShip]),
+	Ship(size_t sizeOfShip) : pointList(new Point[sizeOfShip]), size(sizeOfShip),
 		msgWrongSize(string("Wrong size or shape for ship ") + charSymbol + string("for player") + player ),
 		msgTooManyShips("Too many ships for player " + player + '\n'),
 		msgTooFewShips("Too few ships for player " + player + '\n'),

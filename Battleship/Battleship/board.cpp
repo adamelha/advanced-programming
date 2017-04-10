@@ -97,18 +97,20 @@ static bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const
 			return true;
 		}
 	}
-
+	for (i = 0; i < shipListB.size(); i++)
+	{
+		if (IS_POINT_IN_POINT_LIST(shipListB[i]->pointList, shipListB[i]->size, point)) {
+			return true;
+		}
+	}
 	return false;
 }
 
 status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_SIZE])
 {
-	int numberOfPlayerAShips = 0;
-	int numberOfPlayerBShips = 0;
 	Ship *ship;
 	char part, nextPart;
 	size_t i, j;
-	vector<Ship*> shipListA, shipListB;
 
 	for (size_t x = 0; x < BOARD_SIZE; x++)
 	{
@@ -127,38 +129,8 @@ status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_
 				ship = charToShip(part);
 				ship->pointList[0] = Point(x, y);
 
-				// Try vertical
-				for (j = 1; j < ship->size; j++)
-				{
-					if (y + j >= BOARD_SIZE) {
-						DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-						this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-						delete ship;
-						// Finished column, go to next row
-						break;
-					}
-
-					nextPart = parsedBoard[x + j][y];
-
-					//Correct part
-					if (nextPart == ship->charSymbol) {
-						ship->pointList[j] = Point(x + j, y);
-						continue;
-					}
-					// Wrong Part
-					else
-					{
-						DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-						this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-						delete ship;
-						break;
-					}
-				}
-
-				// Found complete vertical ship 
-				if (j = ship->size)
-				{
-					// If success!
+				// If ship of size 1 - no need to search for vertical and horizontal
+				if (ship->size == 1) {
 					if (checkAdjacentShips(*ship)) {
 						if (IS_PLAYER_A(ship->charSymbol)) {
 							shipListA.push_back(ship);
@@ -167,38 +139,83 @@ status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_
 							shipListB.push_back(ship);
 						}
 					}
-					
 				}
+				else {
 
-
-				// Try horizontal
-				for (i = 1; i < ship->size; i++)
-				{
-					if (y + i >= BOARD_SIZE) {
-						DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-						this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-						delete ship;
-						// Finished row, go to next row
-						break;
-					}
-					nextPart = parsedBoard[x][y + i];
-					
-					//Correct part
-					if (nextPart == ship->charSymbol) {
-						ship->pointList[i] = Point(x, y + i);
-						continue;
-					}
-					// Wrong Part
-					else
+					// Try vertical
+					for (j = 1; j < ship->size; j++)
 					{
-						DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-						this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-						delete ship;
-						break;
+						if (y + j >= BOARD_SIZE) {
+							//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+							//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+							//delete ship;
+							// Finished column, go to next row
+							break;
+						}
+
+						nextPart = parsedBoard[x + j][y];
+
+						//Correct part
+						if (nextPart == ship->charSymbol) {
+							ship->pointList[j] = Point(x + j, y);
+							continue;
+						}
+						// Wrong Part
+						else
+						{
+							//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+							//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+							//delete ship;
+							break;
+						}
 					}
 
 					// Found complete vertical ship 
-					if (j = ship->size)
+					if (j == ship->size)
+					{
+						// If success!
+						if (checkAdjacentShips(*ship)) {
+							if (IS_PLAYER_A(ship->charSymbol)) {
+								shipListA.push_back(ship);
+							}
+							else {
+								shipListB.push_back(ship);
+							}
+							// Ship found go to next iteration
+							continue;
+						}
+
+					}
+
+
+					// Try horizontal
+					for (i = 1; i < ship->size; i++)
+					{
+						if (y + i >= BOARD_SIZE) {
+							DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+							this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+							delete ship;
+							// Finished row, go to next row
+							break;
+						}
+						nextPart = parsedBoard[x][y + i];
+
+						//Correct part
+						if (nextPart == ship->charSymbol) {
+							ship->pointList[i] = Point(x, y + i);
+							//continue;
+						}
+						// Wrong Part
+						else
+						{
+							DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+							this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+							delete ship;
+							break;
+						}
+					}
+						// Found complete horizontal ship 
+					if (i == ship->size)
 					{
 						// If success!
 						if (checkAdjacentShips(*ship)) {
@@ -211,9 +228,9 @@ status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_
 						}
 
 					}
+					
 				}
 			}
-
 		}
 	}
 
@@ -244,9 +261,13 @@ bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 	char c = board[surroundingPoint.x][surroundingPoint.y];
 	if (c != ' ') {
 		// If surrounding point is same type of ship, and is not part of this ship - wrong size error
-		if (c = ship.charSymbol && IS_SHIP_IN_POINT_LIST(ship, surroundingPoint)) {
+		if (c == ship.charSymbol && !IS_SHIP_IN_POINT_LIST(ship, surroundingPoint)) {
 			this->addErrorMsg(ship.msgWrongSizeIdx, ship.msgWrongSize);
 			ret = false;
+		}
+		// If surrounding point is same type of ship and is part of this ship
+		else if (c == ship.charSymbol) {
+			ret = true;
 		}
 		// If surrounding point is different type of ship - adjacent ships error
 		else {
@@ -265,16 +286,25 @@ bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 bool Board::checkAdjacentShips(const Ship &ship)
 {
 	Point shipPoint;
-	bool ret;
+	bool ret = true;
 	for (size_t i = 0; i < ship.size; i++)
 	{
 		shipPoint = ship.pointList[i];
 
 		// Check surrounding of shipPoint that is not part of the ship
-		if (!checkSurroundingPoint(ship, Point(shipPoint.x + 1, shipPoint.y))) ret = false;
-		if (!checkSurroundingPoint(ship, Point(shipPoint.x - 1, shipPoint.y))) ret = false;
-		if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y + 1))) ret = false;
-		if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y - 1))) ret = false;
+		if ((int)shipPoint.x + 1 < BOARD_SIZE) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.x + 1, shipPoint.y))) ret = false;
+		}
+		if ((int)shipPoint.x - 1 >= 0) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.x - 1, shipPoint.y))) ret = false;
+		}
+		if ((int)shipPoint.y + 1 < BOARD_SIZE) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y + 1))) ret = false;
+		}
+		if ((int)shipPoint.y - 1 >= 0) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y - 1))) ret = false;
+		}
+		
 	}
 
 	return ret;

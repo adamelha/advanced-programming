@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG	0
+#define DEBUG	1
 
 #define DEBUG_PRINT(format, ...) do {\
 		if(DEBUG) { \

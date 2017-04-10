@@ -16,21 +16,21 @@ Ship *charToShip(char c)
 {
 	switch (c)
 	{
-	case 'b':
-		return new ShipBPlayerA();
 	case 'B':
+		return new ShipBPlayerA();
+	case 'b':
 		return new ShipBPlayerB();
-	case 'p':
-		return new ShipPPlayerA();
 	case 'P':
+		return new ShipPPlayerA();
+	case 'p':
 		return new ShipPPlayerB();
-	case 'm':
-		return new ShipMPlayerA();
 	case 'M':
+		return new ShipMPlayerA();
+	case 'm':
 		return new ShipMPlayerB();
-	case 'd':
-		return new ShipDPlayerA();
 	case 'D':
+		return new ShipDPlayerA();
+	case 'd':
 		return new ShipDPlayerB();
 	default:
 		// If we got here this means there is a bug in our program.
