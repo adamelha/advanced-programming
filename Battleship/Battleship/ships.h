@@ -13,24 +13,21 @@ using namespace std;
 
 #define MSG_MANY_SHIPS_A		"Too many ships for player A\n"
 #define MSG_MANY_SHIPS_A_IDX	(NUM_OF_DIFFERENT_SHIPS * NUM_OF_PLAYERS)
-#define MSG_FEW_SHIPS_A			"Too few ships for player A"
+#define MSG_FEW_SHIPS_A			"Too few ships for player A\n"
 #define MSG_FEW_SHIPS_A_IDX		(MSG_MANY_SHIPS_A_IDX + 1)
 #define MSG_MANY_SHIPS_B		"Too many ships for player B\n"
 #define MSG_MANY_SHIPS_B_IDX	(MSG_FEW_SHIPS_A_IDX + 1)
-#define MSG_FEW_SHIPS_B			"Too few ships for player B"
+#define MSG_FEW_SHIPS_B			"Too few ships for player B\n"
 #define MSG_FEW_SHIPS_B_IDX		(MSG_MANY_SHIPS_B_IDX + 1)
 
+#define MSG_ADJACENT_SHIPS		"Adjacent Ships on Board\n"
 #define MSG_ADJACENT_SHIPS_IDX	(MSG_FEW_SHIPS_B_IDX + 1)
 #define NUMBER_OF_BOARD_MSGS	(MSG_ADJACENT_SHIPS_IDX + 1)
 
 
 class Ship {
 public:
-	Ship(size_t sizeOfShip) : pointList(new Point[sizeOfShip]), size(sizeOfShip),
-		msgWrongSize(string("Wrong size or shape for ship ") + charSymbol + string("for player") + player ),
-		msgTooManyShips("Too many ships for player " + player + '\n'),
-		msgTooFewShips("Too few ships for player " + player + '\n'),
-		msgAdjacentShips("Adjacent Ships on Board\n") {}
+	Ship(size_t sizeOfShip) : pointList(new Point[sizeOfShip]), size(sizeOfShip) {}
 	char player;
 	char charSymbol;
 	size_t size;
@@ -40,7 +37,7 @@ public:
 	string msgTooManyShips;
 	string msgTooFewShips;
 	string msgAdjacentShips;
-
+	void initErrorStrings();
 	~Ship() { delete[] pointList; }
 };
 

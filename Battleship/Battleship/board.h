@@ -11,7 +11,7 @@
 #define IS_PLAYER_A(c)	(isupper(c))
 
 #define BOARD_SIZE						10
-#define NUM_OF_BOARD_ERR_MSGS		8
+#define NUM_OF_BOARD_ERR_MSGS			NUMBER_OF_BOARD_MSGS
 
 #define BOARD_DIMENSIONS_INVALID		"Board dimensions are invalid\n"
 #define BOARD_DIMENSIONS_INVALID_IDX	0

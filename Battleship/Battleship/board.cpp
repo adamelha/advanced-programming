@@ -145,7 +145,7 @@ status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_
 					// Try vertical
 					for (j = 1; j < ship->size; j++)
 					{
-						if (y + j >= BOARD_SIZE) {
+						if (x + j >= BOARD_SIZE) {
 							//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
 							//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
 							//delete ship;
@@ -271,7 +271,7 @@ bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 		}
 		// If surrounding point is different type of ship - adjacent ships error
 		else {
-			this->addErrorMsg(ship.msgAdjacentShipsIdx, ship.msgAdjacentShips);
+			this->addErrorMsg(MSG_ADJACENT_SHIPS_IDX, MSG_ADJACENT_SHIPS);
 		}
 	}
 

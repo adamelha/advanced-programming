@@ -1,16 +1,24 @@
 #include "ships.h"
 #include "macros.h"
-ShipBPlayerA::ShipBPlayerA() { ShipB(); charSymbol = 'B'; player = 'A'; msgWrongSizeIdx = 0; }
-ShipBPlayerB::ShipBPlayerB() { ShipB(); charSymbol = 'b'; player = 'B'; msgWrongSizeIdx = 4; }
 
-ShipPPlayerA::ShipPPlayerA() { ShipP(); charSymbol = 'P'; player = 'A'; msgWrongSizeIdx = 1; }
-ShipPPlayerB::ShipPPlayerB() { ShipP(); charSymbol = 'p'; player = 'B'; msgWrongSizeIdx = 5; }
+void Ship::initErrorStrings() 
+{
+	msgWrongSize = string("Wrong size or shape for ship ") + charSymbol + string(" for player ") + player + '\n';
+	msgTooManyShips = "Too many ships for player " + player + '\n';
+	msgTooFewShips = "Too few ships for player " + player + '\n';
+}
 
-ShipMPlayerA::ShipMPlayerA() { ShipM(); charSymbol = 'M'; player = 'A'; msgWrongSizeIdx = 2; }
-ShipMPlayerB::ShipMPlayerB() { ShipM(); charSymbol = 'm'; player = 'B'; msgWrongSizeIdx = 6; }
+ShipBPlayerA::ShipBPlayerA() : ShipB() { charSymbol = 'B'; player = 'A'; msgWrongSizeIdx = 0; initErrorStrings();}
+ShipBPlayerB::ShipBPlayerB() : ShipB() { charSymbol = 'b'; player = 'B'; msgWrongSizeIdx = 4; initErrorStrings();}
 
-ShipDPlayerA::ShipDPlayerA() { ShipD(); charSymbol = 'D'; player = 'A'; msgWrongSizeIdx = 3; }
-ShipDPlayerB::ShipDPlayerB() { ShipD(); charSymbol = 'd'; player = 'B'; msgWrongSizeIdx = 7; }
+ShipPPlayerA::ShipPPlayerA() { ShipP(); charSymbol = 'P'; player = 'A'; msgWrongSizeIdx = 1; initErrorStrings();}
+ShipPPlayerB::ShipPPlayerB() { ShipP(); charSymbol = 'p'; player = 'B'; msgWrongSizeIdx = 5; initErrorStrings();}
+
+ShipMPlayerA::ShipMPlayerA() { ShipM(); charSymbol = 'M'; player = 'A'; msgWrongSizeIdx = 2; initErrorStrings();}
+ShipMPlayerB::ShipMPlayerB() { ShipM(); charSymbol = 'm'; player = 'B'; msgWrongSizeIdx = 6; initErrorStrings();}
+
+ShipDPlayerA::ShipDPlayerA() { ShipD(); charSymbol = 'D'; player = 'A'; msgWrongSizeIdx = 3; initErrorStrings();}
+ShipDPlayerB::ShipDPlayerB() { ShipD(); charSymbol = 'd'; player = 'B'; msgWrongSizeIdx = 7; initErrorStrings();}
 
 Ship *charToShip(char c)
 {
