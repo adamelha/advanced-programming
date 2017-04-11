@@ -37,6 +37,16 @@ string FileParser::getAttackB()
 	return this->attackB;
 }
 
+string FileParser::getAttackAFileName()
+{
+	return this->attackAFileName;
+}
+
+string FileParser::getAttackBFileName()
+{
+	return this->attackBFileName;
+}
+
 
 
 /***************Private Methods***************/

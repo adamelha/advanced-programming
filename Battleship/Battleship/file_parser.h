@@ -33,6 +33,8 @@ public:
 	string getBoard();
 	string getAttackA();
 	string getAttackB();
+	string getAttackAFileName();
+	string getAttackBFileName();
 	FileParser(string filesPath) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS), filesPath(filesPath) {}
 
 private:

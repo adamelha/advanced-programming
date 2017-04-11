@@ -25,7 +25,8 @@ class Board : public ErrorClass {
 public:
 	status_t parse();
 	string getFilesPath();
-	char getCharFromBoard(Point p);
+	
+	char getCharFromBoard(int x, int y);
 	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile) {}
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;

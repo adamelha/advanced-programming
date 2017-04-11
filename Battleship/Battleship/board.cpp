@@ -351,3 +351,11 @@ std::istream& Board::safeGetline(std::istream& is, std::string& t)
 		}
 	}
 }
+
+
+
+char Board::getCharFromBoard(int x, int y)
+{
+	return this->board[x][y];
+}
+
