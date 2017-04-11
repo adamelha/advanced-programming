@@ -7,10 +7,10 @@
 #include "ships.h"
 #include <ctype.h>
 #include <vector>
+#include "macros.h"
 
 #define IS_PLAYER_A(c)	(isupper(c))
 
-#define BOARD_SIZE						10
 #define NUM_OF_BOARD_ERR_MSGS			NUMBER_OF_BOARD_MSGS
 
 #define BOARD_DIMENSIONS_INVALID		"Board dimensions are invalid\n"
@@ -26,12 +26,13 @@ public:
 	status_t parse();
 	string getFilesPath();
 	
-	char getCharFromBoard(int x, int y);
+	char getCharFromBoard(int x, int y) const;
 	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile) {}
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;
-private:
 	char board[BOARD_SIZE][BOARD_SIZE];
+
+private:
 	string boardStringFromFile;
 	void setCharOnBoard(Point p, char val);
 	bool checkAdjacentShips(const Ship &ship);

@@ -42,9 +42,6 @@
     <ClInclude Include="point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Attack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="battle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,9 +63,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ships.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Attack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="battle.cpp">

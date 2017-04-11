@@ -2,20 +2,24 @@
 #include <stdlib.h>
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1
-#define VALID_INT_TOKENS  -1 < stoi(tokens[0]) < 10 &&  -1 < stoi(tokens[1]) < 10
+//#define VALID_INT_TOKENS  -1 < stoi(tokens[0]) < 10 &&  -1 < stoi(tokens[1]) < 10
+//#define VALID_INT_TOKENS  -1 < stoi(tokens[0]) < 10 &&  -1 < stoi(tokens[1]) < 10
+
 //#define IS_CHAR_BELONG_TO_A_BOARD     board[i][j] == 'B' || board[i][j] == 'P' || board[i][j] == 'M' || board[i][j]=='D'  
 //#define IS_CHAR_BELONG_TO_B_BOARD     board[i][j] == 'b' || board[i][j] == 'p' || board[i][j] == 'm' || board[i][j]=='d'  
 
+enum {NO_SQUARE = 0, A_SQUARE = 1, B_SQUARE = 2};
+
 // this method from Tirgul 3 
 
-int isBelongToBoard(char c ) 
+static int isBelongToBoard(const char c ) 
 {
 	if (c == 'B' || c == 'P' || c == 'M' || c == 'D' )         //A Square
-		return 1;
-	else if (c == 'b' || c == 'p' || c == 'm' || c == 'm')     // B sqare
-		return 2;
+		return A_SQUARE;
+	else if (c == 'b' || c == 'p' || c == 'm' || c == 'd')     // B sqare
+		return B_SQUARE;
 	else {
-		return 0;
+		return NO_SQUARE;
 	}
 }
 static std::vector<std::string> split(const std::string &s, char delim)
@@ -33,7 +37,7 @@ static std::vector<std::string> split(const std::string &s, char delim)
 }
 
 
-void Battle::setLineOrColumn(char board[][ARR_SIZE], int size , Point* p , bool isVertical, char symbol )
+void Battle::setLineOrColumn(char board[][BOARD_SIZE], int size , Point* p , bool isVertical, char symbol )
 {
 	if(isVertical)
 	{
@@ -70,7 +74,7 @@ void Battle::setAttacker(string attackStr, int whosTurn)
 void Battle::processLine(const string & line, int whosTurn)
 {
 	vector<string> tokens = split(line, ',');
-	if (tokens.size() != 2 || !VALID_INT_TOKENS)
+	if (tokens.size() != 2 /*|| !VALID_INT_TOKENS*/) //TODO: improve define
 	{
 		return;
 	}
@@ -117,7 +121,7 @@ void Battle::setBoard(const char** board, int numRows, int numCols)
 		{
 			for (int j = 0; j < numCols; j++)
 			{
-				if (isBelongToBoard(board[i][j]) == 2)        
+				if (isBelongToBoard(board[i][j]) == B_SQUARE)        
 				{
 					this->B_Board[i][j] = board[i][j];
 					numOfSquareB += 1;
@@ -134,7 +138,7 @@ void Battle::setBoard(const char** board, int numRows, int numCols)
 		{
 			for (int j = 0; j < numCols; j++)
 			{
-				if (isBelongToBoard(board[i][j]) == 1)
+				if (isBelongToBoard(board[i][j]) == A_SQUARE)
 				{
 					this->A_Board[i][j] = board[i][j];
 					numOfSquareA += 1;
@@ -184,6 +188,7 @@ void Battle::setBoard(const char** board, int numRows, int numCols)
 				setLineOrColumn(this->A_Board, board2.shipListA[i]->size, board2.shipListA[i]->pointList, false, board2.shipListA[i]->charSymbol);
 		}
 	}
+	( char[][10])
 	*/
 }
 
@@ -196,27 +201,27 @@ void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult res
 {
 }
 
-int Battle::War(FileParser fileParser, Board board)
+int Battle::War(const FileParser &fileParser, const Board &board)
 {
 	//initialize full const board for method setBoard( memory allocation included )
-	char fullBoard[ARR_SIZE][ARR_SIZE];
-	for (int i = 0 ; i < ARR_SIZE ; i++)
+	char fullBoard[BOARD_SIZE][BOARD_SIZE];
+	for (int i = 0 ; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < ARR_SIZE; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 			fullBoard[i][j] = board.getCharFromBoard(i, j);
 	}
-	const char ** constFullBoard = (const char**)calloc(ARR_SIZE, sizeof(char*));
-	for (int i = 0; i < ARR_SIZE; i++)
-		constFullBoard[i] = (char*)calloc(ARR_SIZE, sizeof(char));
-	for (int i = 0 ; i < ARR_SIZE; i++)
-		constFullBoard[i] = fullBoard[i];
-	
+	char ** constFullBoard = (char**)malloc (BOARD_SIZE * sizeof(char*));
+	for (int i = 0; i < BOARD_SIZE; i++)
+		constFullBoard[i] = (char*)malloc (BOARD_SIZE * sizeof(char));
+	for (int i = 0 ; i < BOARD_SIZE; i++)
+		//constFullBoard[i] = fullBoard[i];
+		memcpy(constFullBoard[i], fullBoard[i], BOARD_SIZE);
 
 	//set each player board
 	setWhosTurn(0);						 //   set turn A
-	setBoard(constFullBoard, 10, 10);
+	setBoard((const char **)constFullBoard, 10, 10);
 	setWhosTurn(1);						//    set turn B
-	setBoard(constFullBoard, 10, 10);
+	setBoard((const char **)constFullBoard, 10, 10);
 	
 	//set players attack vectors
 	loadFromAttackFile(fileParser.getAttackAFileName(), 0);
@@ -231,34 +236,36 @@ int Battle::War(FileParser fileParser, Board board)
 	int total = this->B_Atacker.size() + this->A_Atacker.size();
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
 	{
-		whoGotHit = isBelongToBoard(fullBoard[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second]);
+		//whoGotHit = isBelongToBoard(board.board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second]);
 		if (this->whosTurn)			//player B
 		{
-			if (whoGotHit == 0 )                // miss
+			whoGotHit = isBelongToBoard(board.board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second]);   
+
+			if (whoGotHit == NO_SQUARE )                // miss
 			{
 				HitCorrectTarget = false;
 				//need to notify for next assignments
 			}
-			else if (whoGotHit == 1)		  // player B Hit player A
+			else if (whoGotHit == A_SQUARE)		  // player B Hit player A
 			{
-				alreadyGotHit = (this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] == '\n');
+				alreadyGotHit = (this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] == SQUARE_DOWN_SYMBOL);
 				if (!alreadyGotHit)
 				{
 					this->numOfSquareA -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB);
-					this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = '\n';   //mark has hit
+					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
+					this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = true;
 					
 				}
 			}
 			else							//B Hit himself!!
 			{
-				alreadyGotHit = (this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] == '\n');
+				alreadyGotHit = (this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] == SQUARE_DOWN_SYMBOL);
 				if (!alreadyGotHit)
 				{
 					this->numOfSquareB -= 1;
 					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
-					this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = '\n';   //mark has hit
+					this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = false;
 
 				}
@@ -268,40 +275,41 @@ int Battle::War(FileParser fileParser, Board board)
 			if (indexA < this->A_Atacker.size() && !HitCorrectTarget)
 				setWhosTurn((this->whosTurn + 1) % 2) ;          //change turn to next player if possibale (to player A)
 		}
+
+
 		else                       //player A
 		{
 			whoGotHit = isBelongToBoard(fullBoard[this->A_Atacker[indexA].first][this->A_Atacker[indexA].second]);
-			if (whoGotHit == 0 )                // miss
+			if (whoGotHit == NO_SQUARE )                // miss
 			{
 				HitCorrectTarget = false;
 				//need to notify for next assignments
 			}
-			else if (whoGotHit == 2)		  // player A Hit player B
+			else if (whoGotHit == B_SQUARE)		  // player A Hit player B
 			{
-				alreadyGotHit = (this->B_Board[this->A_Atacker[indexB].first][this->A_Atacker[indexB].second] == '\n');
+				alreadyGotHit = (this->B_Board[this->A_Atacker[indexB].first][this->A_Atacker[indexB].second] == SQUARE_DOWN_SYMBOL);
 				if (!alreadyGotHit)
 				{
+					// Need to notify
 					this->numOfSquareB -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB);
-					this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = '\n';   //mark has hit
+					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
+					this->B_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = true;
-
 				}
 			}
 			else               //A Hit himself!!
 			{
-				alreadyGotHit = (this->A_Board[this->A_Atacker[indexB].first][this->A_Atacker[indexB].second] == '\n');
+				alreadyGotHit = (this->A_Board[this->A_Atacker[indexB].first][this->A_Atacker[indexB].second] == SQUARE_DOWN_SYMBOL);
 				if (!alreadyGotHit)
 				{
 					this->numOfSquareA -= 1;
 					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
-					this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = '\n';   //mark has hit
+					this->A_Board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = false;
 
 
 				}
 			}
-
 
 			indexA += 1;
 			if (indexB < this->B_Atacker.size() && !HitCorrectTarget)
@@ -317,16 +325,16 @@ int Battle::War(FileParser fileParser, Board board)
 	}
 	else if(this->numOfSquareA == 0)
 	{
-		std::cout << "Player <A> won" << std::endl;
+		std::cout << "Player <B> won" << std::endl;
 	}
 	else
 		std::cout << "nobody won" << std::endl;
 
 
 	//free allocation
-	for (int i  = 0; i < ARR_SIZE; i++)
+	for (int i  = 0; i < BOARD_SIZE; i++)
 	{
-		free((void*)constFullBoard[i]);
+		free(constFullBoard[i]);
 	}
 
 	free(constFullBoard);

@@ -17,3 +17,5 @@ For format string must snprintf before using this macro.
 #define ERROR_PRINT(message, returnValue) \
 		std::cout << "Error: " << message << "\n"; \
 		return returnValue;
+
+#define BOARD_SIZE						10

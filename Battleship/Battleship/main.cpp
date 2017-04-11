@@ -2,6 +2,7 @@
 #include "file_parser.h"
 #include "board.h"
 #include "status.h"
+#include "battle.h"
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1
@@ -37,6 +38,9 @@ int main(int argc, char **argv) {
 		
 		return EXIT_FAIL;
 	}
+	Battle battle;
+	battle.War(fileParser, board);
+
 
 	return EXIT_SUCCESS;
 }

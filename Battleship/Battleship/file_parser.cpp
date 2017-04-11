@@ -37,12 +37,12 @@ string FileParser::getAttackB()
 	return this->attackB;
 }
 
-string FileParser::getAttackAFileName()
+string FileParser::getAttackAFileName() const
 {
 	return this->attackAFileName;
 }
 
-string FileParser::getAttackBFileName()
+string FileParser::getAttackBFileName() const
 {
 	return this->attackBFileName;
 }

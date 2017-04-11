@@ -110,7 +110,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Attack.h" />
     <ClInclude Include="battle.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="cmd_parser.h" />
@@ -123,7 +122,6 @@
     <ClInclude Include="status.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Attack.cpp" />
     <ClCompile Include="battle.cpp" />
     <ClCompile Include="board.cpp" />
     <ClCompile Include="cmd_parser.cpp" />
