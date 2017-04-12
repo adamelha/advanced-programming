@@ -1,12 +1,42 @@
 #include "ships.h"
 #include "macros.h"
 
+// Copy constructor
+Ship::Ship(const Ship &ship)
+{
+	operator=(ship);
+}
+
+Ship& Ship::operator = (const Ship& ship)
+{
+	this->charSymbol = ship.charSymbol;
+	this->msgAdjacentShips = msgAdjacentShips;
+	this->msgAdjacentShipsIdx = msgAdjacentShipsIdx;
+	this->msgTooFewShips = msgTooFewShips;
+	this->msgTooFewShipsIdx = msgTooFewShipsIdx;
+	this->msgTooManyShips = msgTooManyShips;
+	this->msgTooManyShipsIdx = msgTooManyShipsIdx;
+	this->msgWrongSize = msgWrongSize;
+	this->msgWrongSizeIdx = msgWrongSizeIdx;
+	this->player = this->player;
+	this->pointList = new Point[size];
+	this->size = size;
+	this->pointsWorth = pointsWorth;
+
+	return *this;
+}
 void Ship::initErrorStrings() 
 {
 	msgWrongSize = string("Wrong size or shape for ship ") + charSymbol + string(" for player ") + player + '\n';
 	msgTooManyShips = "Too many ships for player " + player + '\n';
 	msgTooFewShips = "Too few ships for player " + player + '\n';
 }
+
+int Ship::getPointsWorth() 
+{
+	return pointsWorth;
+}
+
 
 ShipBPlayerA::ShipBPlayerA() : ShipB() { charSymbol = 'B'; player = 'A'; msgWrongSizeIdx = 0; initErrorStrings();}
 ShipBPlayerB::ShipBPlayerB() : ShipB() { charSymbol = 'b'; player = 'B'; msgWrongSizeIdx = 4; initErrorStrings();}

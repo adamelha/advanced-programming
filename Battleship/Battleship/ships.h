@@ -8,6 +8,11 @@ using namespace std;
 #define SHIP_SIZE_M				3
 #define SHIP_SIZE_D				4
 
+#define SHIP_POINTS_B			2
+#define SHIP_POINTS_P			3
+#define SHIP_POINTS_M			7
+#define SHIP_POINTS_D			8
+
 #define NUM_OF_DIFFERENT_SHIPS	4
 #define NUM_OF_PLAYERS			2
 
@@ -27,7 +32,11 @@ using namespace std;
 
 class Ship {
 public:
-	Ship(size_t sizeOfShip) : pointList(new Point[sizeOfShip]), size(sizeOfShip) {}
+	Ship(size_t sizeOfShip, int pointsWorth) : pointList(new Point[sizeOfShip]), size(sizeOfShip) , pointsWorth(pointsWorth){}
+	// Copy constructor
+	Ship(const Ship &ship);
+	// =operator
+	Ship& operator=(const Ship& other);
 	char player;
 	char charSymbol;
 	size_t size;
@@ -38,12 +47,16 @@ public:
 	string msgTooFewShips;
 	string msgAdjacentShips;
 	void initErrorStrings();
+	int getPointsWorth();
 	~Ship() { delete[] pointList; }
+
+protected:
+	int pointsWorth;
 };
 
 class ShipB : public Ship {
 public:
-	ShipB() : Ship(SHIP_SIZE_B) {}
+	ShipB() : Ship(SHIP_SIZE_B, SHIP_POINTS_B) {}
 };
 
 class ShipBPlayerA : public ShipB {
@@ -57,7 +70,7 @@ public:
 
 class ShipP : public Ship {
 public:
-	ShipP() : Ship(SHIP_SIZE_P) {}
+	ShipP() : Ship(SHIP_SIZE_P, SHIP_POINTS_P) {}
 };
 
 class ShipPPlayerA : public ShipP {
@@ -71,7 +84,7 @@ public:
 
 class ShipM : public Ship {
 public:
-	ShipM() : Ship(SHIP_SIZE_M) {}
+	ShipM() : Ship(SHIP_SIZE_M, SHIP_POINTS_M) {}
 };
 
 class ShipMPlayerA : public ShipM {
@@ -85,7 +98,7 @@ public:
 
 class ShipD : public Ship {
 public:
-	ShipD() : Ship(SHIP_SIZE_D) {}
+	ShipD() : Ship(SHIP_SIZE_D, SHIP_POINTS_D) {}
 };
 
 class ShipDPlayerA : public ShipD {
