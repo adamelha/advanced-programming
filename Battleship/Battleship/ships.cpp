@@ -1,28 +1,78 @@
 #include "ships.h"
 #include "macros.h"
+#include <vector>
 
+vector<Ship*> &deepCopyShipPointerVector(const vector<Ship*> &shipList)
+{
+	vector<Ship*> *retShipList = new vector<Ship*>();
+
+	for (size_t i = 0; i < shipList.size(); i++)
+	{
+		(*retShipList).push_back(new Ship(*shipList[i]));
+	}
+
+	return *retShipList;
+}
+
+// finds the coordinate of the ship part hit, 'removes' it from ship pointList by making that point invalid, decreasing ship.activePointsLeft, and returning the score received if ship sinks.
+// return number of points gained
+int shootShip(Point pointHit, vector<Ship*> &shipList)
+{
+	int pointsGained = 0;
+	for (size_t shipIdx = 0; shipIdx < shipList.size(); shipIdx++)
+	{
+		for (size_t pointIdx = 0; pointIdx < shipList[shipIdx]->size; pointIdx++)
+		{
+			// Found point to remove
+			if (pointHit == shipList[shipIdx]->pointList[pointIdx])
+			{
+				// Remove point from ship
+				shipList[shipIdx]->pointList[pointIdx].invalidatePoint();
+				
+				// If no active points left in ship - remove from ship list
+				if (--(shipList[shipIdx]->activePointsLeft) == 0)
+				{
+					pointsGained = shipList[shipIdx]->getPointsWorth();
+					delete shipList[shipIdx];
+					shipList.erase(shipList.begin() + shipIdx);
+
+					return pointsGained;
+				}
+				
+			}
+		}
+	}
+
+	return pointsGained;
+}
 // Copy constructor
 Ship::Ship(const Ship &ship)
 {
-	operator=(ship);
+	*this = ship;
 }
 
 Ship& Ship::operator = (const Ship& ship)
 {
 	this->charSymbol = ship.charSymbol;
-	this->msgAdjacentShips = msgAdjacentShips;
-	this->msgAdjacentShipsIdx = msgAdjacentShipsIdx;
-	this->msgTooFewShips = msgTooFewShips;
-	this->msgTooFewShipsIdx = msgTooFewShipsIdx;
-	this->msgTooManyShips = msgTooManyShips;
-	this->msgTooManyShipsIdx = msgTooManyShipsIdx;
-	this->msgWrongSize = msgWrongSize;
-	this->msgWrongSizeIdx = msgWrongSizeIdx;
-	this->player = this->player;
-	this->pointList = new Point[size];
-	this->size = size;
-	this->pointsWorth = pointsWorth;
+	this->msgAdjacentShips = ship.msgAdjacentShips;
+	this->msgAdjacentShipsIdx = ship.msgAdjacentShipsIdx;
+	this->msgTooFewShips = ship.msgTooFewShips;
+	this->msgTooFewShipsIdx = ship.msgTooFewShipsIdx;
+	this->msgTooManyShips = ship.msgTooManyShips;
+	this->msgTooManyShipsIdx = ship.msgTooManyShipsIdx;
+	this->msgWrongSize = ship.msgWrongSize;
+	this->msgWrongSizeIdx = ship.msgWrongSizeIdx;
+	this->player = ship.player;
 
+	this->pointList = new Point[ship.size];
+	this->size = ship.size;
+	for (size_t i = 0; i < ship.size; i++)
+	{
+		this->pointList[i] = ship.pointList[i];
+	}
+
+	this->pointsWorth = ship.pointsWorth;
+	this->activePointsLeft = ship.activePointsLeft;
 	return *this;
 }
 void Ship::initErrorStrings() 

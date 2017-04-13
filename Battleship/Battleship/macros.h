@@ -1,12 +1,13 @@
 #pragma once
 
-#define DEBUG	1
+#define DEBUG
 
-#define DEBUG_PRINT(format, ...) do {\
-		if(DEBUG) { \
-		printf(format, ##__VA_ARGS__);\
-		} \
-} while(0)
+#ifdef DEBUG
+#define DEBUG_PRINT(format, ...)	printf(format, ##__VA_ARGS__)
+#else
+#define DEBUG_PRINT(format, ...)
+#endif // DEBUG
+
 
 #define ARRAY_LENGTH(arr)	(sizeof(arr) / sizeof((arr[0])))
 
@@ -19,3 +20,7 @@ For format string must snprintf before using this macro.
 		return returnValue;
 
 #define BOARD_SIZE						10
+
+
+#define EXIT_SUCCESS	0
+#define EXIT_FAIL		-1

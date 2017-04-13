@@ -3,12 +3,10 @@
 #include "board.h"
 #include "status.h"
 #include "battle.h"
-
-#define EXIT_SUCCESS	0
-#define EXIT_FAIL		-1
-
+#include "macros.h"
 
 using namespace std;
+
 int main(int argc, char **argv) {
 	status_t status;
 

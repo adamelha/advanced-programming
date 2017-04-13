@@ -110,11 +110,11 @@ status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_
 {
 	Ship *ship;
 	char part, nextPart;
-	size_t i, j;
+	int i, j;
 
-	for (size_t x = 0; x < BOARD_SIZE; x++)
+	for (int x = 0; x < BOARD_SIZE; x++)
 	{
-		for (size_t y = 0; y < BOARD_SIZE; y++)
+		for (int y = 0; y < BOARD_SIZE; y++)
 		{
 			part = parsedBoard[x][y];
 

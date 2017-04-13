@@ -1,6 +1,7 @@
 #pragma once
 #include "point.h"
 #include <string>
+#include <vector>
 using namespace std;
 
 #define SHIP_SIZE_B				1
@@ -32,7 +33,7 @@ using namespace std;
 
 class Ship {
 public:
-	Ship(size_t sizeOfShip, int pointsWorth) : pointList(new Point[sizeOfShip]), size(sizeOfShip) , pointsWorth(pointsWorth){}
+	Ship(size_t sizeOfShip, int pointsWorth) : pointList(new Point[sizeOfShip]), size(sizeOfShip) , pointsWorth(pointsWorth), activePointsLeft(sizeOfShip){}
 	// Copy constructor
 	Ship(const Ship &ship);
 	// =operator
@@ -48,10 +49,12 @@ public:
 	string msgAdjacentShips;
 	void initErrorStrings();
 	int getPointsWorth();
+	int activePointsLeft; // Used for keeping track of ship status - when does it sink.
 	~Ship() { delete[] pointList; }
 
 protected:
 	int pointsWorth;
+	
 };
 
 class ShipB : public Ship {
@@ -112,3 +115,6 @@ public:
 
 // Use this function only with valid chars
 Ship *charToShip(char c);
+
+vector<Ship*> &deepCopyShipPointerVector(const vector<Ship*> &shipList);
+int shootShip(Point pointHit, vector<Ship*> &shipList);
