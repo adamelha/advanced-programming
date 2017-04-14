@@ -24,9 +24,6 @@
     <ClInclude Include="file_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="macros.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="battle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

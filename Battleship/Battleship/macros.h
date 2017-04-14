@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define DEBUG_PRINT(format, ...)	printf(format, ##__VA_ARGS__)

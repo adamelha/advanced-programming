@@ -340,11 +340,11 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	//game is over, print winners if there are
 	if (this->numOfSquareB == 0)
 	{
-		std::cout << "Player <A> won" << std::endl; 
+		std::cout << "Player A won" << std::endl; 
 	}
 	else if(this->numOfSquareA == 0)
 	{
-		std::cout << "Player <B> won" << std::endl;
+		std::cout << "Player B won" << std::endl;
 	}
 
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
