@@ -27,7 +27,6 @@ private:
 	int whosTurn;
 	void setFilePath(string path);
 	void setWhosTurn(int turn);
-	void setLineOrColumn(char board[][BOARD_SIZE], int size, Point* p, bool isVertical, char symbol);
 	void setAttacker(string attackStr, int whosTurn);
 	//vector<pair<int, int>> A_Atacker, B_Atacker;
 	void processLine(const string& line, int whosTurn);

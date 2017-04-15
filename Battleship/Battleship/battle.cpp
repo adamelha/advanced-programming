@@ -36,7 +36,7 @@ static std::vector<std::string> split(const std::string &s, char delim)
 }
 
 
-void Battle::setLineOrColumn(char board[][BOARD_SIZE], int size , Point* p , bool isVertical, char symbol )
+/*void Battle::setLineOrColumn(char board[][BOARD_SIZE], int size , Point* p , bool isVertical, char symbol )
 {
 	if(isVertical)
 	{
@@ -49,7 +49,7 @@ void Battle::setLineOrColumn(char board[][BOARD_SIZE], int size , Point* p , boo
 		for (int i = 0; i < size; i++)
 			board[p->x + i][p->y] = symbol;	
 	}
-}
+}*/
 
 void Battle::setAttacker(string attackStr, int whosTurn)
 {
@@ -149,46 +149,7 @@ void Battle::setBoard(const char** board, int numRows, int numCols)
 	}
 
 
-/*	this->whosTurn;
-	int status;
-	FileParser fileParser = FileParser(filesPath);
-	status = fileParser.parse();
-	Board board2 = Board(fileParser.getBoard());
-	status = board2.parse();
-	board2.shipListA;
-	Point* p;
-	
-	if (this->whosTurn)    // player B 
-	{
-		//this->attack = split(fileParser.getAttackA(), '\n');
-		for (int i = 0; i < 5 ; i ++)
-		{
-			p = board2.shipListB[i]->pointList;
-			p->y += 1;											// for checking verticallity
-			this->numOfSquareB += board2.shipListB[i]->size;	
 
-			if( board2.shipListB[i]->size > 1 && board2.getCharFromBoard(p) == board2.shipListB[i]->charSymbol )
-				setLineOrColumn(this->B_Board, board2.shipListB[i]->size, board2.shipListB[i]->pointList , true , board2.shipListB[i]->charSymbol);
-			else
-				setLineOrColumn(this->B_Board, board2.shipListB[i]->size, board2.shipListB[i]->pointList, false, board2.shipListB[i]->charSymbol);
-		}
-	}
-
-	else				  //player A
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			p = board2.shipListA[i]->pointList;
-			p->y += 1;										   // for checking verticallity
-			this->numOfSquareA += board2.shipListA[i]->size;
-			if (board2.shipListA[i]->size > 1 && board2.getCharFromBoard(p) == board2.shipListA[i]->charSymbol)
-				setLineOrColumn(this->A_Board, board2.shipListA[i]->size, board2.shipListA[i]->pointList, true, board2.shipListA[i]->charSymbol);
-			else
-				setLineOrColumn(this->A_Board, board2.shipListA[i]->size, board2.shipListA[i]->pointList, false, board2.shipListA[i]->charSymbol);
-		}
-	}
-	( char[][10])
-	*/
 }
 
 std::pair<int, int> Battle::attack()
@@ -240,7 +201,6 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	int total = this->B_Atacker.size() + this->A_Atacker.size();
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
 	{
-		//whoGotHit = isBelongToBoard(board.board[this->B_Atacker[indexB].first][this->B_Atacker[indexB].second]);
 		if (this->whosTurn)			//player B
 		{
 			x = this->B_Atacker[indexB].first;
