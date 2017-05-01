@@ -1,16 +1,28 @@
 ### YOU SHOULD EDIT THE BELOW WITH YOUR DETAILS AND FILES ###
 
-set(user1 itzikkobra)
-set(user2 heizenberg)
-set(user3 nevuhadnetzer)
-set(id1 "123456789")
-set(id2 "123456789")
-set(id3 "123456789")
+set(user1 galklein)
+set(user2 adamelhakham)
+set(id1 "200902377")
+set(id2 "201390085")
+
 set (SOURCE_FILES
-	file1.h
-	file1.cpp
-	file2.h
-	file2.cpp
+	battle.h
+	battle.cpp
+	board.h
+	board.cpp
+	cmd_parser.h
+	cmd_parser.cpp
+	error_class.h
+	error_class.cpp
+	file_parser.h
+	file_parser.cpp
+	ships.h
+	ships.cpp	
+	IBattleshipGameAlgo.h
+	macros.h
+	point.h
+	status.h
+	main.cpp
 )
 
 ### DO NOT CHANGE FROM HERE ON ###

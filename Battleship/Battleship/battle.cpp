@@ -4,12 +4,11 @@
 
 #define VALID_INT_TOKENS  (0 < stoi(tokens[0]) && stoi(tokens[0]) < 11 && 0 < stoi(tokens[1]) && stoi(tokens[1]) < 11)
 
-//#define IS_CHAR_BELONG_TO_A_BOARD     board[i][j] == 'B' || board[i][j] == 'P' || board[i][j] == 'M' || board[i][j]=='D'  
-//#define IS_CHAR_BELONG_TO_B_BOARD     board[i][j] == 'b' || board[i][j] == 'p' || board[i][j] == 'm' || board[i][j]=='d'  
+
 
 enum {NO_SQUARE = 0, A_SQUARE = 1, B_SQUARE = 2};
 
-// this method from Tirgul 3 
+// split,processLine,loadFromAttackFile methods are from Tirgul 3 , with some minor changes
 
 static int isBelongToBoard(const char c ) 
 {
@@ -36,39 +35,8 @@ static std::vector<std::string> split(const std::string &s, char delim)
 }
 
 
-/*void Battle::setLineOrColumn(char board[][BOARD_SIZE], int size , Point* p , bool isVertical, char symbol )
-{
-	if(isVertical)
-	{
-		for(int i =0 ; i < size ; i++)
-			board[p->x][p->y + i ] = symbol;	
-	}
-	
-	else
-	{
-		for (int i = 0; i < size; i++)
-			board[p->x + i][p->y] = symbol;	
-	}
-}*/
-
-void Battle::setAttacker(string attackStr, int whosTurn)
-{
-	vector<string> attacker = split(attackStr, '\n');
-	if (whosTurn)		//B attack 
-	{
-		for(int i = 0; i < attacker.size(); i++)
-		{
-			
-		}
-
-	}
-	else                //A attack
-	{
 
 
-
-	}
-}
 
 void Battle::processLine(const string & line, int whosTurn)
 {
@@ -203,54 +171,69 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	{
 		if (this->whosTurn)			//player B
 		{
-			x = this->B_Atacker[indexB].first;
-			y = this->B_Atacker[indexB].second;
-			whoGotHit = isBelongToBoard(board.board[x][y]);   
-
-			if (whoGotHit == NO_SQUARE )                // miss
-			{
-				HitCorrectTarget = false;
-				//need to notify for next assignments
+			//player B is out of plays
+			if (indexB == this->B_Atacker.size()) {
+				setWhosTurn((this->whosTurn + 1) % 2);
+				twoPlayersOutOfPlays = (total < indexA + indexB + 1);
 			}
-			else if (whoGotHit == A_SQUARE)		  // player B Hit player A
+			else
 			{
-				alreadyGotHit = (this->A_Board[x][y] == SQUARE_DOWN_SYMBOL);
-				if (!alreadyGotHit)
-				{
-					this->numOfSquareA -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
-					this->A_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark as hit
-					HitCorrectTarget = true;
+				x = this->B_Atacker[indexB].first;
+				y = this->B_Atacker[indexB].second;
+				whoGotHit = isBelongToBoard(board.board[x][y]);
 
-					pointsB += shootShip(Point(x, y), shipListA);
-					DEBUG_PRINT("B shot A at point <%d,%d>. Now B has %d points ", x, y, pointsB);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
-				}
-			}
-			else							//B Hit himself!!
-			{
-				alreadyGotHit = (this->B_Board[x][y] == SQUARE_DOWN_SYMBOL);
-				if (!alreadyGotHit)
+				if (whoGotHit == NO_SQUARE)                // miss
 				{
-					this->numOfSquareB -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
-					this->B_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark as hit
 					HitCorrectTarget = false;
-
-					pointsA += shootShip(Point(x, y), shipListB);
-					DEBUG_PRINT("B shot B at point <%d,%d>. Now A has %d points ", x, y, pointsA);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+					//need to notify for next assignments
 				}
+				else if (whoGotHit == A_SQUARE)		  // player B Hit player A
+				{
+					alreadyGotHit = (this->A_Board[x][y] == SQUARE_DOWN_SYMBOL);
+					if (!alreadyGotHit)
+					{
+						this->numOfSquareA -= 1;
+						this->A_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark as hit
+						HitCorrectTarget = true;
+
+						pointsB += shootShip(Point(x, y), shipListA);
+						DEBUG_PRINT("B shot A at point <%d,%d>. Now B has %d points ", x, y, pointsB);
+						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+					}
+				}
+				else							//B Hit himself!!
+				{
+					alreadyGotHit = (this->B_Board[x][y] == SQUARE_DOWN_SYMBOL);
+					if (!alreadyGotHit)
+					{
+						this->numOfSquareB -= 1;
+						this->B_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark as hit
+						HitCorrectTarget = false;
+
+						pointsA += shootShip(Point(x, y), shipListB);
+						DEBUG_PRINT("B shot B at point <%d,%d>. Now A has %d points ", x, y, pointsA);
+						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+					}
+				}
+
+				indexB += 1;
+				if (indexA < this->A_Atacker.size() && !HitCorrectTarget)
+					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale (to player A)
 			}
-
-			indexB += 1;
-			if (indexA < this->A_Atacker.size() && !HitCorrectTarget)
-				setWhosTurn((this->whosTurn + 1) % 2) ;          //change turn to next player if possibale (to player A)
 		}
-
 
 		else                       //player A
 		{
+			//player A is out of plays
+			if ( indexA == this->A_Atacker.size() ) 
+			{
+				setWhosTurn((this->whosTurn + 1) % 2);
+				twoPlayersOutOfPlays = (total < indexA + indexB + 1);
+				
+			}
+			else
+			{
+
 			x = this->A_Atacker[indexA].first;
 			y = this->A_Atacker[indexA].second;
 			whoGotHit = isBelongToBoard(fullBoard[x][y]);
@@ -266,7 +249,7 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 				{
 					// Need to notify
 					this->numOfSquareB -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
+					
 					this->B_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = true;
 					pointsA += shootShip(Point(x, y), shipListB);
@@ -280,7 +263,7 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 				if (!alreadyGotHit)
 				{
 					this->numOfSquareA -= 1;
-					twoPlayersOutOfPlays = (total < indexA + indexB + 1);
+					
 					this->A_Board[x][y] = SQUARE_DOWN_SYMBOL;   //mark has hit
 					HitCorrectTarget = false;
 
@@ -294,6 +277,8 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 			if (indexB < this->B_Atacker.size() && !HitCorrectTarget)
 				setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
 		}
+		}
+
 	}
 	
 	
@@ -306,7 +291,8 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	{
 		std::cout << "Player B won" << std::endl;
 	}
-
+	else
+		std::cout << "Tied" << std::endl;
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
 	std::cout << "Player B: " << to_string(pointsB) << std::endl;
 

@@ -27,8 +27,6 @@ private:
 	int whosTurn;
 	void setFilePath(string path);
 	void setWhosTurn(int turn);
-	void setAttacker(string attackStr, int whosTurn);
-	//vector<pair<int, int>> A_Atacker, B_Atacker;
 	void processLine(const string& line, int whosTurn);
 	void loadFromAttackFile(const string& attackPath, int whosTurn);
 
