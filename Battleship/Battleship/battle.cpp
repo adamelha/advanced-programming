@@ -217,7 +217,7 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 				}
 
 				indexB += 1;
-				if (indexA < this->A_Atacker.size() && !HitCorrectTarget)
+				if ( (indexA < this->A_Atacker.size() && !HitCorrectTarget )|| alreadyGotHit)
 					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale (to player A)
 			}
 		}
@@ -274,10 +274,10 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 			}
 
 			indexA += 1;
-			if (indexB < this->B_Atacker.size() && !HitCorrectTarget)
+			if ( ( indexB < this->B_Atacker.size() && !HitCorrectTarget ) || alreadyGotHit)
 				setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
-		}
-		}
+		    }
+	    }
 
 	}
 	
@@ -291,8 +291,8 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	{
 		std::cout << "Player B won" << std::endl;
 	}
-	else
-		std::cout << "Tied" << std::endl;
+	
+	std::cout << "Points:"    << std::endl;
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
 	std::cout << "Player B: " << to_string(pointsB) << std::endl;
 
