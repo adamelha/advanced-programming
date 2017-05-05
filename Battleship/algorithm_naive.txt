@@ -1,0 +1,27 @@
+* Naive Algorithm:
+
+class State // Should inherit from some base state class  
+{
+	Board boardKnown;
+	Point prevPoint;
+	
+	virtual Point getNextPotentialPoint() { // Also changes state
+		return the next point based on prevPoint and update it to what we returned
+	}
+}
+
+class StateNaive Should inherit State class and implement virtual method  
+
+
+bool init(const std::string& path):
+	Board fullBoard = clone of myBoard;// Initiate board to be my board with hits we reveal. (requires only 100 bytes of memory.
+									  //we might want to consider storing only important data if board gets significantly larger).
+	prevPoint = Point(-1,0);	
+	return true;
+	
+std::pair<int, int> attack():
+	potentialPoint = StateNaive.getNextPotentialPoint()
+	if fullBoard.isMoveLegal(myState): // point not in board (is not mine) and no part of ship surrounds it. 
+		return potentialPoint.toTuple()// Must implement in Point class
+			
+				
