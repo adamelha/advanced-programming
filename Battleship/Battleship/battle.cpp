@@ -80,9 +80,9 @@ void Battle::setWhosTurn(int turn)
 	this->whosTurn = turn;
 }
 
-void Battle::setBoard(const char** board, int numRows, int numCols)
+void Battle::setBoard(int player, const char** board, int numRows, int numCols)
 {	
-	if (this->whosTurn)					//set Board to Player B
+	if (player)					//set Board to Player B
 	{
 		for (int i = 0; i < numRows; i++)
 		{
@@ -147,9 +147,9 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 
 	//set each player board
 	setWhosTurn(0);						 //   set turn A
-	setBoard((const char **)constFullBoard, 10, 10);
+	setBoard(this->whosTurn, (const char **)constFullBoard, 10, 10);
 	setWhosTurn(1);						//    set turn B
-	setBoard((const char **)constFullBoard, 10, 10);
+	setBoard(this->whosTurn, (const char **)constFullBoard, 10, 10);
 	
 	//set players attack vectors
 	loadFromAttackFile(fileParser.getAttackAFileName(), 0);
@@ -219,6 +219,8 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 				indexB += 1;
 				if ( (indexA < this->A_Atacker.size() && !HitCorrectTarget )|| alreadyGotHit)
 					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale (to player A)
+				
+				alreadyGotHit = false;
 			}
 		}
 
@@ -276,6 +278,9 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 			indexA += 1;
 			if ( ( indexB < this->B_Atacker.size() && !HitCorrectTarget ) || alreadyGotHit)
 				setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
+			
+			alreadyGotHit = false;
+
 		    }
 	    }
 
