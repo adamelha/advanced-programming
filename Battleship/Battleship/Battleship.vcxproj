@@ -117,8 +117,10 @@
     <ClInclude Include="file_parser.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="macros.h" />
+    <ClInclude Include="naiveAlgo.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="ships.h" />
+    <ClInclude Include="state.h" />
     <ClInclude Include="status.h" />
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +130,7 @@
     <ClCompile Include="error_class.cpp" />
     <ClCompile Include="file_parser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="naiveAlgo.cpp" />
     <ClCompile Include="ships.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

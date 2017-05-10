@@ -4,6 +4,7 @@
 #include "status.h"
 #include "battle.h"
 #include "macros.h"
+#include "naiveAlgo.h"
 
 using namespace std;
 
@@ -38,7 +39,8 @@ int main(int argc, char **argv) {
 	}
 	Battle battle;
 	battle.War(fileParser, board);
-
+	naiveAlgo n;
+	n.initPotentialMoves(board.shipListA);
 
 	return EXIT_SUCCESS;
 }
