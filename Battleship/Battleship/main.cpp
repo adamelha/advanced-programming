@@ -5,15 +5,23 @@
 #include "battle.h"
 #include "macros.h"
 #include "naiveAlgo.h"
-
+#include "display.h"
 using namespace std;
-
 int main(int argc, char **argv) {
 	status_t status;
 
 	// Parse command line args
 	CmdParser cmd = CmdParser(argc, argv);
-	cmd.parse();
+	status = cmd.parse();
+	if (status != STATUS_OK)
+	{
+		return EXIT_FAIL;
+	}
+
+	Display display(cmd);
+	// Set Default text color
+	display.setTextColor(TEXT_COLOR_DEFAULT);
+
 	string filesPath = cmd.getFilesPath();
 
 	// Parse files to strings
@@ -37,7 +45,7 @@ int main(int argc, char **argv) {
 		
 		return EXIT_FAIL;
 	}
-	Battle battle;
+	Battle battle(display, cmd);
 	battle.War(fileParser, board);
 	naiveAlgo n;
 	n.initPotentialMoves(board.shipListA);

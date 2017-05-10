@@ -9,7 +9,6 @@
 #include <vector>
 #include "macros.h"
 
-#define IS_PLAYER_A(c)	(isupper(c))
 
 #define NUM_OF_BOARD_ERR_MSGS			NUMBER_OF_BOARD_MSGS
 

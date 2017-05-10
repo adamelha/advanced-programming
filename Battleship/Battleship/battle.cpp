@@ -174,6 +174,7 @@ int Battle::War(const FileParser &fileParser, const Board &board)
 	int total = this->B_Atacker.size() + this->A_Atacker.size();
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
 	{
+		display.printBoard(board);
 		if (this->whosTurn)			//player B
 		{
 			//player B is out of plays

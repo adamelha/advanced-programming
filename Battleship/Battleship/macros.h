@@ -1,8 +1,10 @@
 #pragma once
 
-//#define DEBUG
+#include <iostream>
+#define DEBUG
 
 #ifdef DEBUG
+#include <stdio.h>
 #define DEBUG_PRINT(format, ...)	printf(format, ##__VA_ARGS__)
 #else
 #define DEBUG_PRINT(format, ...)
@@ -21,6 +23,7 @@ For format string must snprintf before using this macro.
 
 #define BOARD_SIZE						10
 
+#define IS_PLAYER_A(c)	(isupper(c))
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1
