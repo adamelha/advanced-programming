@@ -13,7 +13,7 @@
 #define SQUARE_DOWN_SYMBOL	'\n'
 class Battle : public IBattleshipGameAlgo {
 public:
-	void setBoard(const char** board, int numRows, int numCols) override;
+	void setBoard(int player, const char** board, int numRows, int numCols) override;
 	std::pair<int, int> attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result) override;
 	int War(const FileParser &fileParser, const Board &board);
