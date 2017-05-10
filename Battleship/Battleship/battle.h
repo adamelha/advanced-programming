@@ -16,6 +16,8 @@ public:
 	void setBoard(int player, const char** board, int numRows, int numCols) override;
 	std::pair<int, int> attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result) override;
+	virtual bool init(const std::string& path) override; //TBD
+	//ALGO_API IBattleshipGameAlgo* GetAlgorithm() override;
 	int War(const FileParser &fileParser, const Board &board);
 
 private:

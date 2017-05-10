@@ -120,6 +120,7 @@
     <ClInclude Include="naiveAlgo.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="ships.h" />
+    <ClInclude Include="smartAlgo.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="status.h" />
   </ItemGroup>
@@ -132,6 +133,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="naiveAlgo.cpp" />
     <ClCompile Include="ships.cpp" />
+    <ClCompile Include="smartAlgo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

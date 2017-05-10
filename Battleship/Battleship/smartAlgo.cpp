@@ -1,6 +1,8 @@
 #include "smartAlgo.h"
 #define isPointOnBoard(i , j)  ( i < arrSize && i > -1 && j < arrSize && j > -1 )
-enum { up = 0, right = 1, buttom = 2, left = 3 };
+
+
+//enum { up = 0, right = 1, buttom = 2, left = 3 };
 
 Point smartAlgo::getNextPotentialPoint()
 {
@@ -17,7 +19,7 @@ int smartAlgo::getPotentialMovesSize()
 	return potentialMovesSize;
 }
 
-void smartAlgo::setBoard(const char ** board, int numRows, int numCols)
+void smartAlgo::setBoard(int player, const char ** board, int numRows, int numCols)
 {
 }
 
@@ -25,33 +27,38 @@ std::pair<int, int> smartAlgo::attack()
 {
 	int r;
 	Point attack;
-	srand ( time(NULL) );
+	srand(time(NULL));
 	if (this->strike)       // playr indeed Hit! (in prev turn)
 	{
 		//TBD: local enviorment: return point from local env,the point who got hit is 
 		this;
-	} 
+	}
 	else
-	{                     
+	{
 		r = rand() % potentialMovesSize;
-		attack = this->getNextPotentialPoint[r];
-		this->getNextPotentialPoint[r] = this->potentialMoves[potentialMovesSize];
+		attack = this->potentialMoves[r];
+		this->potentialMoves[r] = this->potentialMoves[potentialMovesSize];
 		PointerForPotentialMove[this->potentialMoves[r].x][this->potentialMoves[r].y] = &this->potentialMoves[r];
 		potentialMovesSize -= 1;
 
 		return std::pair<int, int>(attack.x, attack.y);
 	}
 
-	return std::pair<int, int>(-1 , -1);
+	return std::pair<int, int>(-1, -1);
 }
 
 void smartAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
 }
 
+bool smartAlgo::init(const std::string & path)
+{
+	return false;
+}
+
 
 //changes unvalid points near a point with player ship
-void changeEnvalopPointsToFalse(bool arr[][arrSize], int i, int j)
+void smartAlgo::changeEnvalopPointsToFalse(bool arr[][arrSize], int i, int j)
 {
 	arr[i][j] = false;
 	if (isPointOnBoard(i + 1, j))

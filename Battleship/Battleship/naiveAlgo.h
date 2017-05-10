@@ -9,7 +9,8 @@ public:
 	virtual Point getNextPotentialPoint() ;
 	virtual  Point * potentialLegalMoves() ;
 	int getPotentialMovesSize();
-	void setBoard(const char** board, int numRows, int numCols) override;
+	void setBoard(int player ,const char** board, int numRows, int numCols) override;
+	virtual bool init(const std::string& path) override; //TBD
 	std::pair<int, int> attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result) override;
 	void initPotentialMoves(const vector<Ship*>& shipList);

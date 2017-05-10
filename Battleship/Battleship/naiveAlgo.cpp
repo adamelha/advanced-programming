@@ -16,7 +16,7 @@ int naiveAlgo::getPotentialMovesSize()
 	return potentialMovesSize;
 }
 
-void naiveAlgo::setBoard(const char ** board, int numRows, int numCols)
+void naiveAlgo::setBoard(int player, const char ** board, int numRows, int numCols)
 {
 }
 

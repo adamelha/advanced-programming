@@ -129,6 +129,11 @@ void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult res
 {
 }
 
+bool Battle::init(const std::string & path)
+{
+	return false;
+}
+
 int Battle::War(const FileParser &fileParser, const Board &board)
 {
 	//initialize full const board for method setBoard( memory allocation included )
