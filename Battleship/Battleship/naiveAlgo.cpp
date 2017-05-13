@@ -1,6 +1,11 @@
 #include "naiveAlgo.h"
 #define isPointOnBoard(i , j)  ( i < arrSize && i > -1 && j < arrSize && j > -1 )
 
+bool naiveAlgo::init(const std::string& path)
+{
+	return true;
+}
+
 Point naiveAlgo::getNextPotentialPoint()
 {
 	return Point();

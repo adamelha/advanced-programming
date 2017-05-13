@@ -51,7 +51,7 @@
     <ClInclude Include="naiveAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="smartAlgo.h">
+    <ClInclude Include="display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,7 +80,7 @@
     <ClCompile Include="naiveAlgo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="smartAlgo.cpp">
+    <ClCompile Include="display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
