@@ -4,7 +4,8 @@
 #include "status.h"
 #include "battle.h"
 #include "macros.h"
-#include "naiveAlgo.h"
+#include "naive_algo.h"
+#include "file_algo.h"
 #include "display.h"
 using namespace std;
 int main(int argc, char **argv) {
@@ -21,11 +22,11 @@ int main(int argc, char **argv) {
 	Display display(cmd);
 	// Set Default text color
 	display.setTextColor(TEXT_COLOR_DEFAULT);
-
+	display.hideCursor();
 	string filesPath = cmd.getFilesPath();
 
 	// Parse files to strings
-	FileParser fileParser = FileParser(filesPath);
+	FileParser fileParser = FileParser(filesPath, PARSE_TYPE_BOARD);
 	status = fileParser.parse();
 	if (status != STATUS_OK)
 	{
@@ -45,10 +46,13 @@ int main(int argc, char **argv) {
 		
 		return EXIT_FAIL;
 	}
-	Battle battle(display, cmd);
-	battle.War(fileParser, board);
-	naiveAlgo n;
-	n.initPotentialMoves(board.shipListA);
+
+	FileAlgo algoA;
+	FileAlgo algoB;
+	//NaiveAlgo algoA;
+	//NaiveAlgo algoB;
+	Battle battle(display, cmd, algoA, algoB);
+	battle.War(filesPath, board);
 
 	return EXIT_SUCCESS;
 }

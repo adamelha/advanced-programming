@@ -1,11 +1,13 @@
 #pragma once
-#include "State.h";
-#define arrSize 10
 
-class naiveAlgo :  public IBattleshipGameAlgo
+#include "State.h";
+#include "macros.h"
+
+class NaiveAlgo :  public IBattleshipGameAlgo
 {
 public:
-	//naiveAlgo() :State();
+	//NaiveAlgo () :State();
+	NaiveAlgo();
 	virtual Point getNextPotentialPoint() ;
 	virtual  Point * potentialLegalMoves() ;
 	int getPotentialMovesSize();
@@ -14,19 +16,18 @@ public:
 	std::pair<int, int> attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result) override;
 	void initPotentialMoves(const vector<Ship*>& shipList);
+	char *board[BOARD_SIZE];
 //	Point * getPotentialMoves();
 
 private:
+	char _board[BOARD_SIZE][BOARD_SIZE];
 	int nextPointIndex = 0;
 	Point potentialMoves[100];
 	int potentialMovesSize = 0;
-	bool isPointLegal[arrSize][arrSize];
+	bool isPointLegal[BOARD_SIZE][BOARD_SIZE];
 	void initIsPointLegal(const vector<Ship*> &shipList);
 	//void initPotentialMovesSize();
 	//void initPotentialMoves(const vector<Ship*>& shipList);
 	//void initIsPointLegal(const vector<Ship*> &shipList);
-	
-
-
 
 };

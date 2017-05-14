@@ -7,6 +7,7 @@
 #include "ships.h"
 #include <ctype.h>
 #include <vector>
+
 #include "macros.h"
 
 
@@ -26,16 +27,18 @@ public:
 	string getFilesPath();
 	
 	char getCharFromBoard(int x, int y) const;
-	Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), board(), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile) {}
+	Board(string boardStringFromFile);
+	
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;
-	char board[BOARD_SIZE][BOARD_SIZE];
+	char *board[BOARD_SIZE];
 
 private:
+	char _board[BOARD_SIZE][BOARD_SIZE];
 	string boardStringFromFile;
 	void setCharOnBoard(Point p, char val);
 	bool checkAdjacentShips(const Ship &ship);
 	bool checkSurroundingPoint(const Ship &ship, Point surroundingPoint);
-	status_t const isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_SIZE]);
+	status_t const isBoardValid(char **parsedBoard);
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
 };

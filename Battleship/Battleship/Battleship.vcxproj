@@ -111,14 +111,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="battle.h" />
+    <ClInclude Include="battle_utils.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="cmd_parser.h" />
     <ClInclude Include="display.h" />
     <ClInclude Include="error_class.h" />
+    <ClInclude Include="file_algo.h" />
     <ClInclude Include="file_parser.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="macros.h" />
-    <ClInclude Include="naiveAlgo.h" />
+    <ClInclude Include="naive_algo.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="ships.h" />
     <ClInclude Include="state.h" />
@@ -126,13 +128,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="battle.cpp" />
+    <ClCompile Include="battle_utils.cpp" />
     <ClCompile Include="board.cpp" />
     <ClCompile Include="cmd_parser.cpp" />
     <ClCompile Include="display.cpp" />
     <ClCompile Include="error_class.cpp" />
+    <ClCompile Include="file_algo.cpp" />
     <ClCompile Include="file_parser.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="naiveAlgo.cpp" />
+    <ClCompile Include="naive_algo.cpp" />
     <ClCompile Include="ships.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include "board.h"
 #include "cmd_parser.h"
-
+#include "point.h"
 using namespace std;
 
 #define BOARD_DISPLAY_OFFSET_X	0
@@ -26,8 +26,9 @@ using namespace std;
 #define WHITE			15
 
 #define TEXT_COLOR_DEFAULT			WHITE
-#define TEXT_COLOR_PLAYER_A			RED
+#define TEXT_COLOR_PLAYER_A			GREEN
 #define TEXT_COLOR_PLAYER_B			YELLOW
+#define TEXT_COLOR_BOMBED			RED
 
 
 class Display
@@ -38,8 +39,16 @@ public:
 	void hideCursor();
 	void setTextColor(int color);
 	void printBoard(const Board &board);
+	void updateSquare(int x, int y, char updatedChar);
+	Point getCursorPosition();
+
 private:
+	CONSOLE_SCREEN_BUFFER_INFO SBInfo;
 	HANDLE hConsole;
 	bool printBoardActive;
+	uintmax_t delay;
+	
+	//POINT currentCursorLocation;
+	Point currentCursorLocation;
 };
 

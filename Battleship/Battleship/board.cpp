@@ -15,6 +15,14 @@
 
 /***************Public Methods***************/
 
+Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile)
+{
+	// Init board to be array of char pointers, each pointing to a row in _board matrix (avoids dynamic allocation)
+	for (size_t i = 0; i < BOARD_SIZE; i++)
+	{
+		board[i] = &(_board[i][0]);
+	}
+}
 status_t Board::parse()
 {
 	vector<string> rowList;
@@ -106,7 +114,7 @@ static bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const
 	return false;
 }
 
-status_t const Board::isBoardValid( const char (&parsedBoard)[BOARD_SIZE][BOARD_SIZE])
+status_t const Board::isBoardValid(char **parsedBoard)
 {
 	Ship *ship;
 	char part, nextPart;

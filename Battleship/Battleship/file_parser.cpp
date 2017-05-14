@@ -21,31 +21,36 @@ status_t FileParser::parse()
 	
 }
 
+
+status_t FileParser::parseAttack()
+{
+	status_t status;
+
+	status = this->parsePaths();
+	if (status != STATUS_OK) return status;
+
+	status = this->parseFiles();
+	return status;
+
+}
+
 // Getters of content of files
 string FileParser::getBoard()
 {
 	return this->board;
 }
 
-string FileParser::getAttackA()
+
+string FileParser::getAttack()
 {
-	return this->attackA;
+	return this->attack;
 }
 
-string FileParser::getAttackB()
+string FileParser::getAttackFileName() const
 {
-	return this->attackB;
+	return this->attackPath;
 }
 
-string FileParser::getAttackAFileName() const
-{
-	return this->attackAFileName;
-}
-
-string FileParser::getAttackBFileName() const
-{
-	return this->attackBFileName;
-}
 
 
 
@@ -55,9 +60,9 @@ status_t FileParser::parsePaths()
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
 	DWORD ftyp;
-	string boardAbsPath, attackAAbsPath, attackBAbsPath, slash;
+	string boardAbsPath, attackAbsPath, slash;
 	status_t status = STATUS_OK;
-
+	bool fileStatus;
 	// If path is relative or ends with '\', no need to add '\\' 
 	if (this->filesPath.length() == 0 || this->filesPath[this->filesPath.length() - 1] == '\\')
 	{
@@ -69,8 +74,7 @@ status_t FileParser::parsePaths()
 	}
 
 	boardAbsPath = (this->filesPath) + slash + BOARD_REGEX;
-	attackAAbsPath = (this->filesPath) + slash + ATTACK_A_REGEX;
-	attackBAbsPath = (this->filesPath) + slash + ATTACK_B_REGEX;
+	attackAbsPath = (this->filesPath) + slash + ATTACK_REGEX;
 
 	// If path is not working dir - check that it exists
 	if (this->filesPath != "")
@@ -86,53 +90,70 @@ status_t FileParser::parsePaths()
 	//TODO : must parse and check that path exists 
 
 	// Parse board path
-	hFind = FindFirstFile((boardAbsPath).c_str(), &FindFileData);
-	if (hFind == INVALID_HANDLE_VALUE)
+	if (parseType == PARSE_TYPE_BOARD)
 	{
-		status = STATUS_ERROR;
-		addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
+		hFind = FindFirstFile((boardAbsPath).c_str(), &FindFileData);
+		if (hFind == INVALID_HANDLE_VALUE)
+		{
+			status = STATUS_ERROR;
+			addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
+		}
+		else {
+			DEBUG_PRINT("The first board file found is %s\n", FindFileData.cFileName);
+			this->boardFileName = string(FindFileData.cFileName);
+			this->boardPath = string(this->filesPath + slash + this->boardFileName);
+		}
+
+		return status;
 	}
-	else {
-		DEBUG_PRINT("The first board file found is %s\n", FindFileData.cFileName);
-		this->boardFileName = string(FindFileData.cFileName);
-		this->boardPath = string(this->filesPath + slash + this->boardFileName);
-	}
+	
 
 	// Parse attacker A path
-	hFind = FindFirstFile((attackAAbsPath).c_str(), &FindFileData);
+	hFind = FindFirstFile((attackAbsPath).c_str(), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		status = STATUS_ERROR;
-		addErrorMsg(MISSING_ATTACK_A_IDX, MISSING_ATTACK_A_MSG);
+		addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
 	}
 	else {
-		DEBUG_PRINT("The first attacker A file found is %s\n", FindFileData.cFileName);
-		this->attackAFileName = string(FindFileData.cFileName);
-		this->attackAPath = string(this->filesPath + slash + this->attackAFileName);
+		DEBUG_PRINT("The first attacker file found is %s\n", FindFileData.cFileName);
+		if (parseType == PARSE_TYPE_PLAYER_A) {
+			this->attackFileName = string(FindFileData.cFileName);
+			this->attackPath = string(this->filesPath + slash + this->attackFileName);
+		}
 	}
 
-	// Parse attacker B path
-	hFind = FindFirstFile((attackBAbsPath).c_str(), &FindFileData);
-	if (hFind == INVALID_HANDLE_VALUE)
+
+	// Parse attacker B path - second file with the same regex
+	if (parseType == PARSE_TYPE_PLAYER_B)
 	{
-		status = STATUS_ERROR;
-		addErrorMsg(MISSING_ATTACK_B_IDX, MISSING_ATTACK_B_MSG);
-	}
-	else {
-		DEBUG_PRINT("The first attacker B file found is %s\n", FindFileData.cFileName);
-		this->attackBFileName = string(FindFileData.cFileName);
-		this->attackBPath = string(this->filesPath + slash + this->attackBFileName);
+		fileStatus = FindNextFile(hFind, &FindFileData);
+		if (hFind == INVALID_HANDLE_VALUE)
+		{
+			status = STATUS_ERROR;
+			addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
+		}
+		else {
+			DEBUG_PRINT("The second attacker file found is %s\n", FindFileData.cFileName);
+			this->attackFileName = string(FindFileData.cFileName);
+			this->attackPath = string(this->filesPath + slash + this->attackFileName);
+		}
 	}
 
 	return status;
 }
 
+
 //TODO: must return fail status in case of failure
 status_t FileParser::parseFiles()
 {
-	pathToFileString(this->boardPath, this->board);
-	pathToFileString(this->attackAPath, this->attackA);
-	pathToFileString(this->attackBPath, this->attackB);
+	if (parseType == PARSE_TYPE_BOARD) {
+		pathToFileString(this->boardPath, this->board);
+	}
+	else
+	{
+		pathToFileString(this->attackPath, this->attack);
+	}
 	
 	return STATUS_OK;
 }
