@@ -31,7 +31,7 @@ For format string must snprintf before using this macro.
 #define SQUARE_BOMBED_MISS_SYMBOL		'@'
 #define SQUARE_BOMBED_HIT_SYMBOL		'*'
 
-#define OUT_OF_MOVES	-2
+#define OUT_OF_MOVES	-1
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1
