@@ -66,7 +66,7 @@ std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
 void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
 	algoA.notifyOnAttackResult(player, row, col, result);
-	algoA.notifyOnAttackResult(player, row, col, result);
+	algoB.notifyOnAttackResult(player, row, col, result);
 }
 
 bool Battle::init(const std::string & path)

@@ -1,6 +1,5 @@
 #include "naive_algo.h"
 #include "macros.h"
-#include "battle_utils.h"
 
 #define isPointOnBoard(i , j)  ( i < BOARD_SIZE && i > -1 && j < BOARD_SIZE && j > -1 )
 
@@ -11,6 +10,36 @@ NaiveAlgo::NaiveAlgo()
 	for (size_t i = 0; i < BOARD_SIZE; i++)
 	{
 		board[i] = &(_board[i][0]);
+	}
+}
+
+
+bool NaiveAlgo::isPointPartOfShip(int x, int y)
+{
+	return	board[x][y] == 'b'
+		|| board[x][y] == 'B'
+		|| board[x][y] == 'p'
+		|| board[x][y] == 'P'
+		|| board[x][y] == 'm'
+		|| board[x][y] == 'M'
+		|| board[x][y] == 'd'
+		|| board[x][y] == 'D';
+}
+//changes unvalid points near a point with player ship
+void NaiveAlgo::changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y)
+{
+	if( isPointPartOfShip(x, y) )
+	{
+		arr[x][y] = false;
+		if (isPointOnBoard(x + 1, y))
+			arr[x + 1][y] = false;
+		if (isPointOnBoard(x, y + 1))
+			arr[x][y + 1] = false;
+		if (isPointOnBoard(x, y - 1))
+			arr[x][y - 1] = false;
+		if (isPointOnBoard(x - 1, y))
+			arr[x - 1][y] = false;
+
 	}
 }
 
@@ -38,27 +67,27 @@ int NaiveAlgo::getPotentialMovesSize()
 
 void NaiveAlgo::setBoard(int player, const char ** board, int numRows, int numCols)
 {
-	squareType_e st;
+	squareType_e sqaretTypeIs;
 	if (player)	//set Board to Player B
 	{
-		st = B_SQUARE;
+		sqaretTypeIs = B_SQUARE;
 	}
 	else //set Board to Player A
 	{
-		st = A_SQUARE;
+		sqaretTypeIs = A_SQUARE;
 	}
 
-	for (int i = 0; i < numRows; i++)
+	for (int x = 0; x < numRows; x++)
 	{
-		for (int j = 0; j < numCols; j++)
+		for (int y = 0; y < numCols; y++)
 		{
-			if (isBelongToBoard(board[i][j]) == B_SQUARE)
+			if ( isBelongToBoard(board[x][y]) == sqaretTypeIs)
 			{
-				this->board[i][j] = board[i][j];
-				//numOfSquareB += 1;
+				this->board[x][y] = board[x][y];
+				this->numOfSqares += 1;
 			}
 			else
-				this->board[i][j] = ' ';       // initialize board to 
+				this->board[x][y] = ' ';       // initialize board to 
 		}
 	}
 }
@@ -74,39 +103,32 @@ std::pair<int, int> NaiveAlgo::attack()
 
 void NaiveAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
+
 }
 
 
 //changes unvalid points near a point with player ship
-void changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE] , int i ,int j)
-{
-	arr[i][j] = false;
-	if (isPointOnBoard(i + 1, j))
-		arr[i + 1][j] = false;
-	if (isPointOnBoard(i , j + 1 ))
-		arr[i][j + 1] = false;
-	if (isPointOnBoard(i , j - 1))
-		arr[i][j - 1] = false;
-	if (isPointOnBoard(i -1, j))
-		arr[i -1][j] = false;
-}
+
 //updated two dimientional isPointLegal[10[10],detemine which point (x,y) is valid=> isPointLegal[x][y] = true, else isPointLegal[x][y] = false
-void NaiveAlgo::initIsPointLegal(const vector<Ship*>& shipList)
+void NaiveAlgo::initIsPointLegal()
 {
 	memset(isPointLegal, true, sizeof(isPointLegal[0][0]) * BOARD_SIZE * BOARD_SIZE);   //all initialized to true
-	for(int i = 0 ; i < shipList.size(); i++)
+
+	for(int x = 0 ; x < BOARD_SIZE; x++)
 	{
-		for (int j = 0 ; j < shipList[i]->size ; j++)
+		for (int y = 0 ; y < BOARD_SIZE; y++)
 		{
-			changeEnvalopPointsToFalse( isPointLegal , shipList[i]->pointList[j].x , shipList[i]->pointList[j].y);
+			changeEnvalopPointsToFalse( isPointLegal , x , y);
 		}
 	}
 }
 
-void NaiveAlgo::initPotentialMoves(const vector<Ship*>& shipList)
+
+//potential Moves is an array with naiveAlgo attack moves by order!
+void NaiveAlgo::initPotentialMoves()
 {
 	int index = 0;
-	initIsPointLegal(shipList);
+	initIsPointLegal();
 	for (int i = 0 ; i < BOARD_SIZE; i++)
 	{
 		for (int j =0 ; j < BOARD_SIZE; j++)
