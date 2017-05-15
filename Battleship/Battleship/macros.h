@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -31,7 +31,8 @@ For format string must snprintf before using this macro.
 #define SQUARE_BOMBED_MISS_SYMBOL		'@'
 #define SQUARE_BOMBED_HIT_SYMBOL		'*'
 
-#define OUT_OF_MOVES	-1
+// This returned by IBattleshipGameAlgo.attack() if no moves left
+#define ALGO_OUT_OF_MOVES		-1
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1

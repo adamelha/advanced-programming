@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include "ships.h"
 #include "battle_utils.h"
+#include "macros.h"
 
+// This macro is to be used only from battle.cpp. Returned by Battle.attack() in case no more moves available for algo
+#define BATTLE_OUT_OF_MOVES		(ALGO_OUT_OF_MOVES - 1)
 #define VALID_INT_TOKENS  (0 < stoi(tokens[0]) && stoi(tokens[0]) < 11 && 0 < stoi(tokens[1]) && stoi(tokens[1]) < 11)
 
 // split,processLine,loadFromAttackFile methods are from Tirgul 3 , with some minor changes
@@ -49,9 +52,14 @@ void Battle::setBoard(int player, const char** board, int numRows, int numCols, 
 
 }
 
-std::pair<int, int> Battle::attack()
+std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
 {
-	return std::pair<int, int>();
+	std::pair<int, int> attackPair;
+	attackPair = algo.attack();
+	attackPair.first -= 1;
+	attackPair.second -= 1;
+
+	return attackPair;
 }
 
 // Notify both algos on result of attacke
@@ -109,10 +117,9 @@ int Battle::War(const string &path, const Board &board)
 		{
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
-			attackPair = algoB.attack();
-			
+			attackPair = attack(algoB);
 			// If player B out of moves
-			if (attackPair.first == OUT_OF_MOVES) {
+			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
 				playerBOutOfPlays = true;
 				setWhosTurn((this->whosTurn + 1) % 2);
 				twoPlayersOutOfPlays = (playerAOutOfPlays && playerBOutOfPlays);
@@ -202,10 +209,10 @@ int Battle::War(const string &path, const Board &board)
 
 		else                       //player A
 		{
-			attackPair = algoA.attack();
+			attackPair = attack(algoA);
 			
 			// If player B out of moves
-			if (attackPair.first == OUT_OF_MOVES) {
+			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
 				playerAOutOfPlays = true;
 				setWhosTurn((this->whosTurn + 1) % 2);
 				twoPlayersOutOfPlays = (playerAOutOfPlays && playerBOutOfPlays);

@@ -69,7 +69,7 @@ std::pair<int, int> FileAlgo::attack()
 {
 	if (attacker.empty())
 	{
-		return std::pair<int, int>(OUT_OF_MOVES, OUT_OF_MOVES);
+		return std::pair<int, int>(ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES);
 	}
 	Point p = attacker.front();
 	attacker.pop();
@@ -110,7 +110,7 @@ void FileAlgo::processLine(const string & line, int whosTurn)
 		return;
 	}
 
-	attacker.push(Point(stoi(tokens[0]) - 1, stoi(tokens[1]) - 1));
+	attacker.push(Point(stoi(tokens[0]), stoi(tokens[1])));
 }
 
 void FileAlgo::loadFromAttackFile(const string & attackPath, int whosTurn)

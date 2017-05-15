@@ -18,7 +18,7 @@ class Battle {
 public:
 	Battle(Display &display, CmdParser cmd, IBattleshipGameAlgo &algoA, IBattleshipGameAlgo &algoB) : display(display), delay(cmd.getDelay()), algoA(algoA), algoB(algoB){}
 	void setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo &algo);
-	std::pair<int, int> attack(); // ask player for his move
+	std::pair<int, int> attack(IBattleshipGameAlgo &algo); // ask player for his move
 	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result);
 	virtual bool init(const std::string& path); //TBD
 	//ALGO_API IBattleshipGameAlgo* GetAlgorithm() override;
