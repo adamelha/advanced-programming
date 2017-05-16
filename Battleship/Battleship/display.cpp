@@ -13,8 +13,6 @@ Display::Display(CmdParser cmd)
 
 void Display::hideCursor()
 {
-	
-	CONSOLE_CURSOR_INFO info;
 	info.dwSize = 100;
 	info.bVisible = FALSE;
 	SetConsoleCursorInfo(hConsole, &info);
@@ -75,6 +73,10 @@ void Display::updateSquare(int x, int y, char updatedChar)
 {
 	if (printBoardActive)
 	{
+		if (x < 0)
+		{
+			return;
+		}
 		//GetCursorPos(&currentCursorLocation);
 		//ScreenToClient(hConsole, &currentCursorLocation);
 		currentCursorLocation = getCursorPosition();

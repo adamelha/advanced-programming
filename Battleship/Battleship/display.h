@@ -44,6 +44,7 @@ public:
 
 private:
 	CONSOLE_SCREEN_BUFFER_INFO SBInfo;
+	CONSOLE_CURSOR_INFO info;
 	HANDLE hConsole;
 	bool printBoardActive;
 	uintmax_t delay;
