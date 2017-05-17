@@ -47,11 +47,11 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 
-	NaiveAlgo algoA;
-	NaiveAlgo algoB;
+	//IBattleshipGameAlgo algoA;
+	//IBattleshipGameAlgo algoB;
 	//NaiveAlgo algoA;
 	//NaiveAlgo algoB;
-	Battle battle(display, cmd, algoA, algoB);
+	Battle battle(display, cmd);
 	battle.War(filesPath, board);
 
 	return EXIT_SUCCESS;

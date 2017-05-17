@@ -5,9 +5,8 @@
 #include "status.h"
 #include "macros.h"
 #define BOARD_REGEX				"*.sboard"
-#define ATTACK_A_REGEX			"*.attack-a"
-#define ATTACK_B_REGEX			"*.attack-b"
 #define ATTACK_REGEX			"*.attack"
+#define DLL_REGEX				"*.dll"
 
 
 
@@ -17,11 +16,14 @@
 #define MISSING_BOARD_MSG		"Missing board file (" + this->boardFileName + ") looking in path: " + this->filesPath + "\n"
 #define MISSING_BOARD_IDX		1
 
-#define MISSING_ATTACK_MSG		"Missing attack file for player A (*.attack) looking in path: " + this->filesPath + "\n"
+#define MISSING_ATTACK_MSG		"Missing attack file for player (*.attack) looking in path: " + this->filesPath + "\n"
+#define MISSING_DLL_MSG		"Missing dll file for player (*.dll) looking in path: " + this->filesPath + "\n"
+
 #define MISSING_ATTACK_IDX		2
+#define MISSING_DLL_IDX		3
 
 
-#define NUM_OF_FILE_PARSER_ERR_MSGS			3
+#define NUM_OF_FILE_PARSER_ERR_MSGS			4
 
 #define MAX_MSG_SIZE			256
 
@@ -44,8 +46,8 @@ private:
 	void pathToFileString(string path, string &fileStringOut);
 	parseType_e parseType;
 	const string filesPath;
-	string boardFileName, attackFileName;
-	string boardPath, attackPath;
+	string boardFileName, attackFileName , dllFileName;
+	string boardPath, attackPath, dllPath1 , dllPath2;
 
 	// Content of the file as a c++ string
 	string board, attack;

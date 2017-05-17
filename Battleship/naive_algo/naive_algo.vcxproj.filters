@@ -15,72 +15,63 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IBattleshipGameAlgo.h">
+    <ClInclude Include="..\Battleship\battle_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cmd_parser.h">
+    <ClInclude Include="..\Battleship\board.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="file_parser.h">
+    <ClInclude Include="..\Battleship\cmd_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="board.h">
+    <ClInclude Include="..\Battleship\error_class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="error_class.h">
+    <ClInclude Include="..\Battleship\file_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="status.h">
+    <ClInclude Include="..\Battleship\IBattleshipGameAlgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ships.h">
+    <ClInclude Include="..\Battleship\macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="point.h">
+    <ClInclude Include="..\Battleship\point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="battle.h">
+    <ClInclude Include="..\Battleship\ships.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="macros.h">
+    <ClInclude Include="..\Battleship\state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state.h">
+    <ClInclude Include="..\Battleship\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="display.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="battle_utils.h">
+    <ClInclude Include="..\Battleship\naive_algo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\Battleship\battle_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cmd_parser.cpp">
+    <ClCompile Include="..\Battleship\board.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="file_parser.cpp">
+    <ClCompile Include="..\Battleship\cmd_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ships.cpp">
+    <ClCompile Include="..\Battleship\error_class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="display.cpp">
+    <ClCompile Include="..\Battleship\file_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="battle_utils.cpp">
+    <ClCompile Include="..\Battleship\ships.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="battle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="board.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="error_class.cpp">
+    <ClCompile Include="..\Battleship\naive_algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

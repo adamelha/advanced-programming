@@ -84,7 +84,7 @@ status_t FileParser::parsePaths()
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
 	DWORD ftyp;
-	string boardAbsPath, attackAbsPath, slash;
+	string boardAbsPath, attackAbsPath, dllAbsPath, slash;
 	status_t status = STATUS_OK;
 	bool fileStatus;
 	// If path is relative or ends with '\', no need to add '\\' 
@@ -99,7 +99,7 @@ status_t FileParser::parsePaths()
 
 	boardAbsPath = (this->filesPath) + slash + BOARD_REGEX;
 	attackAbsPath = (this->filesPath) + slash + ATTACK_REGEX;
-
+	dllAbsPath = (this->filesPath) + slash + DLL_REGEX;
 	// If path is not working dir - check that it exists
 	if (this->filesPath != "")
 	{
@@ -129,44 +129,77 @@ status_t FileParser::parsePaths()
 			this->boardPath = string(this->filesPath + slash + this->boardFileName);
 		}
 
-		return status;
-	}
 
+		// Parse dll first  path
+		hFind = FindFirstFile(stringToWstring(dllAbsPath).c_str(), &FindFileData);
 
-	// Parse attacker A path
-	hFind = FindFirstFile(stringToWstring(attackAbsPath).c_str(), &FindFileData);
-
-	if (hFind == INVALID_HANDLE_VALUE)
-	{
-		status = STATUS_ERROR;
-		addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
-	}
-	else {
-		DEBUG_PRINT("The first attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
-		if (parseType == PARSE_TYPE_PLAYER_A) {
-			this->attackFileName = wstringTostring(FindFileData.cFileName);
-			this->attackPath = string(this->filesPath + slash + this->attackFileName);
-		}
-	}
-
-
-	// Parse attacker B path - second file with the same regex
-	if (parseType == PARSE_TYPE_PLAYER_B)
-	{
-		fileStatus = FindNextFile(hFind, &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE)
 		{
 			status = STATUS_ERROR;
 			addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
 		}
 		else {
-			DEBUG_PRINT("The second attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
-			this->attackFileName = wstringTostring(FindFileData.cFileName);
-			this->attackPath = string(this->filesPath + slash + this->attackFileName);
-		}
-	}
+			DEBUG_PRINT("The first dll file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+			if (parseType == PARSE_TYPE_PLAYER_A) {
+				this->dllFileName = wstringTostring(FindFileData.cFileName);
+				this->dllPath1 = string(this->filesPath + slash + this->dllFileName);
+			}
 
-	return status;
+			// Parse dell second path ,  gal
+			fileStatus = FindNextFile(hFind, &FindFileData);
+			if (hFind == INVALID_HANDLE_VALUE)
+			{
+				status = STATUS_ERROR;
+				addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
+			}
+			else {
+				DEBUG_PRINT("The second dll file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+				this->dllFileName = wstringTostring(FindFileData.cFileName);
+				this->dllPath2 = string(this->filesPath + slash + this->dllFileName);
+			}
+
+
+
+
+			return status;
+		}
+
+
+		// Parse attacker A path
+		hFind = FindFirstFile(stringToWstring(attackAbsPath).c_str(), &FindFileData);
+
+		if (hFind == INVALID_HANDLE_VALUE)
+		{
+			status = STATUS_ERROR;
+			addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
+		}
+		else {
+			DEBUG_PRINT("The first attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+			if (parseType == PARSE_TYPE_PLAYER_A) {
+				this->attackFileName = wstringTostring(FindFileData.cFileName);
+				this->attackPath = string(this->filesPath + slash + this->attackFileName);
+			}
+		}
+
+
+		// Parse attacker B path - second file with the same regex
+		if (parseType == PARSE_TYPE_PLAYER_B)
+		{
+			fileStatus = FindNextFile(hFind, &FindFileData);
+			if (hFind == INVALID_HANDLE_VALUE)
+			{
+				status = STATUS_ERROR;
+				addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
+			}
+			else {
+				DEBUG_PRINT("The second attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+				this->attackFileName = wstringTostring(FindFileData.cFileName);
+				this->attackPath = string(this->filesPath + slash + this->attackFileName);
+			}
+		}
+
+		return status;
+	}
 }
 
 

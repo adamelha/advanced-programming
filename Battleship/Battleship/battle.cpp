@@ -17,9 +17,9 @@ void Battle::setWhosTurn(int turn)
 	this->whosTurn = turn;
 }
 
-void Battle::setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo &algo)
+void Battle::setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo * algo)
 {
-	algo.setBoard(player, board, numRows, numCols);
+	algo->setBoard(player, board, numRows, numCols);
 
 	// Count number of squares for the player. TODO: do more efficiently?
 	if (player)					//set Board to Player B
@@ -65,8 +65,8 @@ std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
 // Notify both algos on result of attacke
 void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
-	algoA.notifyOnAttackResult(player, row, col, result);
-	algoB.notifyOnAttackResult(player, row, col, result);
+	algoA->notifyOnAttackResult(player, row, col, result);
+	algoB->notifyOnAttackResult(player, row, col, result);
 }
 
 bool Battle::init(const std::string & path)
@@ -74,13 +74,87 @@ bool Battle::init(const std::string & path)
 	return false;
 }
 
+bool Battle::loadDllFiles(const string& path, const Board &board) {
+
+	HANDLE dir;
+	WIN32_FIND_DATAA fileData; //data struct for file
+	string fileName, fullFileName;
+	int playerNumber = 0;
+	bool init_failed;
+
+	// define function of the type we expect
+	typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
+	GetAlgoFuncType getAlgoFunc;
+
+	// iterate over *.dll files in path
+	string s = "\\*.dll"; // only .dll endings
+	dir = FindFirstFileA((path + s).c_str(), &fileData); // Notice: Unicode compatible version of FindFirstFile
+	if (dir == INVALID_HANDLE_VALUE) //check if the dir opened successfully
+		return false;
+
+	do {
+
+		fileName = fileData.cFileName;
+		fullFileName = path + "\\" + fileName;
+
+		// Load dynamic library
+		HINSTANCE hDll = LoadLibraryA(fullFileName.c_str()); // Notice: Unicode compatible version of LoadLibrary
+		if (!hDll) {
+			cout << "Cannot load dll: " << fullFileName << endl;
+			return false;
+		}
+
+		// Get function pointer
+		getAlgoFunc = (GetAlgoFuncType)GetProcAddress(hDll, "GetAlgorithm");
+		if (!getAlgoFunc) {
+			cout << "Cannot load dll: " << fullFileName << endl;
+			return false;
+		}
+
+		dllList.push_back(hDll);
+		//players.push_back(getAlgoFunc());
+
+		//called once to notify player on his board
+		if (playerNumber == PLAYER_A)
+		{
+			algoA = getAlgoFunc();
+			setBoard(this->whosTurn, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoA);
+			init_failed = !algoA->init(path); // init A_Board
+		}
+		else
+		{
+			algoB = getAlgoFunc();
+			setBoard(this->whosTurn, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoB);
+			init_failed = !algoB->init(path);       // init B_Board
+		}
+
+	
+
+		//call the players init function
+		if (init_failed) {
+			cout << "Algorithm initialization failed for dll: " << fullFileName << endl;
+			return false;
+		}
+
+		playerNumber+=1;
+
+	} while (FindNextFileA(dir, &fileData)); // Notice: Unicode compatible version of FindNextFile
+
+	return true;
+}
+
+
+
 int Battle::War(const string &path, const Board &board)
 {	
 
 	
+	//load the players algorithms
+	if (!loadDllFiles(path, board ) )
+		return false;
 
 	//set each player board
-	setWhosTurn(0);						 //   set turn A
+/*	setWhosTurn(0);						 //   set turn A
 	setBoard(this->whosTurn, (const char **)board.board, 10, 10, algoA);
 	setWhosTurn(1);						//    set turn B
 	setBoard(this->whosTurn, (const char **)board.board, 10, 10, algoB);
@@ -88,6 +162,8 @@ int Battle::War(const string &path, const Board &board)
 	// Init 
 	algoA.init(path);
 	algoB.init(path);
+
+*/
 	//set players attack vectors
 	//loadFromAttackFile(fileParser.getAttackAFileName(), 0);
 	//loadFromAttackFile(fileParser.getAttackBFileName(), 1);
@@ -117,7 +193,7 @@ int Battle::War(const string &path, const Board &board)
 		{
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
-			attackPair = attack(algoB);
+			attackPair = attack(*algoB);
 			// If player B out of moves
 			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
 				playerBOutOfPlays = true;
@@ -209,7 +285,7 @@ int Battle::War(const string &path, const Board &board)
 
 		else                       //player A
 		{
-			attackPair = attack(algoA);
+			attackPair = attack(*algoA);
 			
 			// If player B out of moves
 			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
