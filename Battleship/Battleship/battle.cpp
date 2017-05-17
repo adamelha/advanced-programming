@@ -79,8 +79,8 @@ std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
 // Notify both algos on result of attack
 void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
-	algoA->notifyOnAttackResult(player, row, col, result);
-	algoB->notifyOnAttackResult(player, row, col, result);
+	algoA->notifyOnAttackResult(player, row + 1, col + 1, result);
+	algoB->notifyOnAttackResult(player, row + 1, col + 1, result);
 }
 
 bool Battle::init(const std::string & path)
@@ -165,7 +165,7 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 EXIT:
 	errmsgs.printErrorMsg();
-	return true;
+	return status;
 }
 
 
@@ -230,6 +230,7 @@ int Battle::War(const string &path, const Board &board)
 			{
 				x = attackPair.first;
 				y = attackPair.second;
+				
 				DEBUG_PRINT("B shot A at <%d,%d>\n", x, y);
 				whoGotHit = isBelongToBoard(board.board[x][y]);
 
@@ -325,6 +326,7 @@ int Battle::War(const string &path, const Board &board)
 
 			x = attackPair.first;
 			y = attackPair.second;
+			
 			DEBUG_PRINT("A shot B at <%d,%d>\n", x, y);
 			whoGotHit = isBelongToBoard(board.board[x][y]);
 			if (whoGotHit == NO_SQUARE )                // miss

@@ -1,46 +1,135 @@
+#############################################################
+### YOU SHOULD EDIT THE BELOW WITH YOUR DETAILS AND FILES ###
+#############################################################
+add_definitions(-DUNICODE -D_UNICODE)
+
 set(user1 galklein)
 set(user2 adamelhakham)
 set(id1 "200902377")
 set(id2 "201390085")
-set (SOURCE_FILES
-	battle.cpp
+
+# All source files needed to compile your exe
+set (EXE_SOURCE_FILES
+	battle.h
+	battle_utils.h
 	board.h
-	board.cpp
 	cmd_parser.h
-	cmd_parser.cpp
+	display.h
 	error_class.h
-	error_class.cpp
 	file_parser.h
-	file_parser.cpp
-	ships.h
-	ships.cpp	
 	IBattleshipGameAlgo.h
 	macros.h
 	point.h
+	ships.h
+	state.h
 	status.h
-	main.cpp
-	display.h
-	display.cpp
-	battle_utils.h
+	battle.cpp
 	battle_utils.cpp
-	file_algo.h
-	file_algo.cpp
-	naive_algo.h
-	naive_algo.cpp
-	
+	board.cpp
+	cmd_parser.cpp
+	display.cpp
+	error_class.cpp
+	file_parser.cpp
+	main.cpp
+	ships.cpp
 )
-add_definitions(-DUNICODE -D_UNICODE)
+# All source files needed to compile your naive algorithm's .dll
+set (FILE_ALGO_SOURCE_FILES
+	battle_utils.cpp
+	board.cpp
+	cmd_parser.cpp
+	error_class.cpp
+	file_algo.cpp
+	file_parser.cpp
+	ships.cpp	
+	battle_utils.h
+	board.h
+	cmd_parser.h
+	error_class.h
+	file_parser.h
+	IBattleshipGameAlgo.h
+	macros.h
+	point.h
+	ships.h
+	state.h
+	status.h
+)
+# All source files needed to compile your read-from-file algorithm's .dll
+set (NAIVE_ALGO_SOURCE_FILES
+	battle_utils.h
+	board.h
+	cmd_parser.h
+	error_class.h
+	file_parser.h
+	IBattleshipGameAlgo.h
+	macros.h
+	point.h
+	ships.h
+	state.h
+	status.h
+	naive_algo.h
+	battle_utils.cpp
+	board.cpp
+	cmd_parser.cpp
+	error_class.cpp
+	naive_algo.cpp
+	file_parser.cpp
+	ships.cpp	
+)
+# All source files needed to compile your smart algorithm's .dll
+set (SMART_ALGO_SOURCE_FILES
+	battle_utils.h
+	board.h
+	cmd_parser.h
+	error_class.h
+	file_parser.h
+	IBattleshipGameAlgo.h
+	macros.h
+	point.h
+	ships.h
+	state.h
+	status.h
+	smart_algo.h
+	rand_pool.h
+	battle_utils.cpp
+	board.cpp
+	cmd_parser.cpp
+	error_class.cpp
+	smart_algo.cpp
+	file_parser.cpp
+	ships.cpp
+	rand_pool.cpp
+)
 
+##################################
 ### DO NOT CHANGE FROM HERE ON ###
+##################################
 
 message("user: ${user1}, id: ${id1}")
-message("user: ${user2}, id: ${id2}")
-message("user: ${user3}, id: ${id3}")
 
-set(EXE_NAME "ex1.${user1}")
-add_executable( ${EXE_NAME}
-	${SOURCE_FILES}
-)
-#BUILD_BINARY_OUTPUT_DIRECTORY
-set_property(TARGET ${EXE_NAME} PROPERTY FOLDER "ex1/${user1}")
+# Set exe build parameters
+set(EXE_NAME "ex2.${user1}")
+add_executable( ${EXE_NAME}	${EXE_SOURCE_FILES})
+set_property(TARGET ${EXE_NAME} PROPERTY FOLDER "ex2/${user1}")
 set_property(TARGET ${EXE_NAME} PROPERTY OUTPUT_NAME "${user1}")
+
+# Set naive algorithm's .dll build parameters
+set(ALG1_NAME "ex2.${user1}.naive")
+add_library(${ALG1_NAME} SHARED ${NAIVE_ALGO_SOURCE_FILES})
+set_property(TARGET ${ALG1_NAME} PROPERTY FOLDER "ex2/${user1}")
+set_property(TARGET ${ALG1_NAME} PROPERTY OUTPUT_NAME "${user1}.naive")
+target_compile_definitions(${ALG1_NAME} PRIVATE -DALGO_EXPORTS) # preprocessor flag saying we are the one compiling the header now
+
+# Set read-from-file algorithm's .dll build parameters
+set(ALG2_NAME "ex2.${user1}.file")
+add_library(${ALG2_NAME} SHARED ${FILE_ALGO_SOURCE_FILES})
+set_property(TARGET ${ALG2_NAME} PROPERTY FOLDER "ex2/${user1}")
+set_property(TARGET ${ALG2_NAME} PROPERTY OUTPUT_NAME "${user1}.file")
+target_compile_definitions(${ALG2_NAME} PRIVATE -DALGO_EXPORTS) # preprocessor flag saying we are the one compiling the header now
+
+# Set smart algorithm's .dll build parameters
+set(ALG3_NAME "ex2.${user1}.smart")
+add_library(${ALG3_NAME} SHARED ${SMART_ALGO_SOURCE_FILES})
+set_property(TARGET ${ALG3_NAME} PROPERTY FOLDER "ex2/${user1}")
+set_property(TARGET ${ALG3_NAME} PROPERTY OUTPUT_NAME "${user1}.smart")
+target_compile_definitions(${ALG3_NAME} PRIVATE -DALGO_EXPORTS) # preprocessor flag saying we are the one compiling the header now
