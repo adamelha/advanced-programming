@@ -5,30 +5,6 @@
 #include <Windows.h>
 #include "macros.h"
 #include "status.h"
-#include <string>
-#include <AtlBase.h>
-#include <atlconv.h>
-
-
-// Credit stackoverflow
-static std::wstring stringToWstring(std::string str)
-{
-	wstring ws;
-	CA2W ca2w(str.c_str());
-	ws = ca2w;
-
-	return ws;
-}
-
-static std::string wstringTostring(std::wstring wstr)
-{
-	CW2A cw2a(wstr.c_str());
-	string s = cw2a;
-
-	return s;
-}
-
-
 
 /***************Public Methods***************/
 
@@ -104,7 +80,7 @@ status_t FileParser::parsePaths()
 	if (this->filesPath != "")
 	{
 		//check that path exists - if not, or is not directory, return without checking anything else
-		ftyp = GetFileAttributes(stringToWstring(this->filesPath).c_str());
+		ftyp = GetFileAttributesA(this->filesPath.c_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES || !(ftyp & FILE_ATTRIBUTE_DIRECTORY))
 		{
 			addErrorMsg(WRONG_PATH_IDX, WRONG_PATH_MSG);
@@ -116,16 +92,15 @@ status_t FileParser::parsePaths()
 	// Parse board path
 	if (parseType == PARSE_TYPE_BOARD)
 	{
-		hFind = FindFirstFile(stringToWstring(boardAbsPath).c_str(), &FindFileData);
-
+		hFind = FindFirstFile((boardAbsPath).c_str(), &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE)
 		{
 			status = STATUS_ERROR;
 			addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
 		}
 		else {
-			DEBUG_PRINT("The first board file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
-			this->boardFileName = wstringTostring(FindFileData.cFileName);
+			DEBUG_PRINT("The first board file found is %s\n", FindFileData.cFileName);
+			this->boardFileName = string(FindFileData.cFileName);
 			this->boardPath = string(this->filesPath + slash + this->boardFileName);
 		}
 
@@ -134,17 +109,16 @@ status_t FileParser::parsePaths()
 
 
 	// Parse attacker A path
-	hFind = FindFirstFile(stringToWstring(attackAbsPath).c_str(), &FindFileData);
-
+	hFind = FindFirstFile((attackAbsPath).c_str(), &FindFileData);
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		status = STATUS_ERROR;
 		addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
 	}
 	else {
-		DEBUG_PRINT("The first attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+		DEBUG_PRINT("The first attacker file found is %s\n", FindFileData.cFileName);
 		if (parseType == PARSE_TYPE_PLAYER_A) {
-			this->attackFileName = wstringTostring(FindFileData.cFileName);
+			this->attackFileName = string(FindFileData.cFileName);
 			this->attackPath = string(this->filesPath + slash + this->attackFileName);
 		}
 	}
@@ -160,8 +134,8 @@ status_t FileParser::parsePaths()
 			addErrorMsg(MISSING_ATTACK_IDX, MISSING_ATTACK_MSG);
 		}
 		else {
-			DEBUG_PRINT("The second attacker file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
-			this->attackFileName = wstringTostring(FindFileData.cFileName);
+			DEBUG_PRINT("The second attacker file found is %s\n", FindFileData.cFileName);
+			this->attackFileName = string(FindFileData.cFileName);
 			this->attackPath = string(this->filesPath + slash + this->attackFileName);
 		}
 	}

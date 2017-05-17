@@ -4,6 +4,7 @@
 #include <Windows.h>
 
 
+
 Display::Display(CmdParser cmd)
 {
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -71,6 +72,8 @@ void Display::printBoard(const Board &boardObj)
 // if print is active, sleeps for cmd.delay milliseconds and then updates
 void Display::updateSquare(int x, int y, char updatedChar)
 {
+	if (x < 0)
+		return;
 	if (printBoardActive)
 	{
 		if (x < 0)

@@ -57,9 +57,6 @@
     <ClInclude Include="naive_algo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="file_algo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,16 +68,7 @@
     <ClCompile Include="file_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="board.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="error_class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ships.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="battle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="display.cpp">
@@ -92,7 +80,13 @@
     <ClCompile Include="naive_algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="file_algo.cpp">
+    <ClCompile Include="battle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="error_class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

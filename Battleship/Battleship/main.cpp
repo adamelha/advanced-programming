@@ -47,8 +47,8 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 
-	FileAlgo algoA;
-	FileAlgo algoB;
+	NaiveAlgo algoA;
+	NaiveAlgo algoB;
 	//NaiveAlgo algoA;
 	//NaiveAlgo algoB;
 	Battle battle(display, cmd, algoA, algoB);

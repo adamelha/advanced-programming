@@ -123,3 +123,7 @@ void FileAlgo::loadFromAttackFile(const string & attackPath, int whosTurn)
 	}
 }
 
+IBattleshipGameAlgo* GetAlgorithm() {
+	return new FileAlgo();
+}
+

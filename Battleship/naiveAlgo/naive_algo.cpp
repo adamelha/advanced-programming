@@ -28,7 +28,7 @@ bool NaiveAlgo::isPointPartOfShip(int x, int y)
 //changes unvalid points near a point with player ship
 void NaiveAlgo::changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y)
 {
-	if( isPointPartOfShip(x, y) )
+	if (isPointPartOfShip(x, y))
 	{
 		arr[x][y] = false;
 		if (isPointOnBoard(x + 1, y))
@@ -81,7 +81,7 @@ void NaiveAlgo::setBoard(int player, const char ** board, int numRows, int numCo
 	{
 		for (int y = 0; y < numCols; y++)
 		{
-			if ( isBelongToBoard(board[x][y]) == sqaretTypeIs)
+			if (isBelongToBoard(board[x][y]) == sqaretTypeIs)
 			{
 				this->board[x][y] = board[x][y];
 				this->numOfSqares += 1;
@@ -99,7 +99,7 @@ std::pair<int, int> NaiveAlgo::attack()
 	int x = OUT_OF_MOVES, y = OUT_OF_MOVES;
 	if (this->nextPointIndex < getPotentialMovesSize())
 	{
-		x = potentialMoves[curr].x + 1; 
+		x = potentialMoves[curr].x + 1;
 		y = potentialMoves[curr].y + 1;
 	}
 	return std::pair<int, int>(x, y);
@@ -118,11 +118,11 @@ void NaiveAlgo::initIsPointLegal()
 {
 	memset(isPointLegal, true, sizeof(isPointLegal[0][0]) * BOARD_SIZE * BOARD_SIZE);   //all initialized to true
 
-	for(int x = 0 ; x < BOARD_SIZE; x++)
+	for (int x = 0; x < BOARD_SIZE; x++)
 	{
-		for (int y = 0 ; y < BOARD_SIZE; y++)
+		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			changeEnvalopPointsToFalse( isPointLegal , x , y);
+			changeEnvalopPointsToFalse(isPointLegal, x, y);
 		}
 	}
 }
@@ -133,11 +133,11 @@ void NaiveAlgo::initPotentialMoves()
 {
 	int index = 0;
 	initIsPointLegal();
-	for (int i = 0 ; i < BOARD_SIZE; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j =0 ; j < BOARD_SIZE; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
-			if(isPointLegal[i][j])
+			if (isPointLegal[i][j])
 			{
 				potentialMoves[index] = Point(i, j);
 				index += 1;
