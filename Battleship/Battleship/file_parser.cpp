@@ -133,35 +133,39 @@ status_t FileParser::parsePaths()
 		// Parse dll first  path
 		hFind = FindFirstFileA((dllAbsPath).c_str(), &FindFileDataDll);
 
+		string dll1Name, dll2Name;
+
 		if (hFind == INVALID_HANDLE_VALUE)
 		{
 			status = STATUS_ERROR;
 			addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
 		}
-		else {
+		else 
+		{
+			dll1Name = string(FindFileDataDll.cFileName);
 			DEBUG_PRINT("The first dll file found is %s\n", FindFileDataDll.cFileName);
-			if (parseType == PARSE_TYPE_PLAYER_A) {
-				this->dllFileName = FindFileDataDll.cFileName;
-				this->dllPath1 = string(this->filesPath + slash + this->dllFileName);
-			}
-			// Parse dell second path ,  gal
-			fileStatus = FindNextFileA(hFind, &FindFileDataDll);
-			if (hFind == INVALID_HANDLE_VALUE)
-			{
-				status = STATUS_ERROR;
-				addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
-			}
-			else {
-				DEBUG_PRINT("The second dll file found is %s\n", FindFileDataDll.cFileName);
-				this->dllFileName = FindFileDataDll.cFileName;
-				this->dllPath2 = string(this->filesPath + slash + this->dllFileName);
-			}
+			this->dllFileName = FindFileDataDll.cFileName;
+			this->dllPath1 = string(this->filesPath + slash + this->dllFileName);
+		}
+		// Parse dll second 
+		fileStatus = FindNextFileA(hFind, &FindFileDataDll);
+		if (!fileStatus)
+		{
+			status = STATUS_ERROR;
+			addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
+		}
+		else
+		{
+			DEBUG_PRINT("The second dll file found is %s\n", FindFileDataDll.cFileName);
+			this->dllFileName = FindFileDataDll.cFileName;
+			this->dllPath2 = string(this->filesPath + slash + this->dllFileName);
+		}
 
 
 			
 
 
-		}
+		
 		FindClose(hFind);
 		return status;
 	}

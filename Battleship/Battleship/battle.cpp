@@ -3,10 +3,24 @@
 #include "ships.h"
 #include "battle_utils.h"
 #include "macros.h"
-
+#include "error_class.h"
 // This macro is to be used only from battle.cpp. Returned by Battle.attack() in case no more moves available for algo
 #define BATTLE_OUT_OF_MOVES		(ALGO_OUT_OF_MOVES - 1)
 #define VALID_INT_TOKENS  (0 < stoi(tokens[0]) && stoi(tokens[0]) < 11 && 0 < stoi(tokens[1]) && stoi(tokens[1]) < 11)
+
+#define CANNOT_LOAD_DLL_MSG			"Cannot load dll: " + fullFileName + "\n"
+#define CANNOT_LOAD_DLL_IDX			0
+
+#define ALGO_INIT_FAIL_MSG			"Algorithm initialization failed for dll: " + fullFileName + "\n"
+#define ALGO_INIT_FAIL_IDX			1
+
+
+#define ALGO_INIT_FAILED			"Cannot load dll: " << fullFileName << endl
+#define WRONG_PATH_IDX			1
+
+#define NUM_OF_DLL_ERR_MSGS			2
+
+
 
 // split,processLine,loadFromAttackFile methods are from Tirgul 3 , with some minor changes
 
@@ -74,6 +88,7 @@ bool Battle::init(const std::string & path)
 	return false;
 }
 
+// Taken from recitation 5
 bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 	HANDLE dir;
@@ -81,16 +96,22 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 	string fileName, fullFileName;
 	int playerNumber = 0;
 	bool init_failed;
-
+	bool status = true;
 	// define function of the type we expect
 	typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
 	GetAlgoFuncType getAlgoFunc;
+	
+	ErrorClass errmsgs(NUM_OF_DLL_ERR_MSGS);
 
 	// iterate over *.dll files in path
 	string s = "\\*.dll"; // only .dll endings
 	dir = FindFirstFileA((path + s).c_str(), &fileData); // Notice: Unicode compatible version of FindFirstFile
 	if (dir == INVALID_HANDLE_VALUE) //check if the dir opened successfully
-		return false;
+	{
+		status = false;
+		goto EXIT;
+	}
+		
 	do {
 
 		fileName = fileData.cFileName;
@@ -99,15 +120,17 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 		// Load dynamic library
 		HINSTANCE hDll = LoadLibraryA(fullFileName.c_str()); // Notice: Unicode compatible version of LoadLibrary
 		if (!hDll) {
-			cout << "Cannot load dll: " << fullFileName << endl;
-			return false;
+			errmsgs.addErrorMsg(CANNOT_LOAD_DLL_IDX, CANNOT_LOAD_DLL_MSG);
+			status = false;
+			goto EXIT;
 		}
 
 		// Get function pointer
 		getAlgoFunc = (GetAlgoFuncType)GetProcAddress(hDll, "GetAlgorithm");
 		if (!getAlgoFunc) {
-			cout << "Cannot load dll: " << fullFileName << endl;
-			return false;
+			errmsgs.addErrorMsg(CANNOT_LOAD_DLL_IDX, CANNOT_LOAD_DLL_MSG);
+			status = false;
+			goto EXIT;
 		}
 
 		dllList.push_back(hDll);
@@ -131,14 +154,17 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 		//call the players init function
 		if (init_failed) {
-			cout << "Algorithm initialization failed for dll: " << fullFileName << endl;
-			return false;
+			errmsgs.addErrorMsg(ALGO_INIT_FAIL_IDX, ALGO_INIT_FAIL_MSG);
+			status = false;
+			goto EXIT;
 		}
 
 		playerNumber+=1;
 
 	} while (FindNextFileA(dir, &fileData) && playerNumber < 2); // Notice: Unicode compatible version of FindNextFile
 
+EXIT:
+	errmsgs.printErrorMsg();
 	return true;
 }
 

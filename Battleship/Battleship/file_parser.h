@@ -13,14 +13,14 @@
 #define WRONG_PATH_MSG			"Wrong path: " + this->filesPath + "\n"
 #define WRONG_PATH_IDX			0
 
-#define MISSING_BOARD_MSG		"Missing board file (" + this->boardFileName + ") looking in path: " + this->filesPath + "\n"
+#define MISSING_BOARD_MSG		"Missing board file (*.sboard) looking in path: " + this->filesPath + "\n"
 #define MISSING_BOARD_IDX		1
 
 #define MISSING_ATTACK_MSG		"Missing attack file for player (*.attack) looking in path: " + this->filesPath + "\n"
-#define MISSING_DLL_MSG		"Missing dll file for player (*.dll) looking in path: " + this->filesPath + "\n"
+#define MISSING_DLL_MSG			"Missing an algorithm (dll) file looking in path " + this->filesPath + "\n"
+#define MISSING_DLL_IDX		2
 
-#define MISSING_ATTACK_IDX		2
-#define MISSING_DLL_IDX		3
+#define MISSING_ATTACK_IDX		3
 
 
 #define NUM_OF_FILE_PARSER_ERR_MSGS			4
