@@ -51,6 +51,7 @@ bool FileAlgo::init(const std::string& path)
 	status_t status = STATUS_OK;
 	FileParser fp(path, (parseType_e)player);
 
+	/*
 	status = fp.parse();
 	if (status != STATUS_OK) {
 		fp.printErrorMsg();
@@ -59,6 +60,7 @@ bool FileAlgo::init(const std::string& path)
 
 	//set players attack vectors
 	loadFromAttackFile(fp.getAttackFileName(), player);
+	*/
 	return true;
 }
 
@@ -123,7 +125,7 @@ void FileAlgo::loadFromAttackFile(const string & attackPath, int whosTurn)
 	}
 }
 
-IBattleshipGameAlgo* GetAlgorithm() {
+ALGO_API IBattleshipGameAlgo* GetAlgorithm() {
 	return new FileAlgo();
 }
 

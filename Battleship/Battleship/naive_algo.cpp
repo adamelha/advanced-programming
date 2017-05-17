@@ -43,11 +43,9 @@ void NaiveAlgo::changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y)
 	}
 }
 
-// Gal, here you must call the initializer! I don't think you can use ship list as an argument.
-// Must create it here!
 bool NaiveAlgo::init(const std::string& path)
 {
-	NaiveAlgo::initPotentialMoves();
+	initPotentialMoves();
 	return true;
 }
 
@@ -152,3 +150,8 @@ void NaiveAlgo::initPotentialMoves()
 	//memset(array, 0, sizeof(array[0][0]) * m * n);
 
 }
+
+ALGO_API IBattleshipGameAlgo* GetAlgorithm() {
+	return new NaiveAlgo();
+}
+

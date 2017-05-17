@@ -91,7 +91,6 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 	dir = FindFirstFileA((path + s).c_str(), &fileData); // Notice: Unicode compatible version of FindFirstFile
 	if (dir == INVALID_HANDLE_VALUE) //check if the dir opened successfully
 		return false;
-
 	do {
 
 		fileName = fileData.cFileName;
@@ -118,13 +117,13 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 		if (playerNumber == PLAYER_A)
 		{
 			algoA = getAlgoFunc();
-			setBoard(this->whosTurn, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoA);
+			setBoard(playerNumber, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoA);
 			init_failed = !algoA->init(path); // init A_Board
 		}
 		else
 		{
 			algoB = getAlgoFunc();
-			setBoard(this->whosTurn, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoB);
+			setBoard(playerNumber, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoB);
 			init_failed = !algoB->init(path);       // init B_Board
 		}
 
@@ -138,7 +137,7 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 		playerNumber+=1;
 
-	} while (FindNextFileA(dir, &fileData)); // Notice: Unicode compatible version of FindNextFile
+	} while (FindNextFileA(dir, &fileData) && playerNumber < 2); // Notice: Unicode compatible version of FindNextFile
 
 	return true;
 }
