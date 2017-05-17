@@ -124,7 +124,7 @@ status_t FileParser::parsePaths()
 			addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
 		}
 		else {
-			DEBUG_PRINT("The first board file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+			//DEBUG_PRINT("The first board file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
 			this->boardFileName = wstringTostring(FindFileData.cFileName);
 			this->boardPath = string(this->filesPath + slash + this->boardFileName);
 		}

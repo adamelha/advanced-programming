@@ -47,6 +47,7 @@ void NaiveAlgo::changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y)
 // Must create it here!
 bool NaiveAlgo::init(const std::string& path)
 {
+	NaiveAlgo::initPotentialMoves();
 	return true;
 }
 
@@ -96,8 +97,8 @@ std::pair<int, int> NaiveAlgo::attack()
 {
 	int curr = this->nextPointIndex;
 	this->nextPointIndex += 1;
-	int x = OUT_OF_MOVES, y = OUT_OF_MOVES;
-	if (this->nextPointIndex < getPotentialMovesSize())
+	int x = ALGO_OUT_OF_MOVES, y = ALGO_OUT_OF_MOVES;
+	if (curr < getPotentialMovesSize())
 	{
 		x = potentialMoves[curr].x + 1; 
 		y = potentialMoves[curr].y + 1;
@@ -109,6 +110,7 @@ void NaiveAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult 
 {
 
 }
+
 
 
 //changes unvalid points near a point with player ship

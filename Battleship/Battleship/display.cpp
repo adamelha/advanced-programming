@@ -52,13 +52,13 @@ void Display::printBoard(const Board &boardObj)
 			for (size_t y = 0; y < BOARD_SIZE; y++)
 			{
 				gotoxy(BOARD_DISPLAY_OFFSET_X + x, BOARD_DISPLAY_OFFSET_Y + y);
-				if (IS_PLAYER_A(boardObj.board[x][y])) {
+				if (IS_PLAYER_A(boardObj.board[y][x])) {
 					setTextColor(TEXT_COLOR_PLAYER_A);
 				}
 				else {
 					setTextColor(TEXT_COLOR_PLAYER_B);
 				}
-				cout << boardObj.board[x][y];
+				cout << boardObj.board[y][x];
 			}
 
 		}
@@ -70,7 +70,7 @@ void Display::printBoard(const Board &boardObj)
 }
 
 // if print is active, sleeps for cmd.delay milliseconds and then updates
-void Display::updateSquare(int x, int y, char updatedChar)
+void Display::updateSquare( int y, int x, char updatedChar)
 {
 	if (x < 0)
 		return;
