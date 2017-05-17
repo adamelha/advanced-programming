@@ -261,3 +261,7 @@ void SmartAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult 
 }
 
 
+ALGO_API IBattleshipGameAlgo* GetAlgorithm() {
+	return new SmartAlgo();
+}
+
