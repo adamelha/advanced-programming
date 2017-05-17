@@ -62,7 +62,7 @@ std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
 	return attackPair;
 }
 
-// Notify both algos on result of attacke
+// Notify both algos on result of attack
 void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult result)
 {
 	algoA->notifyOnAttackResult(player, row, col, result);
@@ -204,6 +204,7 @@ int Battle::War(const string &path, const Board &board)
 			{
 				x = attackPair.first;
 				y = attackPair.second;
+				DEBUG_PRINT("B shot A at <%d,%d>\n", x, y);
 				whoGotHit = isBelongToBoard(board.board[x][y]);
 
 				if (whoGotHit == NO_SQUARE)                // miss
@@ -298,7 +299,7 @@ int Battle::War(const string &path, const Board &board)
 
 			x = attackPair.first;
 			y = attackPair.second;
-
+			DEBUG_PRINT("A shot B at <%d,%d>\n", x, y);
 			whoGotHit = isBelongToBoard(board.board[x][y]);
 			if (whoGotHit == NO_SQUARE )                // miss
 			{

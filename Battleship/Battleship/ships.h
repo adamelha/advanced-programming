@@ -8,6 +8,8 @@ using namespace std;
 #define SHIP_SIZE_P				2
 #define SHIP_SIZE_M				3
 #define SHIP_SIZE_D				4
+#define SHIP_SIZE_MAX			4
+
 
 #define SHIP_POINTS_B			2
 #define SHIP_POINTS_P			3

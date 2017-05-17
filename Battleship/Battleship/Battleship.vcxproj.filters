@@ -54,6 +54,12 @@
     <ClInclude Include="battle_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="smart_algo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rand_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,7 +71,16 @@
     <ClCompile Include="file_parser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="error_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ships.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="battle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="display.cpp">
@@ -77,10 +92,10 @@
     <ClCompile Include="battle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="board.cpp">
+    <ClCompile Include="smart_algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="error_class.cpp">
+    <ClCompile Include="rand_pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

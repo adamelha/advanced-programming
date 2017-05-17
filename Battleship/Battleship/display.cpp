@@ -86,6 +86,8 @@ void Display::updateSquare( int y, int x, char updatedChar)
 		Sleep(delay);
 		gotoxy(BOARD_DISPLAY_OFFSET_X + x, BOARD_DISPLAY_OFFSET_Y + y);
 
+		
+
 		if (updatedChar == SQUARE_BOMBED_MISS_SYMBOL || updatedChar == SQUARE_BOMBED_HIT_SYMBOL)
 		{
 			setTextColor(TEXT_COLOR_BOMBED);

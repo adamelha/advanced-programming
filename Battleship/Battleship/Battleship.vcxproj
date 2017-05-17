@@ -122,7 +122,9 @@
     <ClInclude Include="IBattleshipGameAlgo.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="point.h" />
+    <ClInclude Include="rand_pool.h" />
     <ClInclude Include="ships.h" />
+    <ClInclude Include="smart_algo.h" />
     <ClInclude Include="state.h" />
     <ClInclude Include="status.h" />
   </ItemGroup>
@@ -135,7 +137,9 @@
     <ClCompile Include="error_class.cpp" />
     <ClCompile Include="file_parser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rand_pool.cpp" />
     <ClCompile Include="ships.cpp" />
+    <ClCompile Include="smart_algo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
