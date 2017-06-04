@@ -24,7 +24,7 @@ using namespace std;
 class Board : public ErrorClass {
 public:
 	status_t parse();
-	string getFilesPath();
+	//string getFilesPath();
 	
 	char getCharFromBoard(int x, int y) const;
 	Board(string boardStringFromFile);

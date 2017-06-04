@@ -190,7 +190,7 @@ status_t FileParser::parsePaths()
 		// Parse attacker B path - second file with the same regex
 		if (parseType == PARSE_TYPE_PLAYER_B)
 		{
-			fileStatus = FindNextFileA(hFind, &FindFileData);
+			//fileStatus = FindNextFileA(hFind, &FindFileData);
 			if (hFind == INVALID_HANDLE_VALUE)
 			{
 				status = STATUS_ERROR;

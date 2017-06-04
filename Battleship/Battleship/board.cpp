@@ -138,17 +138,25 @@ status_t const Board::isBoardValid(char **parsedBoard)
 				ship->pointList[0] = Point(x, y);
 
 				// If ship of size 1 - no need to search for vertical and horizontal
-				if (ship->size == 1) {
-					if (checkAdjacentShips(*ship)) {
-						if (IS_PLAYER_A(ship->charSymbol)) {
+				if (ship->size == 1) 
+				{
+					if (checkAdjacentShips(*ship)) 
+					{
+						if (IS_PLAYER_A(ship->charSymbol)) 
+						{
 							shipListA.push_back(ship);
 						}
-						else {
+						else 
+						{
 							shipListB.push_back(ship);
 						}
 					}
+					delete ship;
+
 				}
-				else {
+
+				else 
+				{
 
 					// Try vertical
 					for (j = 1; j < ship->size; j++)

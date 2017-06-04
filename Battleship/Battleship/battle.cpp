@@ -202,7 +202,7 @@ int Battle::War(const string &path, const Board &board)
 	//war!!
 	setWhosTurn(0);						 //   set turn A
 	bool twoPlayersOutOfPlays = false, alreadyGotHit = false, HitCorrectTarget = false, playerAOutOfPlays = false, playerBOutOfPlays = false;
-	int indexA = 0, indexB = 0, pointsReceived = 0;
+	int pointsReceived = 0;
 	int whoGotHit;
 	int x = -1, y = -1;
 	std::pair<int, int> attackPair;
@@ -391,7 +391,7 @@ int Battle::War(const string &path, const Board &board)
 				}
 			}
 
-			indexA += 1;
+		
 			notifyOnAttackResult(PLAYER_A, x, y, attackResult);
 			//if ( (!playerBOutOfPlays && !HitCorrectTarget ) || alreadyGotHit)
 			if (!playerBOutOfPlays && attackResult == AttackResult::Miss)

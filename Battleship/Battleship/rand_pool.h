@@ -5,7 +5,7 @@
 class RandPool {
 public:
 	RandPool(char **myBoard);
-	~RandPool();
+	//~RandPool();
 	Point getNextRandPoint();
 	void removePointFromPool(Point pointToRemove);
 private:

@@ -31,10 +31,10 @@ RandPool::RandPool(char **myBoard) : potentialMoves(), myBoard(myBoard), refTabe
 
 	}
 }
-RandPool::~RandPool()
+/*RandPool::~RandPool()
 {
 	delete[] potentialMoves;
-}
+}*/
 
 // Public methods
 
