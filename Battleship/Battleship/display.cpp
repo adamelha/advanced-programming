@@ -3,7 +3,7 @@
 #include "macros.h"
 #include <Windows.h>
 
-
+/*
 
 Display::Display(CmdParser cmd)
 {
@@ -41,6 +41,7 @@ Point Display::getCursorPosition()
 }
 
 // Prints board in colors if 
+
 void Display::printBoard(const Board &boardObj)
 {
 	currentCursorLocation = getCursorPosition();
@@ -65,7 +66,7 @@ void Display::printBoard(const Board &boardObj)
 	}
 
 	//Restore
-	gotoxy(currentCursorLocation.x, currentCursorLocation.y);
+	gotoxy(currentCursorLocation.row, currentCursorLocation.col);
 	setTextColor(TEXT_COLOR_DEFAULT);
 }
 
@@ -104,9 +105,10 @@ void Display::updateSquare( int y, int x, char updatedChar)
 
 		// Restore
 		//gotoxy(0, 30);
-		gotoxy(currentCursorLocation.x, currentCursorLocation.y);
+		gotoxy(currentCursorLocation.row, currentCursorLocation.col);
 		setTextColor(TEXT_COLOR_DEFAULT);
 	}
 	
 	
 }
+*/

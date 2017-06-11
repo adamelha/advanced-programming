@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -36,3 +36,6 @@ For format string must snprintf before using this macro.
 
 #define EXIT_SUCCESS	0
 #define EXIT_FAIL		-1
+
+// IMPORTANT: rows, cols, and depth must be defined in scope where this macro is used!
+#define isPointOnBoard(x , y, z)  ( x < rows && x > -1 && y < cols && y > -1 && z < depth && z > -1)

@@ -4,8 +4,6 @@
 #include "status.h"
 #include "battle.h"
 #include "macros.h"
-#include "naive_algo.h"
-#include "file_algo.h"
 #include "display.h"
 using namespace std;
 int main(int argc, char **argv) {
@@ -19,10 +17,10 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 
-	Display display(cmd);
+	Display display;
 	// Set Default text color
-	display.setTextColor(TEXT_COLOR_DEFAULT);
-	display.hideCursor();
+	//display.setTextColor(TEXT_COLOR_DEFAULT);
+	//display.hideCursor();
 	string filesPath = cmd.getFilesPath();
 
 	// Parse files to strings
@@ -35,22 +33,28 @@ int main(int argc, char **argv) {
 	}
 
 	//TODO: Right now if some file parser error occres we do not continue to check board validity. Need to?
-	
 	// Check board validity and parse
-	Board board = Board(fileParser.getBoard());
-	
-	status = board.parse();
-	if (status != STATUS_OK)
+	try
 	{
-		if (status == STATUS_INVALID_BOARD) board.printErrorMsg();
+		Board board = Board(fileParser.getBoard());
+	
+		status = board.parse();
+		if (status != STATUS_OK)
+		{
+			if (status == STATUS_INVALID_BOARD) board.printErrorMsg();
 		
-		return EXIT_FAIL;
+			return EXIT_FAIL;
+		}
+
+
+		Battle battle(display, cmd);
+		battle.War(filesPath, board);
+
+		return EXIT_SUCCESS;
 	}
-
-
-	Battle battle(display, cmd);
-	battle.War(filesPath, board);
-
-	return EXIT_SUCCESS;
+	catch (BoardBadDimensions& bd)
+	{
+		ERROR_PRINT("Wrong board dimensions.\n", EXIT_FAIL);
+	}
 }
 

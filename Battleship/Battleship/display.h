@@ -34,6 +34,8 @@ using namespace std;
 class Display
 {
 public:
+	Display() {}
+	/*
 	Display(CmdParser cmd);
 	void gotoxy(int x, int y);
 	void hideCursor();
@@ -41,7 +43,7 @@ public:
 	void printBoard(const Board &board);
 	void updateSquare(int x, int y, char updatedChar);
 	Point getCursorPosition();
-
+	*/
 private:
 	CONSOLE_SCREEN_BUFFER_INFO SBInfo;
 	CONSOLE_CURSOR_INFO info;

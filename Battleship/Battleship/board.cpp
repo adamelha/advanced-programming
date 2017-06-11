@@ -6,26 +6,90 @@
 #include "status.h"
 #include "ships.h"
 #include "macros.h"
-
+#include "battle_utils.h"
 
 #define NUM_OF_SHIPS_PER_PLAYER	5
 #define IS_POINT_IN_POINT_LIST(pointList, pointListSize, point)	(std::find(pointList, pointList + pointListSize, point) != (pointList + pointListSize))
 #define IS_SHIP_IN_POINT_LIST(ship, point)	IS_POINT_IN_POINT_LIST(ship.pointList, ship.size, point)
 
-
+#define BOARD_DIMENSIONS_DELIMITER	"x"
 /***************Public Methods***************/
 
 Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile)
 {
-	// Init board to be array of char pointers, each pointing to a row in _board matrix (avoids dynamic allocation)
-	for (size_t i = 0; i < BOARD_SIZE; i++)
-	{
-		board[i] = &(_board[i][0]);
+	std::istringstream f(boardStringFromFile);
+	std::string line;
+	size_t pos = 0;
+	vector<string> dimensions;
+
+	//Parse first line - dimensions
+	//std::getline(f, line); 
+	safeGetline(f, line);
+	std::cout << line << std::endl;
+
+	// Add delimiter at the end of the line in order to work properly
+	line += BOARD_DIMENSIONS_DELIMITER;
+
+	std::string delimiter = BOARD_DIMENSIONS_DELIMITER;
+	std::string token;
+	while ((pos = line.find(delimiter)) != std::string::npos) {
+		token = line.substr(0, pos);
+		dimensions.push_back(token);
+		line.erase(0, pos + delimiter.length());
 	}
+
+	// throw exception if not enough dimensions given
+	if (dimensions.size() < 3)
+	{
+		DEBUG_PRINT("Only %d dimensions found\n", (int)dimensions.size());
+		throw BoardBadDimensions();
+	}
+
+	// Parse dimensions
+	try
+	{
+		_cols = std::stoi(dimensions[0]);
+		_rows = std::stoi(dimensions[1]);
+		_depth = std::stoi(dimensions[2]);
+	}
+	catch (...)
+	{
+		DEBUG_PRINT("Unable to parse dimension provided, make sure you provide an integer");
+		throw BoardBadDimensions();
+	}
+	
+	// Init board - a dynamic 3 dimensional array
+	board = alloc3dArray<char>(_rows, _cols, _depth);	
 }
+
+// Overloading of Board constructor - if no parsing
+
+Board::Board(int rows, int cols, int depth) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), numberOfPlayerAShips(0), numberOfPlayerBShips(0)
+{
+	_rows = rows;
+	_cols = cols;
+	_depth = depth;
+	board = alloc3dArray<char>(rows, cols, depth);
+}
+
+Board::~Board()
+{
+	delete board;
+	// TODO: must delete board 3d array!!!
+}
+
+char Board::charAt(Coordinate c) const
+{
+	return board[c.row][c.col][c.depth];
+}
+
 status_t Board::parse()
 {
-	vector<string> rowList;
+	// row list for eeach depth
+	//vector<string> rowList[_depth];
+
+	
+	vector<vector<string>> rowList;
 	size_t i;
 	uint32_t x, y;
 	size_t lineNumber = 0;
@@ -33,59 +97,100 @@ status_t Board::parse()
 	status_t status;
 	istringstream ifs = istringstream(this->boardStringFromFile);
 
+	// make row list for each depth
+	rowList.resize(depth());
+
 	y = 0;
 
-	// Read BOARD_SIZE lines and uppend to rowList
-	while (!safeGetline(ifs, t).eof())
+	// Skip first 2 lines - already read and parsed by constructor
+	// Checking is just a precaution, should have already raised exception in constructor in case of error
+	
+	for (size_t i = 0; i < 2; i++)
 	{
-		rowList.push_back(t);
-		if (++lineNumber == BOARD_SIZE) break;
+		if (safeGetline(ifs, t).eof()) {
+			return STATUS_INVALID_BOARD;
+		}
 	}
-
-	// If not enough lines
-	if (lineNumber < BOARD_SIZE)
-	{
-		addErrorMsg(BOARD_DIMENSIONS_INVALID_IDX, BOARD_DIMENSIONS_INVALID);
+	
+	/*
+	// Skip first line - already parsed by constructor
+	// Checking is just a precaution, should have already raised exception in constructor in case of error
+	if (safeGetline(ifs, t).eof()) {
 		return STATUS_INVALID_BOARD;
 	}
+	*/
 
-	// Read from rowList to board
-	for (x = 0; x < rowList.size(); x++)
+
+	// Read one depth at a time
+	for (size_t d = 0; d < depth(); d++)
 	{
-		for (i = 0; i < rowList[x].size(); i++)
+
+		
+
+		// Read row lines and append to rowList[d]
+		// Now rowList[d] will be a list (vector) of rows for depth d 
+		while (!safeGetline(ifs, t).eof())
 		{
-			if (rowList[x][i] == ' '
-				|| rowList[x][i] == 'b'
-				|| rowList[x][i] == 'B'
-				|| rowList[x][i] == 'p'
-				|| rowList[x][i] == 'P'
-				|| rowList[x][i] == 'm'
-				|| rowList[x][i] == 'M'
-				|| rowList[x][i] == 'd'
-				|| rowList[x][i] == 'D')
-			{
-				setCharOnBoard(Point(x, y++), rowList[x][i]);
-
-				
-			}
-			else {
-				setCharOnBoard(Point(x, y++), ' ');
-			}
-
-			// Discard any tokens after BOARD_SIZE have been found
-			if (y == BOARD_SIZE) break;
+			rowList[d].push_back(t);
+			if (++lineNumber == rows()) break;
 		}
 
-		// If not enough valid chars in line x
-		if (y != BOARD_SIZE)
+		// If not enough lines
+		if (lineNumber < rows())
 		{
 			addErrorMsg(BOARD_DIMENSIONS_INVALID_IDX, BOARD_DIMENSIONS_INVALID);
 			return STATUS_INVALID_BOARD;
 		}
 
-		y = 0;
-	}
+		// Read from rowList to board
+		for (x = 0; x < rowList[d].size(); x++)
+		{
+			if (x == 9 && d == 1 ) {
+				d = d;
+			}
+			// Iterate cols 
+			for (i = 0; i < rowList[d][x].size(); i++)
+			{
+				if (rowList[d][x][i] == ' '
+					|| rowList[d][x][i] == 'b'
+					|| rowList[d][x][i] == 'B'
+					|| rowList[d][x][i] == 'p'
+					|| rowList[d][x][i] == 'P'
+					|| rowList[d][x][i] == 'm'
+					|| rowList[d][x][i] == 'M'
+					|| rowList[d][x][i] == 'd'
+					|| rowList[d][x][i] == 'D')
+				{
+					setCharOnBoard(Point(x, y++, d), rowList[d][x][i]);
 
+
+				}
+				else {
+					setCharOnBoard(Point(x, y++, d), ' ');
+				}
+
+				// Discard any tokens after BOARD_SIZE have been found
+				if (y == cols()) break;
+			}
+
+			// If not enough chars in line x
+			if (y != cols())
+			{
+				addErrorMsg(BOARD_DIMENSIONS_INVALID_IDX, BOARD_DIMENSIONS_INVALID);
+				return STATUS_INVALID_BOARD;
+			}
+
+			y = 0;
+		}
+
+		// Before next depth we must read an empty line
+		if (safeGetline(ifs, t).eof() && d != depth() - 1) {
+			addErrorMsg(BOARD_DIMENSIONS_INVALID_IDX, BOARD_DIMENSIONS_INVALID);
+			return STATUS_INVALID_BOARD;
+		}
+
+		lineNumber = 0;
+	}
 	// Check board for errors and collect error messages
 	status = isBoardValid(board);
 
@@ -93,9 +198,10 @@ status_t Board::parse()
 }
 
 
+
 /***************Private Methods***************/
 
-static bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB)
+bool Board::isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB)
 {
 	size_t i;
 
@@ -114,82 +220,34 @@ static bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const
 	return false;
 }
 
-status_t const Board::isBoardValid(char **parsedBoard)
+status_t const Board::isBoardValid(char ***parsedBoard)
 {
 	Ship *ship;
 	char part, nextPart;
 	int i, j;
 
-	for (int x = 0; x < BOARD_SIZE; x++)
+	for (int d = 0; d < depth(); d++)
 	{
-		for (int y = 0; y < BOARD_SIZE; y++)
+		for (int x = 0; x < rows(); x++)
 		{
-			part = parsedBoard[x][y];
-
-			// If already part of a found ship - skip this point
-			if (isPartOfFoundList(Point(x, y), shipListA, shipListB)) {
-				continue;
-			}
-
-			// If found part of piece
-			if (part != ' ')
+			for (int y = 0; y < cols(); y++)
 			{
-				ship = charToShip(part);
-				ship->pointList[0] = Point(x, y);
 
-				// If ship of size 1 - no need to search for vertical and horizontal
-				if (ship->size == 1) 
-				{
-					if (checkAdjacentShips(*ship)) 
-					{
-						if (IS_PLAYER_A(ship->charSymbol)) 
-						{
-							shipListA.push_back(ship);
-						}
-						else 
-						{
-							shipListB.push_back(ship);
-						}
-					}
-					delete ship;
+				part = parsedBoard[x][y][d];
 
+				// If already part of a found ship - skip this point
+				if (isPartOfFoundList(Point(x, y, d), shipListA, shipListB)) {
+					continue;
 				}
 
-				else 
+				// If found part of piece
+				if (part != ' ')
 				{
+					ship = charToShip(part);
+					ship->pointList[0] = Point(x, y, d);
 
-					// Try vertical
-					for (j = 1; j < ship->size; j++)
-					{
-						if (x + j >= BOARD_SIZE) {
-							//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-							//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-							//delete ship;
-							// Finished column, go to next row
-							break;
-						}
-
-						nextPart = parsedBoard[x + j][y];
-
-						//Correct part
-						if (nextPart == ship->charSymbol) {
-							ship->pointList[j] = Point(x + j, y);
-							continue;
-						}
-						// Wrong Part
-						else
-						{
-							//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-							//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-							//delete ship;
-							break;
-						}
-					}
-
-					// Found complete vertical ship 
-					if (j == ship->size)
-					{
-						// If success!
+					// If ship of size 1 - no need to search for vertical and horizontal
+					if (ship->size == 1) {
 						if (checkAdjacentShips(*ship)) {
 							if (IS_PLAYER_A(ship->charSymbol)) {
 								shipListA.push_back(ship);
@@ -197,59 +255,148 @@ status_t const Board::isBoardValid(char **parsedBoard)
 							else {
 								shipListB.push_back(ship);
 							}
-							// Ship found go to next iteration
-							continue;
 						}
 
+						delete ship;
 					}
+					else {
 
-
-					// Try horizontal
-					for (i = 1; i < ship->size; i++)
-					{
-						if (y + i >= BOARD_SIZE) {
-							DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-							this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-							delete ship;
-							// Finished row, go to next row
-							break;
-						}
-						nextPart = parsedBoard[x][y + i];
-
-						//Correct part
-						if (nextPart == ship->charSymbol) {
-							ship->pointList[i] = Point(x, y + i);
-							//continue;
-						}
-						// Wrong Part
-						else
+						// Try vertical
+						for (j = 1; j < ship->size; j++)
 						{
-							DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
-							this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
-							delete ship;
-							break;
+							if (x + j >= rows()) {
+								//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								//delete ship;
+								// Finished column, go to next row
+								break;
+							}
+
+							nextPart = parsedBoard[x + j][y][d];
+
+							//Correct part
+							if (nextPart == ship->charSymbol) {
+								ship->pointList[j] = Point(x + j, y, d);
+								continue;
+							}
+							// Wrong Part
+							else
+							{
+								//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								//delete ship;
+								break;
+							}
 						}
-					}
+
+						// Found complete vertical ship 
+						if (j == ship->size)
+						{
+							// If success!
+							if (checkAdjacentShips(*ship)) {
+								if (IS_PLAYER_A(ship->charSymbol)) {
+									shipListA.push_back(ship);
+								}
+								else {
+									shipListB.push_back(ship);
+								}
+								// Ship found go to next iteration
+								continue;
+							}
+
+						}
+
+
+						// Try horizontal
+						for (i = 1; i < ship->size; i++)
+						{
+							if (y + i >= cols()) {
+								DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								delete ship;
+								// Finished row, go to next row
+								break;
+							}
+							nextPart = parsedBoard[x][y + i][d];
+
+							//Correct part
+							if (nextPart == ship->charSymbol) {
+								ship->pointList[i] = Point(x, y + i, d);
+								continue;
+							}
+							// Wrong Part
+							else
+							{
+								//DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								//this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								//delete ship;
+								break;
+							}
+						}
 						// Found complete horizontal ship 
-					if (i == ship->size)
-					{
-						// If success!
-						if (checkAdjacentShips(*ship)) {
-							if (IS_PLAYER_A(ship->charSymbol)) {
-								shipListA.push_back(ship);
+						if (i == ship->size)
+						{
+							// If success!
+							if (checkAdjacentShips(*ship)) {
+								if (IS_PLAYER_A(ship->charSymbol)) {
+									shipListA.push_back(ship);
+								}
+								else {
+									shipListB.push_back(ship);
+								}
+								// Ship found go to next iteration
+								continue;
 							}
-							else {
-								shipListB.push_back(ship);
-							}
+
 						}
 
+						// Try depth
+						for (i = 1; i < ship->size; i++)
+						{
+							if (d + i >= depth()) {
+								DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								delete ship;
+								// Finished row, go to next row
+								break;
+							}
+							nextPart = parsedBoard[x][y][d + i];
+
+							//Correct part
+							if (nextPart == ship->charSymbol) {
+								ship->pointList[i] = Point(x, y, d + i);
+								//continue;
+							}
+							// Wrong Part
+							else
+							{
+								DEBUG_PRINT("Ship %c too small\n", ship->charSymbol);
+								this->addErrorMsg(ship->msgWrongSizeIdx, ship->msgWrongSize);
+								delete ship;
+								break;
+							}
+						}
+						// Found complete horizontal ship 
+						if (i == ship->size)
+						{
+							// If success!
+							if (checkAdjacentShips(*ship)) {
+								if (IS_PLAYER_A(ship->charSymbol)) {
+									shipListA.push_back(ship);
+								}
+								else {
+									shipListB.push_back(ship);
+								}
+								// Ship found go to next iteration
+								continue;
+							}
+
+						}
 					}
-					
 				}
 			}
 		}
 	}
-
 	if (shipListA.size() > NUM_OF_SHIPS_PER_PLAYER) {
 		this->addErrorMsg(MSG_MANY_SHIPS_A_IDX, MSG_MANY_SHIPS_A);
 	}
@@ -274,7 +421,7 @@ status_t const Board::isBoardValid(char **parsedBoard)
 bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 {
 	bool ret = true;
-	char c = board[surroundingPoint.x][surroundingPoint.y];
+	char c = board[surroundingPoint.row][surroundingPoint.col][surroundingPoint.depth];
 	if (c != ' ') {
 		// If surrounding point is same type of ship, and is not part of this ship - wrong size error
 		if (c == ship.charSymbol && !IS_SHIP_IN_POINT_LIST(ship, surroundingPoint)) {
@@ -308,17 +455,23 @@ bool Board::checkAdjacentShips(const Ship &ship)
 		shipPoint = ship.pointList[i];
 
 		// Check surrounding of shipPoint that is not part of the ship
-		if ((int)shipPoint.x + 1 < BOARD_SIZE) {
-			if (!checkSurroundingPoint(ship, Point(shipPoint.x + 1, shipPoint.y))) ret = false;
+		if ((int)shipPoint.row + 1 < rows()) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row + 1, shipPoint.col, shipPoint.depth))) ret = false;
 		}
-		if ((int)shipPoint.x - 1 >= 0) {
-			if (!checkSurroundingPoint(ship, Point(shipPoint.x - 1, shipPoint.y))) ret = false;
+		if ((int)shipPoint.row - 1 >= 0) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row - 1, shipPoint.col, shipPoint.depth))) ret = false;
 		}
-		if ((int)shipPoint.y + 1 < BOARD_SIZE) {
-			if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y + 1))) ret = false;
+		if ((int)shipPoint.col + 1 < cols()) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row, shipPoint.col + 1, shipPoint.depth))) ret = false;
 		}
-		if ((int)shipPoint.y - 1 >= 0) {
-			if (!checkSurroundingPoint(ship, Point(shipPoint.x, shipPoint.y - 1))) ret = false;
+		if ((int)shipPoint.col - 1 >= 0) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row, shipPoint.col - 1, shipPoint.depth))) ret = false;
+		}
+		if ((int)shipPoint.depth + 1 < depth()) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row, shipPoint.col, shipPoint.depth + 1))) ret = false;
+		}
+		if ((int)shipPoint.depth - 1 >= 0) {
+			if (!checkSurroundingPoint(ship, Point(shipPoint.row, shipPoint.col, shipPoint.depth - 1))) ret = false;
 		}
 		
 	}
@@ -329,7 +482,7 @@ bool Board::checkAdjacentShips(const Ship &ship)
 
 void Board::setCharOnBoard(Point p, char val)
 {
-	board[p.x][p.y] = val;
+	board[p.row][p.col][p.depth] = val;
 }
 
 //TODO: Also treats a plain "\r" as an endline. Must be changed.
@@ -368,10 +521,4 @@ std::istream& Board::safeGetline(std::istream& is, std::string& t)
 	}
 }
 
-
-
-char Board::getCharFromBoard(int x, int y) const
-{
-	return this->board[x][y];
-}
 

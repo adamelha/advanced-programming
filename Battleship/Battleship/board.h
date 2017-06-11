@@ -7,7 +7,7 @@
 #include "ships.h"
 #include <ctype.h>
 #include <vector>
-
+#include "IBattleshipGameAlgo.h"
 #include "macros.h"
 
 
@@ -16,22 +16,29 @@
 #define BOARD_DIMENSIONS_INVALID		"Board dimensions are invalid\n"
 #define BOARD_DIMENSIONS_INVALID_IDX	0
 
+#define BOARD_DIMENSIONS_EXCEPTIONS		1
+
+#define BOARD_NUMBER_OF_DIMENSIONS		3
+#define BOARD_ROWS	10
+#define BOARD_COLS	10
+#define BOARD_DEPTH	10
 using namespace std;
 
+struct BoardBadDimensions {};
 
 /**** Board Class *****/
 
-class Board : public ErrorClass {
+class Board : public ErrorClass, public BoardData {
 public:
-	status_t parse();
-	//string getFilesPath();
-	
-	char getCharFromBoard(int x, int y) const;
+	status_t parse();	
 	Board(string boardStringFromFile);
-	
+	char charAt(Coordinate c) const;
+	 
+	Board(int rows, int cols, int depth);
+	~Board();
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;
-	char *board[BOARD_SIZE];
+	char ***board;
 
 private:
 	char _board[BOARD_SIZE][BOARD_SIZE];
@@ -39,6 +46,7 @@ private:
 	void setCharOnBoard(Point p, char val);
 	bool checkAdjacentShips(const Ship &ship);
 	bool checkSurroundingPoint(const Ship &ship, Point surroundingPoint);
-	status_t const isBoardValid(char **parsedBoard);
+	status_t const isBoardValid(char ***parsedBoard);
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
+	bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB);
 };

@@ -4,18 +4,21 @@
 
 class RandPool {
 public:
-	RandPool(char **myBoard);
-	//~RandPool();
+	RandPool(char ***myBoard, int rows, int cols, int depth);
+	~RandPool();
 	Point getNextRandPoint();
 	void removePointFromPool(Point pointToRemove);
 private:
-	char **myBoard;
-	Point potentialMoves[BOARD_SIZE * BOARD_SIZE];
-	int potentialMovesSize;
-	Point *refTabel[BOARD_SIZE][BOARD_SIZE];
-	bool isPointLegal[BOARD_SIZE][BOARD_SIZE];
+	char ***myBoard;
+
+	// 1-dimension array containing potential moves
+	Point *potentialMoves;
+	int potentialMovesSize, rows, cols, depth;
+	Point ****refTabel;
+	bool ***isPointLegal;
 	void initIsPointLegal();
-	void changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y);
-	bool isPointPartOfShip(int x, int y);
+	void changeEnvalopPointsToFalse(bool ***arr, Point p);
+	bool isPointPartOfShip(Point p);
+
 };
 

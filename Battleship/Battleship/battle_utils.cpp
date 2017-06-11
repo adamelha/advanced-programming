@@ -11,3 +11,4 @@ int isBelongToBoard(const char c)
 		return NO_SQUARE;
 	}
 }
+

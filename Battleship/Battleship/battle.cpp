@@ -16,13 +16,8 @@
 
 
 #define ALGO_INIT_FAILED			"Cannot load dll: " << fullFileName << endl
-#define WRONG_PATH_IDX			1
 
 #define NUM_OF_DLL_ERR_MSGS			2
-
-
-
-// split,processLine,loadFromAttackFile methods are from Tirgul 3 , with some minor changes
 
 
 
@@ -31,56 +26,74 @@ void Battle::setWhosTurn(int turn)
 	this->whosTurn = turn;
 }
 
-void Battle::setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo * algo)
+//void Battle::setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo * algo)
+void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo)
 {
-	algo->setBoard(player, board, numRows, numCols);
-
+	algo->setPlayer(player);
+	algo->setBoard(board);
+	
 	// Count number of squares for the player. TODO: do more efficiently?
 	if (player)					//set Board to Player B
 	{
-		for (int i = 0; i < numRows; i++)
+		for (int x = 0; x < board.rows(); x++)
 		{
-			for (int j = 0; j < numCols; j++)
+			for (int y = 0; y < board.cols(); y++)
 			{
-				if (isBelongToBoard(board[i][j]) == B_SQUARE)        
+				for (int z = 0; z < board.depth(); z++)
 				{
-					numOfSquareB += 1;
+					if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == B_SQUARE)
+					{
+						numOfSquareB += 1;
+					}
 				}
+				
 			}
 		}
 	}
 	
 	else                                //set Board to Player A
 	{
-		for (int i = 0; i < numRows; i++)
+		for (int x = 0; x < board.rows(); x++)
 		{
-			for (int j = 0; j < numCols; j++)
+			for (int y = 0; y < board.cols(); y++)
 			{
-				if (isBelongToBoard(board[i][j]) == A_SQUARE)
+				for (int z = 0; z < board.depth(); z++)
 				{
-					numOfSquareA += 1;
+					if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == A_SQUARE)
+					{
+						numOfSquareA += 1;
+					}
 				}
+				
 			}
 		}
 	}
-
+	
 }
 
-std::pair<int, int> Battle::attack(IBattleshipGameAlgo &algo)
+Coordinate Battle::attack(IBattleshipGameAlgo &algo)
 {
-	std::pair<int, int> attackPair;
-	attackPair = algo.attack();
-	attackPair.first -= 1;
-	attackPair.second -= 1;
 
-	return attackPair;
+	Coordinate attackPoint = algo.attack();
+
+	attackPoint.row -= 1;
+	attackPoint.col -= 1;
+	attackPoint.depth -= 1;
+
+	return attackPoint;
 }
 
 // Notify both algos on result of attack
-void Battle::notifyOnAttackResult(int player, int row, int col, AttackResult result)
+void Battle::notifyOnAttackResult(int player, Coordinate p, AttackResult result)
 {
-	algoA->notifyOnAttackResult(player, row + 1, col + 1, result);
-	algoB->notifyOnAttackResult(player, row + 1, col + 1, result);
+
+	// Update point according to interface
+	p.row += 1;
+	p.col += 1;
+	p.depth += 1;
+
+	algoA->notifyOnAttackResult(player, p, result);
+	algoB->notifyOnAttackResult(player, p, result);
 }
 
 bool Battle::init(const std::string & path)
@@ -134,24 +147,23 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 		}
 
 		dllList.push_back(hDll);
-		//players.push_back(getAlgoFunc());
 
 		//called once to notify player on his board
 		if (playerNumber == PLAYER_A)
 		{
 			algoA = getAlgoFunc();
-			setBoard(playerNumber, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoA);
-			init_failed = !algoA->init(path); // init A_Board
+			setBoard(playerNumber, board, algoA);
+			//init_failed = !algoA->init(path); // init A_Board
 		}
 		else
 		{
 			algoB = getAlgoFunc();
-			setBoard(playerNumber, (const char **)board.board, BOARD_SIZE, BOARD_SIZE, algoB);
-			init_failed = !algoB->init(path);       // init B_Board
+			setBoard(playerNumber, board, algoB);
+			//init_failed = !algoB->init(path);       // init B_Board
 		}
 
 	
-
+		init_failed = 0;
 		//call the players init function
 		if (init_failed) {
 			errmsgs.addErrorMsg(ALGO_INIT_FAIL_IDX, ALGO_INIT_FAIL_MSG);
@@ -175,23 +187,8 @@ int Battle::War(const string &path, const Board &board)
 
 	
 	//load the players algorithms
-	if (!loadDllFiles(path, board ) )
+	if (!loadDllFiles(path, board) )
 		return false;
-
-	//set each player board
-/*	setWhosTurn(0);						 //   set turn A
-	setBoard(this->whosTurn, (const char **)board.board, 10, 10, algoA);
-	setWhosTurn(1);						//    set turn B
-	setBoard(this->whosTurn, (const char **)board.board, 10, 10, algoB);
-	
-	// Init 
-	algoA.init(path);
-	algoB.init(path);
-
-*/
-	//set players attack vectors
-	//loadFromAttackFile(fileParser.getAttackAFileName(), 0);
-	//loadFromAttackFile(fileParser.getAttackBFileName(), 1);
 
 	// Deep copy ship lists
 	vector<Ship*> shipListA = deepCopyShipPointerVector(board.shipListA);
@@ -204,23 +201,25 @@ int Battle::War(const string &path, const Board &board)
 	bool twoPlayersOutOfPlays = false, alreadyGotHit = false, HitCorrectTarget = false, playerAOutOfPlays = false, playerBOutOfPlays = false;
 	int pointsReceived = 0;
 	int whoGotHit;
-	int x = -1, y = -1;
-	std::pair<int, int> attackPair;
+	int x = -1, y = -1, z = -1;
+
+	int roundCounter = 0;
+	Point attackPoint;
 	AttackResult attackResult;
 
-	display.printBoard(board);
 	
-	// Make all prints after board 
-	display.gotoxy(0, BOARD_DISPLAY_OFFSET_Y + BOARD_SIZE + 2);
+	// Main loop
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
-	{		
+	{	
+		roundCounter++;
 		if (this->whosTurn)			//player B
 		{
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
-			attackPair = attack(*algoB);
+			attackPoint = attack(*algoB);
+
 			// If player B out of moves
-			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
+			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
 				playerBOutOfPlays = true;
 				setWhosTurn((this->whosTurn + 1) % 2);
 				twoPlayersOutOfPlays = (playerAOutOfPlays && playerBOutOfPlays);
@@ -228,19 +227,21 @@ int Battle::War(const string &path, const Board &board)
 			
 			else
 			{
-				x = attackPair.first;
-				y = attackPair.second;
+				x = attackPoint.row;
+				y = attackPoint.col;
+				z = attackPoint.depth;
 				
-				DEBUG_PRINT("B shot A at <%d,%d>\n", x, y);
-				whoGotHit = isBelongToBoard(board.board[x][y]);
+				
+				DEBUG_PRINT("B shot A at <%d,%d,%d>\n", x, y, z);
+				whoGotHit = isBelongToBoard(board.board[x][y][z]);
 
 				if (whoGotHit == NO_SQUARE)                // miss
 				{
 					HitCorrectTarget = false;
 					attackResult = AttackResult::Miss;
-					if (!IS_SQUARE_DOWN(board.board[x][y]))
+					if (!IS_SQUARE_DOWN(board.board[x][y][z]))
 					{
-						board.board[x][y] = SQUARE_BOMBED_MISS_SYMBOL;
+						board.board[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
 					}
 					
 				}
@@ -248,18 +249,18 @@ int Battle::War(const string &path, const Board &board)
 				{
 					attackResult = AttackResult::Miss;
 
-					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y]));
+					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
 					if (!alreadyGotHit)
 					{
 
-						pointsReceived = shootShip(Point(x, y), shipListA);
+						pointsReceived = shootShip(Point(x, y, z), shipListA);
 						pointsB += pointsReceived;
-						DEBUG_PRINT("B shot A at point <%d,%d>. Now B has %d points ", x, y, pointsB);
-						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+						DEBUG_PRINT("B shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
+						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
 
 						attackResult = AttackResult::Hit;
 						this->numOfSquareA -= 1;
-						board.board[x][y] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+						board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 						HitCorrectTarget = true;
 
 						// If ship sank
@@ -275,21 +276,21 @@ int Battle::War(const string &path, const Board &board)
 
 				else							//B Hit himself!! // TODO: notify a hit or a miss? notifying as a miss for now
 				{
-					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y]));
+					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
 					if (!alreadyGotHit)
 					{
 						
 
-						pointsReceived = shootShip(Point(x, y), shipListB);
+						pointsReceived = shootShip(Point(x, y, z), shipListB);
 						pointsA += pointsReceived;
 
-						DEBUG_PRINT("B shot B at point <%d,%d>. Now A has %d points ", x, y, pointsA);
-						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+						DEBUG_PRINT("B shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
+						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
 
 						// Notify as miss because did not hit correct ship 
 						attackResult = AttackResult::Miss;
 						this->numOfSquareB -= 1;
-						board.board[x][y] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+						board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 						HitCorrectTarget = false;
 
 						
@@ -301,7 +302,7 @@ int Battle::War(const string &path, const Board &board)
 					}
 				}
 
-				notifyOnAttackResult(PLAYER_B, x, y, attackResult);
+				notifyOnAttackResult(PLAYER_B, attackPoint, attackResult);
 				//if ( (!playerAOutOfPlays && !HitCorrectTarget )|| alreadyGotHit)
 				if (!playerAOutOfPlays && attackResult == AttackResult::Miss)
 					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale (to player A)
@@ -312,10 +313,10 @@ int Battle::War(const string &path, const Board &board)
 
 		else                       //player A
 		{
-			attackPair = attack(*algoA);
+			attackPoint = attack(*algoA);
 			
 			// If player B out of moves
-			if (attackPair.first == BATTLE_OUT_OF_MOVES) {
+			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
 				playerAOutOfPlays = true;
 				setWhosTurn((this->whosTurn + 1) % 2);
 				twoPlayersOutOfPlays = (playerAOutOfPlays && playerBOutOfPlays);
@@ -324,36 +325,37 @@ int Battle::War(const string &path, const Board &board)
 			else
 			{
 
-			x = attackPair.first;
-			y = attackPair.second;
-			
-			DEBUG_PRINT("A shot B at <%d,%d>\n", x, y);
-			whoGotHit = isBelongToBoard(board.board[x][y]);
+			x = attackPoint.row;
+			y = attackPoint.col;
+			z = attackPoint.depth;
+
+			DEBUG_PRINT("A shot B at <%d,%d,%d>\n", x, y, z);
+			whoGotHit = isBelongToBoard(board.board[x][y][z]);
 			if (whoGotHit == NO_SQUARE )                // miss
 			{
 				HitCorrectTarget = false;
 				attackResult = AttackResult::Miss;
-				if (!IS_SQUARE_DOWN(board.board[x][y]))
+				if (!IS_SQUARE_DOWN(board.board[x][y][z]))
 				{
-					board.board[x][y] = SQUARE_BOMBED_MISS_SYMBOL;
+					board.board[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
 				}
 			}
 			else if (whoGotHit == B_SQUARE)		  // player A Hit player B
 			{
 				attackResult = AttackResult::Hit;
-				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y]));
+				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
 
 				if (!alreadyGotHit)
 				{
 					
-					pointsReceived = shootShip(Point(x, y), shipListB);
+					pointsReceived = shootShip(Point(x, y, z), shipListB);
 					pointsA += pointsReceived;
-					DEBUG_PRINT("A shot B at point <%d,%d>. Now A has %d points ", x, y, pointsA);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+					DEBUG_PRINT("A shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
+					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
 
 					// Need to notify
 					this->numOfSquareB -= 1;
-					board.board[x][y] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+					board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 				}
 
 				// If ship sank
@@ -367,20 +369,20 @@ int Battle::War(const string &path, const Board &board)
 			}
 			else               //A Hit himself!!
 			{
-				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y]));
+				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
 				if (!alreadyGotHit)
 				{
 					// If ship sank - notify as miss because did not hit correct ship 
 					attackResult = AttackResult::Miss;
-					pointsReceived = shootShip(Point(x, y), shipListA);
+					pointsReceived = shootShip(Point(x, y, z), shipListA);
 					pointsB += pointsReceived;
 
-					DEBUG_PRINT("A shot A at point <%d,%d>. Now B has %d points ", x, y, pointsB);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y]);
+					DEBUG_PRINT("A shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
+					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
 
 					this->numOfSquareA -= 1;
 
-					board.board[x][y] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
+					board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
 					HitCorrectTarget = false;
 					
 					if (pointsReceived > 0)
@@ -391,8 +393,7 @@ int Battle::War(const string &path, const Board &board)
 				}
 			}
 
-		
-			notifyOnAttackResult(PLAYER_A, x, y, attackResult);
+			notifyOnAttackResult(PLAYER_A, attackPoint, attackResult);
 			//if ( (!playerBOutOfPlays && !HitCorrectTarget ) || alreadyGotHit)
 			if (!playerBOutOfPlays && attackResult == AttackResult::Miss)
 				setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
@@ -402,8 +403,6 @@ int Battle::War(const string &path, const Board &board)
 		    }
 	    }
 
-		// Update board
-		display.updateSquare(x, y, board.board[x][y]);
 	}
 	
 	
@@ -421,6 +420,7 @@ int Battle::War(const string &path, const Board &board)
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
 	std::cout << "Player B: " << to_string(pointsB) << std::endl;
 
+	DEBUG_PRINT("Game took %d rounds to complete\n", roundCounter);
 	
 
 	// Delete cloned ship lists

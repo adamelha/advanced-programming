@@ -10,7 +10,6 @@ status_t CmdParser::parse()
 {
 	status_t status = STATUS_OK;
 	this->filesPath = "";
-	//ptrdiff_t idx;      Unused variable
 	vector<int> usedIndexList;
 	vector<string> cmdList;
 

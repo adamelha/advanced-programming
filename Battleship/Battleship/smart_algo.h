@@ -1,10 +1,19 @@
 #pragma once
 
-#include "state.h";
+#include "state.h"
 #include "macros.h"
 #include "battle_utils.h"
 #include "rand_pool.h"
 #include "ships.h"
+
+#define UP_POINT	(Point(0, 1, 0))
+#define DOWN_POINT	(Point(0, -1, 0))
+#define RIGHT_POINT	(Point(1, 0, 0))
+#define LEFT_POINT	(Point(-1, 0, 0))
+#define IN_POINT	(Point(0, 0, 1))
+#define OUT_POINT	(Point(0, 0, -1))
+#define DIRECTIONS_FINAL_INDEX	(5)
+
 class SmartAlgo : public IBattleshipGameAlgo
 {
 public:
@@ -14,12 +23,14 @@ public:
 	virtual Point getNextPotentialPoint();
 	virtual  Point * potentialLegalMoves();
 	int getPotentialMovesSize();
-	void setBoard(int player, const char** board, int numRows, int numCols) override;
-	virtual bool init(const std::string& path) override; //TBD
-	std::pair<int, int> attack() override; // ask player for his move
-	virtual void notifyOnAttackResult(int player, int row, int col, AttackResult result) override;
+	void setPlayer(int player);
+	void setBoard(const BoardData & board);
+	//virtual bool init(const std::string& path) override; //TBD
+	Coordinate attack() override; // ask player for his move
+	virtual void notifyOnAttackResult(int player, Coordinate move, AttackResult result) override;
 	void initPotentialMoves();
-	char *board[BOARD_SIZE];
+	//char *board[BOARD_SIZE];
+	char ***board;
 	//	Point * getPotentialMoves();
 
 private:
@@ -39,14 +50,16 @@ private:
 
 
 	void initIsPointLegal();
-	bool isPointPartOfShip(int x, int y);
+	bool isPointPartOfShip(Point p);
 	void changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y);
 	player_is lastPlayerFormNotifyed = player_A;
 	Point lastPointFormNotifyed;
 	int player;
-	Point directions[4];
+	Point directions[DIRECTIONS_FINAL_INDEX + 1];
 	int directionsIndex;
 	int dirState2Points;
+	void setBoard(int rows, int cols, int depth);
+	int rows, cols, depth;
 	//void initPotentialMovesSize();
 	//void initPotentialMoves(const vector<Ship*>& shipList);
 	//void initIsPointLegal(const vector<Ship*> &shipList);

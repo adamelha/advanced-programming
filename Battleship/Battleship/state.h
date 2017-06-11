@@ -6,11 +6,3 @@
 #include "battle.h"
 #include "macros.h"
 
-class State 
-{
-public:
-	Board boardKnown;
-	Point prevPoint;
-	virtual Point getNextPotentialPoint()  = 0;
-	virtual  Point * potentialLegalMoves() = 0;
-};

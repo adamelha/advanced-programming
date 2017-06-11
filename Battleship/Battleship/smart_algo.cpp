@@ -2,46 +2,32 @@
 #include "macros.h"
 #include "ships.h"
 #include <cmath>
-
-#define isPointOnBoard(i , j)  ( i < BOARD_SIZE && i > -1 && j < BOARD_SIZE && j > -1 )
-
-#define UP_POINT	(Point(0, 1))
-#define DOWN_POINT	(Point(0, -1))
-#define RIGHT_POINT	(Point(1, 0))
-#define LEFT_POINT	(Point(-1, 0))
+#include "battle_utils.h"
 
 
 
 SmartAlgo::SmartAlgo() : randPool(nullptr), randPoolTemp(), currentAttackIndex(0), directionsIndex(0), dirState2Points(0)
 {
+	
+	
 	// Init board to be array of char pointers, each pointing to a row in _board matrix (avoids dynamic allocation)
-
-	for (size_t i = 0; i < BOARD_SIZE; i++)
-	{
-		board[i] = &(_board[i][0]);
-	}
+	// Now done in setBoard()
 
 	// init directions
 	directions[0] = UP_POINT;
 	directions[1] = DOWN_POINT;
 	directions[2] = RIGHT_POINT;
 	directions[3] = LEFT_POINT;
-
+	directions[4] = IN_POINT;
+	directions[5] = OUT_POINT;
 }
 
 SmartAlgo::~SmartAlgo()
 {
 	delete randPool;
+	// TODO: must free this->board
 }
 
-
-// Gal, here you must call the initializer! I don't think you can use ship list as an argument.
-// Must create it here!
-bool SmartAlgo::init(const std::string& path)
-{
-	randPool = new RandPool(board);
-	return true;
-}
 
 Point SmartAlgo::getNextPotentialPoint()
 {
@@ -58,9 +44,18 @@ int SmartAlgo::getPotentialMovesSize()
 	return potentialMovesSize;
 }
 
-void SmartAlgo::setBoard(int player, const char ** board, int numRows, int numCols)
+void SmartAlgo::setPlayer(int player)
+{
+	this->player = player;
+}
+
+void SmartAlgo::setBoard(const BoardData& board)
 {
 	squareType_e sqaretTypeIs;
+
+	// Allocate local board
+	//this->board = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
+
 	if (player)	//set Board to Player B
 	{
 		sqaretTypeIs = B_SQUARE;
@@ -70,52 +65,71 @@ void SmartAlgo::setBoard(int player, const char ** board, int numRows, int numCo
 		sqaretTypeIs = A_SQUARE;
 	}
 
+	rows = board.rows();
+	cols = board.cols();
+	depth = board.depth();
+
+	// Make allocations for 3D array
+	setBoard(rows, cols, depth);
+
 	this->player = player;
-	for (int x = 0; x < numRows; x++)
+	for (int x = 0; x < board.rows(); x++)
 	{
-		for (int y = 0; y < numCols; y++)
+		for (int y = 0; y < board.cols(); y++)
 		{
-			if (isBelongToBoard(board[x][y]) == sqaretTypeIs)
+			for (int z = 0; z < board.depth(); z++)
 			{
-				this->board[x][y] = board[x][y];
-				this->numOfSqares += 1;
+				if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == sqaretTypeIs)
+				{
+					this->board[x][y][z] = board.charAt(Coordinate(x, y, z));
+					this->numOfSqares += 1;
+				}
+				else
+					this->board[x][y][z] = ' ';       // initialize board to 
 			}
-			else
-				this->board[x][y] = ' ';       // initialize board to 
 		}
 	}
 
+	// Set RandPool data structure
+	randPool = new RandPool(this->board, rows, cols, depth);
+}
 
+void SmartAlgo::setBoard(int rows, int cols, int depth)
+{
+	board = alloc3dArray<char>(rows, cols, depth);
 }
 
 Point SmartAlgo::getLowestPointIncurrentAttackArr()
 {
-	int minx, miny;
-	minx = currentAttackArr[0].x;
-	miny = currentAttackArr[0].y;
+	int minRow, minCol, minDepth;
+	minRow = currentAttackArr[0].row;
+	minCol = currentAttackArr[0].col;
+	minDepth = currentAttackArr[0].depth;
 
 	for (size_t i = 1; i < currentAttackIndex; i++)
 	{
-		minx = min(minx, currentAttackArr[i].x);
-		miny = min(miny, currentAttackArr[i].y);
+		minRow = min(minRow, currentAttackArr[i].row);
+		minCol = min(minCol, currentAttackArr[i].col);
+		minDepth = min(minDepth, currentAttackArr[i].depth);
 	}
 
-	return Point(minx, miny);
+	return Point(minRow, minCol, minDepth);
 }
 
 Point SmartAlgo::getHighestPointIncurrentAttackArr()
 {
-	int maxx, maxy;
-	maxx = currentAttackArr[0].x;
-	maxy = currentAttackArr[0].y;
-
+	int maxRow, maxCol, maxDepth;
+	maxRow = currentAttackArr[0].row;
+	maxCol = currentAttackArr[0].col;
+	maxDepth = currentAttackArr[0].depth;
 	for (size_t i = 1; i < currentAttackIndex; i++)
 	{
-		maxx = max(maxx, currentAttackArr[i].x);
-		maxy = max(maxy, currentAttackArr[i].y);
+		maxRow = max(maxRow, currentAttackArr[i].row);
+		maxCol = max(maxCol, currentAttackArr[i].col);
+		maxDepth = max(maxDepth, currentAttackArr[i].depth);
 	}
 
-	return Point(maxx, maxy);
+	return Point(maxRow, maxCol, maxDepth);
 }
 
 
@@ -126,17 +140,22 @@ Point SmartAlgo::nextPointFrom2PointsDirPlus()
 	Point maxPoint = getHighestPointIncurrentAttackArr();
 
 	// Xs are different
-	if (currentAttackArr[currentAttackIndex - 1].x != currentAttackArr[currentAttackIndex - 2].x)
+	if (currentAttackArr[currentAttackIndex - 1].row != currentAttackArr[currentAttackIndex - 2].row)
 	{
-		return Point(maxPoint.x + 1, maxPoint.y);
+		return Point(maxPoint.row + 1, maxPoint.col, maxPoint.depth);
 	}
 
 	// Ys are different
+	else if(currentAttackArr[currentAttackIndex - 1].col != currentAttackArr[currentAttackIndex - 2].col)
+	{
+		return Point(maxPoint.row, maxPoint.col + 1, maxPoint.depth);
+	}
+
+	// Zs are different
 	else
 	{
-		return Point(maxPoint.x, maxPoint.y + 1);
+		return Point(maxPoint.row, maxPoint.col, maxPoint.depth + 1);
 	}
-	
 }
 
 Point SmartAlgo::nextPointFrom2PointsDirMinus()
@@ -146,48 +165,62 @@ Point SmartAlgo::nextPointFrom2PointsDirMinus()
 	Point minPoint = getLowestPointIncurrentAttackArr();
 
 	// Xs are different
-	if (currentAttackArr[currentAttackIndex - 1].x != currentAttackArr[currentAttackIndex - 2].x)
+	if (currentAttackArr[currentAttackIndex - 1].row != currentAttackArr[currentAttackIndex - 2].row)
 	{
-		return Point(minPoint.x - 1, minPoint.y);
+		return Point(minPoint.row - 1, minPoint.col, minPoint.depth);
 	}
 
 	// Ys are different
+	if (currentAttackArr[currentAttackIndex - 1].col != currentAttackArr[currentAttackIndex - 2].col)
+	{
+		return Point(minPoint.row, minPoint.col - 1, minPoint.depth);
+	}
+
+	// Zs are different
 	else
 	{
-		return Point(minPoint.x, minPoint.y - 1);
+		return Point(minPoint.row, minPoint.col, minPoint.depth - 1);
 	}
 }
 
 
-std::pair<int, int> SmartAlgo::attack()
+Coordinate SmartAlgo::attack()
 {
 	Point attackPoint;
-	Point outOfMoves = Point(ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES);
+	Point outOfMoves = Point(ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES);
 	
 	// If not in middle of attack, attack at random
 	if (currentAttackIndex == 0)
 	{
 		attackPoint = randPool->getNextRandPoint();
-
+		/*DEBUG START*/
+		if (attackPoint.row == 3 && attackPoint.col == 0 && attackPoint.depth == 3)
+		{
+			attackPoint.row = attackPoint.row;
+		}
+		/*DEBUG END*/
 	}
+	
 	
 	// If found first part of ship but not rest, guess near
 	else if(currentAttackIndex == 1)
 	{
-		attackPoint = Point(currentAttackArr[0].x + directions[directionsIndex].x,
-			currentAttackArr[0].y + directions[directionsIndex].y);
+		attackPoint = Point(currentAttackArr[0].row + directions[directionsIndex].row,
+			currentAttackArr[0].col + directions[directionsIndex].col,
+			currentAttackArr[0].depth + directions[directionsIndex].depth);
 		
 		// Make sure ipint on board if not iterate directions[] until it is
-		while (!isPointOnBoard(attackPoint.x, attackPoint.y))
+		while (!isPointOnBoard(attackPoint.row, attackPoint.col, attackPoint.depth))
 		{
 			directionsIndex++;
-			attackPoint = Point(currentAttackArr[0].x + directions[directionsIndex].x,
-				currentAttackArr[0].y + directions[directionsIndex].y);
+			attackPoint = Point(currentAttackArr[0].row + directions[directionsIndex].row,
+				currentAttackArr[0].col + directions[directionsIndex].col,
+				currentAttackArr[0].depth + directions[directionsIndex].depth);
 		}
 
 		// Should not happen
-		if (directionsIndex < 3) {
-			directionsIndex++;
+		if (directionsIndex < DIRECTIONS_FINAL_INDEX) {
+			//directionsIndex++;
 		}
 
 		//Remove attack point from randPool
@@ -201,7 +234,7 @@ std::pair<int, int> SmartAlgo::attack()
 		if (dirState2Points == 0)
 		{
 			attackPoint = nextPointFrom2PointsDirPlus();
-			if (!isPointOnBoard(attackPoint.x, attackPoint.y))
+			if (!isPointOnBoard(attackPoint.row, attackPoint.col, attackPoint.depth))
 			{
 				dirState2Points++;
 				attackPoint = nextPointFrom2PointsDirMinus();
@@ -210,6 +243,11 @@ std::pair<int, int> SmartAlgo::attack()
 		else
 		{
 			attackPoint = nextPointFrom2PointsDirMinus();
+			if (!isPointOnBoard(attackPoint.row, attackPoint.col, attackPoint.depth))
+			{
+				dirState2Points++;
+				attackPoint = nextPointFrom2PointsDirPlus();
+			}
 		}
 
 		//Remove attack point from randPool
@@ -218,19 +256,20 @@ std::pair<int, int> SmartAlgo::attack()
 
 	
 
-	return std::pair<int, int>(attackPoint.x + 1, attackPoint.y + 1);
+	return Coordinate(attackPoint.row + 1, attackPoint.col + 1, attackPoint.depth + 1);
 }
 
-void SmartAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult result)
+void SmartAlgo::notifyOnAttackResult(int player, Coordinate move, AttackResult result)
 {
-	int adjustedRow = row - 1;
-	int adjustedCol = col -1;
+	int adjustedRow = move.row - 1;
+	int adjustedCol = move.col -1;
+	int adjustedDepth = move.depth - 1;
 
 	// If opponent attacked
 	if (player != this->player)
 	{
 		// Remove points attacked by opponent
-		this->randPool->removePointFromPool(Point(adjustedRow, adjustedCol));
+		this->randPool->removePointFromPool(Point(adjustedRow, adjustedCol, adjustedDepth));
 	}
 
 	// If I am the one who attacked
@@ -246,7 +285,7 @@ void SmartAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult 
 
 		if (result == AttackResult::Hit)
 		{	
-			currentAttackArr[currentAttackIndex] = Point(adjustedRow, adjustedCol);
+			currentAttackArr[currentAttackIndex] = Point(adjustedRow, adjustedCol, adjustedDepth);
 			currentAttackIndex++;	
 		}
 
@@ -255,6 +294,10 @@ void SmartAlgo::notifyOnAttackResult(int player, int row, int col, AttackResult 
 			if (currentAttackIndex > 1)
 			{
 				dirState2Points++;
+			}
+			else if(currentAttackIndex == 1)
+			{
+				directionsIndex++;
 			}
 		}
 	}
