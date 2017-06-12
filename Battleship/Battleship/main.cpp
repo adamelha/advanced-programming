@@ -47,8 +47,8 @@ int main(int argc, char **argv) {
 		}
 
 
-	//Battle battle(display, cmd);
-	//battle.War(filesPath, board);
+	Battle battle(display, cmd);
+	battle.War(filesPath, board);
 
 
 		return EXIT_SUCCESS;

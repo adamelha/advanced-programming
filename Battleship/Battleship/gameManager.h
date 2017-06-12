@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #pragma once
 
 #include "IBattleshipGameAlgo.h"
@@ -68,3 +68,5 @@ private:
 	bool shipSetHorizontally(char** board, bool boolBoard[BOARD_EDGE_LENGTH][BOARD_EDGE_LENGTH], int i, int j, int expectedLength);
 	bool shipSetVertically(char** board, bool boolBoard[BOARD_EDGE_LENGTH][BOARD_EDGE_LENGTH], int i, int j, int expectedLength);
 };
+
+*/

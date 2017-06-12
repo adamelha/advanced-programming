@@ -92,8 +92,8 @@ void Battle::notifyOnAttackResult(int player, Coordinate p, AttackResult result)
 	p.col += 1;
 	p.depth += 1;
 
-	algoA->notifyOnAttackResult(player, p, result);
-	algoB->notifyOnAttackResult(player, p, result);
+	//algoA->notifyOnAttackResult(player, p, result);
+	//algoB->notifyOnAttackResult(player, p, result);
 }
 
 bool Battle::init(const std::string & path)
@@ -147,8 +147,15 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 		}
 
 		dllList.push_back(hDll);
+		//std::vector<IBattleshipGameAlgo *> players;
+		playersList.push_back(getAlgoFunc());
 
 		//called once to notify player on his board
+		/*   
+		
+		//this section of code is no longer relevent, we will manage the 'setboards' and and competitions of diffrent players in 'war' function!!
+
+
 		if (playerNumber == PLAYER_A)
 		{
 			algoA = getAlgoFunc();
@@ -172,6 +179,8 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 		}
 
 		playerNumber+=1;
+		
+		*/
 
 	} while (FindNextFileA(dir, &fileData) && playerNumber < 2); // Notice: Unicode compatible version of FindNextFile
 
@@ -216,7 +225,7 @@ int Battle::War(const string &path, const Board &board)
 		{
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
-			attackPoint = attack(*algoB);
+			//attackPoint = attack(*algoB);
 
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
@@ -313,7 +322,7 @@ int Battle::War(const string &path, const Board &board)
 
 		else                       //player A
 		{
-			attackPoint = attack(*algoA);
+			//attackPoint = attack(*algoA);
 			
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {

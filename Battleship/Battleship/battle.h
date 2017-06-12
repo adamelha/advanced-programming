@@ -27,7 +27,7 @@ public:
 
 private:
 	std::vector<HINSTANCE> dllList;
-	std::vector<IBattleshipGameAlgo> players;
+	std::vector<IBattleshipGameAlgo *> playersList;
 
 	char A_Board[BOARD_SIZE][BOARD_SIZE], B_Board[BOARD_SIZE][BOARD_SIZE];
 	int numOfSquareA = 0, numOfSquareB = 0; 
@@ -35,7 +35,8 @@ private:
 	int whosTurn;
 	void setWhosTurn(int turn);
 	Display &display;
-	IBattleshipGameAlgo *algoA, *algoB;
+	//IBattleshipGameAlgo *algoA, *algoB;
+	
 	uintmax_t delay;
 	bool printBoardActive;
 	bool loadDllFiles(const string& path, const Board &board);
