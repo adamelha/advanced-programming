@@ -4,8 +4,13 @@
 #include "status.h"
 #include "battle.h"
 #include "macros.h"
+#include "thread_manager.h"
+
+// This is temporary - must parse from command line with CmdParser
+#define NUMBER_OF_THREADS	5
 
 using namespace std;
+
 int main(int argc, char **argv) {
 	status_t status;
 
@@ -42,9 +47,10 @@ int main(int argc, char **argv) {
 			return EXIT_FAIL;
 		}
 
-
-	Battle battle(cmd);
-	battle.War(filesPath, board);
+		ThreadManager threadManager(filesPath, board, NUMBER_OF_THREADS);
+		threadManager.run();
+		//Battle battle(cmd);
+		//battle.War(filesPath, board);
 
 
 		return EXIT_SUCCESS;
