@@ -3,11 +3,6 @@
 #include <string> // Actually not required here - but here due to students' request
 
 /*Notice:
-* Usually it is bad practice to have several classes/structs in the same header.
-* Here we use this practice only for simplicity considerations,
-* since we only want to have 1 common file in this excersice.
-* You should avoid from doing so yourself!
-*/
 
 enum class AttackResult
 {
@@ -23,8 +18,7 @@ struct Coordinate
 };
 
 /*This is a wrapper to the Board's Data
-* You should derive from it, make sure you set all protected members in the derived class.
-*/
+// IBattleshipGameAlgo for Ex2 - do not change this class - you should use it as is
 class BoardData
 {
 public:
@@ -57,9 +51,4 @@ public:
 #endif
 
 /* Please Notice:
-* The derived class of IBattleshipGameAlgo allocates a new instance, returns a raw pointer, and IS NOT respoinsible for deleting it
-* The Game Manager MUST take this pointer, and put in in an std::unique_ptr<IBattleshipGameAlgo>.
-* The reason that we don't return a unique_ptr instead, is that it is bad practice to export cpp methods due to their name mangling.
-* When working with shared objects (dlls), the interface must be a C interface.
-*/
 ALGO_API IBattleshipGameAlgo* GetAlgorithm(); // This method must be implemented in each player(algorithm) .cpp file
