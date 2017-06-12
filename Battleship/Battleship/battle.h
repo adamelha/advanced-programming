@@ -9,15 +9,16 @@
 #include <fstream>
 #include <sstream>
 #include "macros.h"
-#include "display.h"
 #include <stdlib.h>
+#include <Windows.h>
 
 #define IS_SQUARE_DOWN(c)				(c == SQUARE_BOMBED_MISS_SYMBOL || c == SQUARE_BOMBED_HIT_SYMBOL)
 
 
 class Battle {
 public:
-	Battle(Display &display, CmdParser cmd) : display(display), delay(cmd.getDelay()){}
+	Battle(CmdParser cmd) : delay(cmd.getDelay()){}
+	Battle() {}
 	void setBoard(int player, const Board &board, IBattleshipGameAlgo * algo);
 	Coordinate attack(IBattleshipGameAlgo &algo); // ask player for his move
 	void notifyOnAttackResult(int player, Coordinate p, AttackResult result);
@@ -34,7 +35,6 @@ private:
 	string filesPath;
 	int whosTurn;
 	void setWhosTurn(int turn);
-	Display &display;
 	//IBattleshipGameAlgo *algoA, *algoB;
 	
 	uintmax_t delay;

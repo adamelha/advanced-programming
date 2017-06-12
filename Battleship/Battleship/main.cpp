@@ -4,7 +4,7 @@
 #include "status.h"
 #include "battle.h"
 #include "macros.h"
-#include "display.h"
+
 using namespace std;
 int main(int argc, char **argv) {
 	status_t status;
@@ -17,10 +17,6 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 
-	Display display;
-	// Set Default text color
-	//display.setTextColor(TEXT_COLOR_DEFAULT);
-	//display.hideCursor();
 	string filesPath = cmd.getFilesPath();
 
 	// Parse files to strings
@@ -47,7 +43,7 @@ int main(int argc, char **argv) {
 		}
 
 
-	Battle battle(display, cmd);
+	Battle battle(cmd);
 	battle.War(filesPath, board);
 
 
