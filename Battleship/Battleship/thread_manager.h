@@ -5,17 +5,17 @@
 #include "board.h"
 #include "status.h"
 #include "IBattleshipGameAlgo.h"
+#include "battle.h"
+#include "battle_utils.h"
 #include <iostream>
 #include <fstream>
 #include <thread>
 #include "macros.h"
 #include <stdlib.h>
 #include <Windows.h>
-#include "board.h"
-#include "status.h"
 #include <atomic>
 #include <vector>
-
+#include <chrono>
 
 
 #define CANNOT_LOAD_DLL_MSG			"Cannot load dll: " + fullFileName + "\n"
@@ -44,8 +44,13 @@ private:
 	void threadGameFunc();
 
 	// Use  std::atomic_fetch_add
-	std::atomic<int> atomicCounter;
+	std::atomic<int> atomicCounter = -1;
 	std::vector<thread> threadList;
 	int numberOfThreads;
 	bool loadDllFiles();
+	typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
+	GetAlgoFuncType getAlgoFunc;
+	//std::vector< std::unique_ptr<GetAlgoFuncType> > algoFuncInstance1;
+	std::vector< pair<int, int> > listOfGames;
+	void creatListOfGames();
 };

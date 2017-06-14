@@ -26,6 +26,8 @@ void Battle::setWhosTurn(int turn)
 	this->whosTurn = turn;
 }
 
+
+
 //void Battle::setBoard(int player, const char** board, int numRows, int numCols, IBattleshipGameAlgo * algo)
 void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo)
 {
@@ -102,6 +104,7 @@ bool Battle::init(const std::string & path)
 }
 
 // Taken from recitation 5
+/*
 bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 	HANDLE dir;
@@ -180,24 +183,28 @@ bool Battle::loadDllFiles(const string& path, const Board &board) {
 
 		playerNumber+=1;
 		
-		*/
+		
 
 	} while (FindNextFileA(dir, &fileData) && playerNumber < 2); // Notice: Unicode compatible version of FindNextFile
+
 
 EXIT:
 	errmsgs.printErrorMsg();
 	return status;
 }
 
+*/
 
-
-int Battle::War(const string &path, const Board &board)
+int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGameAlgo* algoB)
 {	
 
 	
 	//load the players algorithms
-	if (!loadDllFiles(path, board) )
-		return false;
+	//if (!loadDllFiles(path, board) )
+	//	return false;
+
+	setBoard(player_A, board, algoA);  // setBoard to player A
+	setBoard(player_B, board, algoB);	// setBoard to player B
 
 	// Deep copy ship lists
 	vector<Ship*> shipListA = deepCopyShipPointerVector(board.shipListA);
@@ -206,7 +213,7 @@ int Battle::War(const string &path, const Board &board)
 	int pointsB = 0;
 
 	//war!!
-	setWhosTurn(0);						 //   set turn A
+	setWhosTurn(player_A);						 //   set turn A
 	bool twoPlayersOutOfPlays = false, alreadyGotHit = false, HitCorrectTarget = false, playerAOutOfPlays = false, playerBOutOfPlays = false;
 	int pointsReceived = 0;
 	int whoGotHit;
@@ -220,12 +227,13 @@ int Battle::War(const string &path, const Board &board)
 	// Main loop
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
 	{	
+		cout << "gal is the king" << endl;
 		roundCounter++;
 		if (this->whosTurn)			//player B
 		{
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
-			//attackPoint = attack(*algoB);
+			attackPoint = attack(*algoB);
 
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
@@ -322,8 +330,7 @@ int Battle::War(const string &path, const Board &board)
 
 		else                       //player A
 		{
-			//attackPoint = attack(*algoA);
-			
+			attackPoint = attack(*algoA);
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
 				playerAOutOfPlays = true;

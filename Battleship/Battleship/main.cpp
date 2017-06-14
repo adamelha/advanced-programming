@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
 		ThreadManager threadManager(filesPath, board, NUMBER_OF_THREADS);
 		threadManager.run();
-		//Battle battle(cmd);
+		//Battle battle(10);
 		//battle.War(filesPath, board);
 
 

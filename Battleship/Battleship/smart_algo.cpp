@@ -108,6 +108,7 @@ Point SmartAlgo::getLowestPointIncurrentAttackArr()
 
 	for (size_t i = 1; i < currentAttackIndex; i++)
 	{
+		
 		minRow = min(minRow, currentAttackArr[i].row);
 		minCol = min(minCol, currentAttackArr[i].col);
 		minDepth = min(minDepth, currentAttackArr[i].depth);

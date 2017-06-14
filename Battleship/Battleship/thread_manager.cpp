@@ -1,29 +1,36 @@
 #include "thread_manager.h"
-#include "macros.h"
-#include <iostream>
-#include <thread>
-#include <atomic>
-#include <chrono>
+
 
 // Thread that should take one game from the list, instantiate the algorithms and and manage the game
 void ThreadManager::threadGameFunc()
 {
-	int indexOfGame;
-	indexOfGame = atomicCounter.fetch_add(1, std::memory_order_relaxed);
+	while( true )  // as long there are gamesto be played, play
+	{ 
+	int indexOfGame = atomicCounter.fetch_add(1, std::memory_order_relaxed);
+	if (indexOfGame >= listOfGames.size())
+		break;
 
+	IBattleshipGameAlgo * firstPlayer  =  ( (GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].first], "GetAlgorithm") )  () ; 
+	IBattleshipGameAlgo * secondPlayer =   ((GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].second], "GetAlgorithm") ) () ;
+	Battle battle(player_A);
+	battle.War(board, firstPlayer, secondPlayer);
+	}
 	// Print is not thread safe
-	DEBUG_PRINT("%d\n", indexOfGame);
+	cout << "yalla" << endl; 
+	//DEBUG_PRINT("%d\n", indexOfGame);
 }
 
 
 ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numberOfThreads) : path(_path), board(_board), numberOfThreads(_numberOfThreads)
 {
-	threadList.resize(numberOfThreads);
-	 
+	threadList.resize(numberOfThreads); 
 	loadDllFiles();
+	creatListOfGames();
+
 }
 
 // This methods creates and runs the threads that call Battle::war() which will create instances of the 2 algos it's supposed to use
+
 status_t ThreadManager::run()
 {
 
@@ -58,8 +65,8 @@ bool ThreadManager::loadDllFiles()
 	bool init_failed;
 	bool status = true;
 	// define function of the type we expect
-	typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
-	GetAlgoFuncType getAlgoFunc;
+	//typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
+	//GetAlgoFuncType getAlgoFunc;
 
 	ErrorClass errmsgs(NUM_OF_DLL_ERR_MSGS);
 
@@ -137,5 +144,17 @@ bool ThreadManager::loadDllFiles()
 EXIT:
 	errmsgs.printErrorMsg();
 	return status;
+}
+
+void ThreadManager::creatListOfGames()
+{
+	for (int i = 0; i < dllList.size(); i++)
+	{
+		for (int j = 0; j < dllList.size(); j++)
+		{
+			if (i != j)
+				listOfGames.push_back(std::make_pair(i, j));
+		}
+	}
 }
 
