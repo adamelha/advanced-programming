@@ -5,7 +5,17 @@
 
 #ifdef DEBUG
 #include <stdio.h>
-#define DEBUG_PRINT(format, ...)	printf(format, ##__VA_ARGS__)
+#include <mutex>
+#include <thread>
+
+// Mutex for debug printing
+extern std::mutex debugPrintMutex;
+#define DEBUG_PRINT(format, ...) \
+debugPrintMutex.lock(); \
+std::cout << "[Thread " << std::this_thread::get_id() << "]"; \
+printf(format, ##__VA_ARGS__); \
+debugPrintMutex.unlock()
+
 #else
 #define DEBUG_PRINT(format, ...)
 #endif // DEBUG

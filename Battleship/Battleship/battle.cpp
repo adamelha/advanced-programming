@@ -227,7 +227,6 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 	// Main loop
 	while ( this->numOfSquareA > 0 && this->numOfSquareB > 0  && !twoPlayersOutOfPlays)
 	{	
-		cout << "gal is the king" << endl;
 		roundCounter++;
 		if (this->whosTurn)			//player B
 		{

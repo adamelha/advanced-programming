@@ -131,6 +131,7 @@
     <ClCompile Include="battle_utils.cpp" />
     <ClCompile Include="board.cpp" />
     <ClCompile Include="cmd_parser.cpp" />
+    <ClCompile Include="debug_utils.cpp" />
     <ClCompile Include="error_class.cpp" />
     <ClCompile Include="file_parser.cpp" />
     <ClCompile Include="main.cpp" />
