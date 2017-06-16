@@ -131,6 +131,7 @@
     <ClCompile Include="..\Battleship\battle_utils.cpp" />
     <ClCompile Include="..\Battleship\board.cpp" />
     <ClCompile Include="..\Battleship\cmd_parser.cpp" />
+    <ClCompile Include="..\Battleship\debug_utils.cpp" />
     <ClCompile Include="..\Battleship\error_class.cpp" />
     <ClCompile Include="..\Battleship\file_parser.cpp" />
     <ClCompile Include="..\Battleship\rand_pool.cpp" />

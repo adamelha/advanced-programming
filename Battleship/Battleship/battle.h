@@ -18,7 +18,7 @@
 class Battle {
 public:
 	//Battle(Display &display, CmdParser cmd) : display(display), delay(cmd.getDelay()){}
-	Battle(int _whosTurn) : whosTurn(_whosTurn){}
+	Battle(int _whosTurn) : whosTurn(_whosTurn), numOfSquareA(0), numOfSquareB(0) {}
 	void setBoard(int player, const Board &board, IBattleshipGameAlgo * algo);
 	Coordinate attack(IBattleshipGameAlgo &algo); // ask player for his move
 	void notifyOnAttackResult(int player, Coordinate p, AttackResult result);
@@ -31,7 +31,7 @@ private:
 	//std::vector<IBattleshipGameAlgo *> playersList;
 
 	char A_Board[BOARD_SIZE][BOARD_SIZE], B_Board[BOARD_SIZE][BOARD_SIZE];
-	int numOfSquareA = 0, numOfSquareB = 0; 
+	int numOfSquareA, numOfSquareB; 
 	string filesPath;
 	int whosTurn;
 	void setWhosTurn(int turn);
@@ -40,5 +40,6 @@ private:
 	
 	uintmax_t delay;
 	bool printBoardActive;
+	IBattleshipGameAlgo *algoA, *algoB;
 	//bool loadDllFiles(const string& path, const Board &board);
 };

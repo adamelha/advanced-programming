@@ -2,6 +2,7 @@
 #include "macros.h"
 #include "ships.h"
 #include <cmath>
+#include <algorithm>
 #include "battle_utils.h"
 
 

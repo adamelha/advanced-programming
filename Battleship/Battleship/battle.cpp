@@ -94,8 +94,8 @@ void Battle::notifyOnAttackResult(int player, Coordinate p, AttackResult result)
 	p.col += 1;
 	p.depth += 1;
 
-	//algoA->notifyOnAttackResult(player, p, result);
-	//algoB->notifyOnAttackResult(player, p, result);
+	algoA->notifyOnAttackResult(player, p, result);
+	algoB->notifyOnAttackResult(player, p, result);
 }
 
 bool Battle::init(const std::string & path)
@@ -195,16 +195,21 @@ EXIT:
 
 */
 
-int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGameAlgo* algoB)
+int Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattleshipGameAlgo* _algoB)
 {	
 
 	
 	//load the players algorithms
 	//if (!loadDllFiles(path, board) )
 	//	return false;
-
+	algoA = _algoA;
+	algoB = _algoB;
 	setBoard(player_A, board, algoA);  // setBoard to player A
 	setBoard(player_B, board, algoB);	// setBoard to player B
+
+	// Create local copy of board
+	char ***localBoard = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
+	copy3dArray(localBoard, board.board, board.rows(), board.cols(), board.depth());
 
 	// Deep copy ship lists
 	vector<Ship*> shipListA = deepCopyShipPointerVector(board.shipListA);
@@ -249,15 +254,15 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 				
 				
 				DEBUG_PRINT("B shot A at <%d,%d,%d>\n", x, y, z);
-				whoGotHit = isBelongToBoard(board.board[x][y][z]);
+				whoGotHit = isBelongToBoard(localBoard[x][y][z]);
 
 				if (whoGotHit == NO_SQUARE)                // miss
 				{
 					HitCorrectTarget = false;
 					attackResult = AttackResult::Miss;
-					if (!IS_SQUARE_DOWN(board.board[x][y][z]))
+					if (!IS_SQUARE_DOWN(localBoard[x][y][z]))
 					{
-						board.board[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
+						localBoard[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
 					}
 					
 				}
@@ -265,18 +270,18 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 				{
 					attackResult = AttackResult::Miss;
 
-					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
+					alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
 					if (!alreadyGotHit)
 					{
 
 						pointsReceived = shootShip(Point(x, y, z), shipListA);
 						pointsB += pointsReceived;
 						DEBUG_PRINT("B shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
-						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
+						DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
 
 						attackResult = AttackResult::Hit;
 						this->numOfSquareA -= 1;
-						board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+						localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 						HitCorrectTarget = true;
 
 						// If ship sank
@@ -292,7 +297,7 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 
 				else							//B Hit himself!! // TODO: notify a hit or a miss? notifying as a miss for now
 				{
-					alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
+					alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
 					if (!alreadyGotHit)
 					{
 						
@@ -301,12 +306,12 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 						pointsA += pointsReceived;
 
 						DEBUG_PRINT("B shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
-						DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
+						DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
 
 						// Notify as miss because did not hit correct ship 
 						attackResult = AttackResult::Miss;
 						this->numOfSquareB -= 1;
-						board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+						localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 						HitCorrectTarget = false;
 
 						
@@ -345,20 +350,20 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 			z = attackPoint.depth;
 
 			DEBUG_PRINT("A shot B at <%d,%d,%d>\n", x, y, z);
-			whoGotHit = isBelongToBoard(board.board[x][y][z]);
+			whoGotHit = isBelongToBoard(localBoard[x][y][z]);
 			if (whoGotHit == NO_SQUARE )                // miss
 			{
 				HitCorrectTarget = false;
 				attackResult = AttackResult::Miss;
-				if (!IS_SQUARE_DOWN(board.board[x][y][z]))
+				if (!IS_SQUARE_DOWN(localBoard[x][y][z]))
 				{
-					board.board[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
+					localBoard[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
 				}
 			}
 			else if (whoGotHit == B_SQUARE)		  // player A Hit player B
 			{
 				attackResult = AttackResult::Hit;
-				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
+				alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
 
 				if (!alreadyGotHit)
 				{
@@ -366,11 +371,11 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 					pointsReceived = shootShip(Point(x, y, z), shipListB);
 					pointsA += pointsReceived;
 					DEBUG_PRINT("A shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
+					DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
 
 					// Need to notify
 					this->numOfSquareB -= 1;
-					board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+					localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
 				}
 
 				// If ship sank
@@ -384,7 +389,7 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 			}
 			else               //A Hit himself!!
 			{
-				alreadyGotHit = (IS_SQUARE_DOWN(board.board[x][y][z]));
+				alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
 				if (!alreadyGotHit)
 				{
 					// If ship sank - notify as miss because did not hit correct ship 
@@ -393,11 +398,11 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* algoA, IBattleshipGame
 					pointsB += pointsReceived;
 
 					DEBUG_PRINT("A shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
-					DEBUG_PRINT("Ship hit is %c\n", board.board[x][y][z]);
+					DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
 
 					this->numOfSquareA -= 1;
 
-					board.board[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
+					localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
 					HitCorrectTarget = false;
 					
 					if (pointsReceived > 0)

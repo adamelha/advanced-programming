@@ -438,6 +438,7 @@ bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 		}
 	}
 
+
 	return ret;
 }
 

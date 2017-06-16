@@ -6,7 +6,6 @@
 #include "rand_pool.h"
 #include "ships.h"
 #include <iostream>
-#include <algorithm>
 
 #define UP_POINT	(Point(0, 1, 0))
 #define DOWN_POINT	(Point(0, -1, 0))

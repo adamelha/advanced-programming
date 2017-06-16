@@ -80,5 +80,8 @@
     <ClCompile Include="..\Battleship\smart_algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Battleship\debug_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

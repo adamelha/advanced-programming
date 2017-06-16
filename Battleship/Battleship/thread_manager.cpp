@@ -6,14 +6,18 @@ void ThreadManager::threadGameFunc()
 {
 	while( true )  // as long there are gamesto be played, play
 	{ 
-	int indexOfGame = atomicCounter.fetch_add(1, std::memory_order_relaxed);
-	if (indexOfGame >= listOfGames.size())
-		break;
+		int indexOfGame = atomicCounter.fetch_add(1, std::memory_order_relaxed);
+		if (indexOfGame >= listOfGames.size())
+			break;
 
-	IBattleshipGameAlgo * firstPlayer  =  ( (GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].first], "GetAlgorithm") )  () ; 
-	IBattleshipGameAlgo * secondPlayer =   ((GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].second], "GetAlgorithm") ) () ;
-	Battle battle(player_A);
-	battle.War(board, firstPlayer, secondPlayer);
+		IBattleshipGameAlgo * firstPlayer  =  ( (GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].first], "GetAlgorithm") )  () ; 
+		IBattleshipGameAlgo * secondPlayer =   ((GetAlgoFuncType)GetProcAddress(dllList[listOfGames[indexOfGame].second], "GetAlgorithm") ) () ;
+		
+		DEBUG_PRINT("Pointer to firstPlayer: %p\n", firstPlayer);
+		DEBUG_PRINT("Pointer to secondPlayer: %p'n", secondPlayer);
+
+		Battle battle(player_A);
+		battle.War(board, firstPlayer, secondPlayer);
 	}
 	// Print is not thread safe
 	cout << "yalla" << endl; 

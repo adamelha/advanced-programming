@@ -10,6 +10,9 @@ template <class T>
 void init3dArray(T ***arr, T value, int rows, int cols, int depth);
 
 template <class T>
+void copy3dArray(T ***dst, T ***src, int rows, int cols, int depth);
+
+template <class T>
 T*** alloc3dArray(int rows, int cols, int depth)
 {
 	// Init board - a dynamic 3 dimensional array (credit Stackoverflow)
@@ -36,6 +39,22 @@ void init3dArray(T ***arr, T value, int rows, int cols, int depth)
 			for (size_t z = 0; z < depth; z++)
 			{
 				arr[x][y][z] = value;
+			}
+		}
+	}
+}
+
+// Copy from on board to another. Dimensions must match
+template <class T>
+void copy3dArray(T ***dst, T ***src, int rows, int cols, int depth)
+{
+	for (size_t x = 0; x < rows; x++)
+	{
+		for (size_t y = 0; y < cols; y++)
+		{
+			for (size_t z = 0; z < depth; z++)
+			{
+				dst[x][y][z] = src[x][y][z];
 			}
 		}
 	}
