@@ -35,7 +35,6 @@
 class ThreadManager {
 public:
 	ThreadManager(const string& _path, const Board& _board, int numberOfThreads);
-	~ThreadManager() { delete[] scoreTabel; }
 	status_t run();
 	
 private:
@@ -58,8 +57,11 @@ private:
 	void creatListOfGames();
 
 	// This is 2d tabel: scoreTabel[round][player]
-	PlayerScore **scoreTabel;
+	//PlayerScore **scoreTabel;
 
+	// Array of PlayerScore vectors - each member of the array is a vector of the scores of the players for a round
+	// scoreTabel[round][player] - the PlayerScore for round 'round' for player 'player'
+	std::vector<std::vector<PlayerScore>> scoreTabel;
 	// For each dll tells round number
 	std::atomic<int> *playerRound;
 	int numberOfRounds, numberOfPlayers;

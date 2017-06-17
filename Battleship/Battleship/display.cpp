@@ -2,16 +2,26 @@
 #include <stdlib.h>
 #include "macros.h"
 #include <Windows.h>
-
+#include <algorithm>
 
 Display::Display()
 {
 	
 }
 
-// Gets array of scores of a single round and prints them in a thread safe manner
-void Display::displayTabel(PlayerScore *scoreArrayForRound, int numberOfPlayers)
+// Gets list of scores of a single round and prints them in a thread safe manner
+void Display::displayTabel(std::vector<PlayerScore> scoreArrayForRound)
 {
+	// Calculate winning percentage for each player
+	// Does everything on local copy
+	for (size_t i = 0; i < scoreArrayForRound.size(); i++)
+	{
+		scoreArrayForRound[i].percentage = ((double)scoreArrayForRound[i].wins / ((double)scoreArrayForRound[i].losses + (double)scoreArrayForRound[i].wins)) * 100;
+	}
+	
+	// Sort by winning percentage in descending order
+	std::sort(scoreArrayForRound.begin(), scoreArrayForRound.end(), greater<PlayerScore>());
+
 	printMutex.lock();
 	cout << "Wins" << "\t";
 	cout << "Losses" << "\t";
@@ -19,7 +29,7 @@ void Display::displayTabel(PlayerScore *scoreArrayForRound, int numberOfPlayers)
 	cout << "Pts For" << "\t";
 	cout << "Pts Against" << "\t\n";
 
-	for (size_t i = 0; i < numberOfPlayers; i++)
+	for (size_t i = 0; i < scoreArrayForRound.size(); i++)
 	{
 		displayRow(scoreArrayForRound[i]);
 	}
@@ -44,9 +54,7 @@ void Display::displayRow(PlayerScore row)
 
 	cout << row.wins << "\t";
 	cout << row.losses << "\t";
-
-	pct = ((double)row.wins / ((double)row.losses + (double)row.wins)) * 100;
-	cout << pct << "\t";
+	cout << row.percentage << "\t";
 	cout << row.totalPointsFor << "\t";
 	cout << row.totalPointsAgainst << "\t\n";
 }

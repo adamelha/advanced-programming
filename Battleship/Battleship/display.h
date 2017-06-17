@@ -32,10 +32,16 @@ using namespace std;
 #define TEXT_COLOR_PLAYER_B			YELLOW
 #define TEXT_COLOR_BOMBED			RED
 
+// Seems like an overkill to move this struct to another file.
+// Its main purpose is for the display of the results
 struct PlayerScore
 {
 	int totalPointsFor, totalPointsAgainst, wins, losses;
+	double percentage;
 	string name;
+
+	// Define operator for use of std::sort
+	bool operator > (const PlayerScore& score) const{ return (percentage > score.percentage); }
 };
 
 class Display
@@ -48,7 +54,7 @@ public:
 	void setTextColor(int color);
 	void updateSquare(int x, int y, char updatedChar);
 	Point getCursorPosition();
-	void displayTabel(PlayerScore *scoreArrayForRound, int numberOfPlayers);
+	void displayTabel(std::vector<PlayerScore> scoreArrayForRound);
 
 private:
 	void displayRow(PlayerScore row);

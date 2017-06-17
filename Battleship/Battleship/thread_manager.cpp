@@ -84,10 +84,14 @@ ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numb
 	// init score tabel
 	
 	// size numberOfRounds + 1 because we allocate a round 0 where the scores are 0 (simplifies algorithm).
-	scoreTabel = new PlayerScore*[numberOfRounds + 1];
+	scoreTabel.resize(numberOfRounds + 1);
+	//scoreTabel = new std::vector<PlayerScore>[numberOfRounds + 1];
+	//scoreTabel = new PlayerScore*[numberOfRounds + 1];
 	for (size_t i = 0; i < numberOfRounds + 1; i++)
 	{
-		scoreTabel[i] = new PlayerScore[numberOfPlayers];
+		// Each vector is of the size of the amount of players
+		scoreTabel[i].resize(numberOfPlayers);
+		//scoreTabel[i] = new PlayerScore[numberOfPlayers];
 		for (size_t j = 0; j < numberOfPlayers; j++)
 		{
 			if (i == 0) {
@@ -114,8 +118,6 @@ ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numb
 }
 
 // This methods creates and runs the threads that call Battle::war() which will create instances of the 2 algos it's supposed to use
-
-// TODO: IMPORTANT - when printing must add 1 to points because started with -1
 status_t ThreadManager::run()
 {
 	// Create threads to run game
@@ -144,7 +146,7 @@ status_t ThreadManager::run()
 				
 				// Round completed, print results
 				INFO_PRINT("displaying tabel for round %d:\n", curRound);
-				display.displayTabel(scoreTabel[curRound], numberOfPlayers);
+				display.displayTabel(scoreTabel[curRound]);
 				curRound++;
 			}
 		}
