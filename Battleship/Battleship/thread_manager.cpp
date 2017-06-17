@@ -158,7 +158,7 @@ status_t ThreadManager::run()
 
 	DEBUG_PRINT("Finished all rounds!!!\n");
 
-	// wait for threads to finish - not necessary here, just an example
+	// Make sure all threads finished
 	for (size_t i = 0; i < numberOfThreads; i++)
 	{
 		threadList[i].join();

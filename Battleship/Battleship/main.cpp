@@ -13,6 +13,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	status_t status;
+	int threadNumber;
 
 	// Parse command line args
 	CmdParser cmd = CmdParser(argc, argv);
@@ -21,6 +22,8 @@ int main(int argc, char **argv) {
 	{
 		return EXIT_FAIL;
 	}
+
+	threadNumber = cmd.getThreadNumber();
 
 	string filesPath = cmd.getFilesPath();
 
@@ -47,7 +50,7 @@ int main(int argc, char **argv) {
 			return EXIT_FAIL;
 		}
 
-		ThreadManager threadManager(filesPath, board, NUMBER_OF_THREADS);
+		ThreadManager threadManager(filesPath, board, threadNumber);
 		threadManager.run();
 		//Battle battle(10);
 		//battle.War(filesPath, board);

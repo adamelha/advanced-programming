@@ -19,37 +19,29 @@ status_t CmdParser::parse()
 		cmdList.push_back(string(argv[i]));
 	}
 
-	// Parse quiet
-	if (std::find(cmdList.begin(), cmdList.end(), "-quiet") != cmdList.end())
+	// Parse threads
+	if (std::find(cmdList.begin(), cmdList.end(), "-threads") != cmdList.end())
 	{
-		usedIndexList.push_back(std::find(cmdList.begin(), cmdList.end(), "-quiet") - cmdList.begin());
-		DEBUG_PRINT("Found quiet param\n");
-		this->printActive = false;
-	}
-
-	// Parse delay
-	if (std::find(cmdList.begin(), cmdList.end(), "-delay") != cmdList.end())
-	{
-		int delayIdx = std::find(cmdList.begin(), cmdList.end(), "-delay") - cmdList.begin();
-		usedIndexList.push_back(delayIdx);
-		DEBUG_PRINT("Found delay param\n");
+		int threadIdx = std::find(cmdList.begin(), cmdList.end(), "-threads") - cmdList.begin();
+		usedIndexList.push_back(threadIdx);
+		DEBUG_PRINT("Found threads param\n");
 		
 		// If -delay is last in cmd list (no provided value)
-		if (delayIdx == cmdList.size() - 1) {
-			ERROR_PRINT("Must provide -delay with value", STATUS_ERROR);
+		if (threadIdx == cmdList.size() - 1) {
+			ERROR_PRINT("Must provide -threads with value", STATUS_ERROR);
 		}
 		else {
 			int num;
 			try
 			{
-				num = std::stoi(cmdList[delayIdx + 1]);
+				num = std::stoi(cmdList[threadIdx + 1]);
 			}
 			catch (...)
 			{
-				ERROR_PRINT("Unable to parse delay provided, make sure you provide an integer", STATUS_ERROR);
+				ERROR_PRINT("Unable to parse threads provided, make sure you provide an integer", STATUS_ERROR);
 			}
-			usedIndexList.push_back(delayIdx + 1);
-			this->delay = num;
+			usedIndexList.push_back(threadIdx + 1);
+			this->threadNumber = num;
 		}
 	}
 
