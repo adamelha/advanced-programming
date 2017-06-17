@@ -15,6 +15,8 @@
 #define BOARD_DIMENSIONS_DELIMITER	"x"
 /***************Public Methods***************/
 
+// Start with boardNumber = 1 and increment and reiterate until get a board that is good
+// boardNumber will return the boardNumber board available lexicographically 
 Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile)
 {
 	std::istringstream f(boardStringFromFile);

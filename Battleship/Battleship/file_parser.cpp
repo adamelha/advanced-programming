@@ -32,15 +32,23 @@ static std::string wstringTostring(std::wstring wstr)
 
 /***************Public Methods***************/
 
-// Parse files
+// Parse files:
+// first call will parse first board.
+// second call will parse second board.
+// and so on.
 status_t FileParser::parse()
 {
 	status_t status;
 
 	status = this->parsePaths();
-	if (status != STATUS_OK) return status;
-
+	if (status != STATUS_OK) {
+		goto EXIT;
+		return status;
+	}
 	status = this->parseFiles();
+
+EXIT:
+	retryBoard++;
 	return status;
 
 }
@@ -117,55 +125,28 @@ status_t FileParser::parsePaths()
 	if (parseType == PARSE_TYPE_BOARD)
 	{
 		hFind = FindFirstFileA((boardAbsPath).c_str(), &FindFileData);
-
+		
 		if (hFind == INVALID_HANDLE_VALUE)
 		{
 			status = STATUS_ERROR;
 			addErrorMsg(MISSING_BOARD_IDX, MISSING_BOARD_MSG);
 		}
 		else {
-			//DEBUG_PRINT("The first board file found is %s\n", wstringTostring(FindFileData.cFileName).c_str());
+			// try to read next boards if needed
+			for (size_t i = 0; i < retryBoard; i++)
+			{
+				fileStatus = FindNextFileA(hFind, &FindFileData);
+				if (!fileStatus)
+				{
+					status = STATUS_NO_MORE_BOARDS;
+					goto EXIT;
+				}
+			}
+
 			this->boardFileName = FindFileData.cFileName;
 			this->boardPath = string(this->filesPath + slash + this->boardFileName);
 		}
-
-		FindClose(hFind);
-		// Parse dll first  path
-		hFind = FindFirstFileA((dllAbsPath).c_str(), &FindFileDataDll);
-
-		string dll1Name, dll2Name;
-
-		if (hFind == INVALID_HANDLE_VALUE)
-		{
-			status = STATUS_ERROR;
-			addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
-		}
-		else 
-		{
-			dll1Name = string(FindFileDataDll.cFileName);
-			DEBUG_PRINT("The first dll file found is %s\n", FindFileDataDll.cFileName);
-			this->dllFileName = FindFileDataDll.cFileName;
-			this->dllPath1 = string(this->filesPath + slash + this->dllFileName);
-		}
-		// Parse dll second 
-		fileStatus = FindNextFileA(hFind, &FindFileDataDll);
-		if (!fileStatus)
-		{
-			status = STATUS_ERROR;
-			addErrorMsg(MISSING_DLL_IDX, MISSING_DLL_MSG);
-		}
-		else
-		{
-			DEBUG_PRINT("The second dll file found is %s\n", FindFileDataDll.cFileName);
-			this->dllFileName = FindFileDataDll.cFileName;
-			this->dllPath2 = string(this->filesPath + slash + this->dllFileName);
-		}
-
-
-			
-
-
-		
+EXIT:
 		FindClose(hFind);
 		return status;
 	}

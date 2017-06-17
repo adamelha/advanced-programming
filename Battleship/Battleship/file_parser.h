@@ -38,7 +38,7 @@ public:
 	string getBoard();
 	string getAttack();
 	string getAttackFileName() const;
-	FileParser(string filesPath, parseType_e parseType) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS), filesPath(filesPath), parseType(parseType){}
+	FileParser(string filesPath, parseType_e parseType) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS), filesPath(filesPath), parseType(parseType), retryBoard(0){}
 	status_t parseAttack();
 private:
 	status_t parsePaths();
@@ -48,7 +48,7 @@ private:
 	const string filesPath;
 	string boardFileName, attackFileName , dllFileName;
 	string boardPath, attackPath, dllPath1 , dllPath2;
-
+	int retryBoard;
 	// Content of the file as a c++ string
 	string board, attack;
 };

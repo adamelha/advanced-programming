@@ -25,6 +25,7 @@
 using namespace std;
 
 struct BoardBadDimensions {};
+//struct BoardNoMoreBoards {};
 
 /**** Board Class *****/
 
@@ -49,4 +50,5 @@ private:
 	status_t const isBoardValid(char ***parsedBoard);
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
 	bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB);
+	int boardNumber;
 };

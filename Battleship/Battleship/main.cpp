@@ -38,29 +38,40 @@ int main(int argc, char **argv) {
 
 	//TODO: Right now if some file parser error occres we do not continue to check board validity. Need to?
 	// Check board validity and parse
-	try
+	while (true)
 	{
-		Board board = Board(fileParser.getBoard());
-	
-		status = board.parse();
-		if (status != STATUS_OK)
+		try
 		{
-			if (status == STATUS_INVALID_BOARD) board.printErrorMsg();
-		
-			return EXIT_FAIL;
+			Board board = Board(fileParser.getBoard());
+
+			status = board.parse();
+			if (status != STATUS_OK)
+			{
+				if (status == STATUS_INVALID_BOARD) board.printErrorMsg();
+
+				throw BoardBadDimensions();
+			}
+
+			ThreadManager threadManager(filesPath, board, threadNumber);
+			threadManager.run();
+			//Battle battle(10);
+			//battle.War(filesPath, board);
+
+
+			return EXIT_SUCCESS;
 		}
-
-		ThreadManager threadManager(filesPath, board, threadNumber);
-		threadManager.run();
-		//Battle battle(10);
-		//battle.War(filesPath, board);
-
-
-		return EXIT_SUCCESS;
-	}
-	catch (BoardBadDimensions& bd)
-	{
-		ERROR_PRINT("Wrong board dimensions.\n", EXIT_FAIL);
+		catch (BoardBadDimensions& bd)
+		{
+			DEBUG_PRINT("Bad Board.\n");
+			
+			// Try to parse next board file
+			status = fileParser.parse();
+			if (status != STATUS_OK)
+			{
+				fileParser.printErrorMsg();
+				return EXIT_FAIL;
+			}
+		}
 	}
 }
 
