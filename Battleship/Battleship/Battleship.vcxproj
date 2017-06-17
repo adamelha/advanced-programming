@@ -116,6 +116,7 @@
     <ClInclude Include="battle_utils.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="cmd_parser.h" />
+    <ClInclude Include="display.h" />
     <ClInclude Include="error_class.h" />
     <ClInclude Include="file_parser.h" />
     <ClInclude Include="IBattleshipGameAlgo.h" />
@@ -132,6 +133,7 @@
     <ClCompile Include="board.cpp" />
     <ClCompile Include="cmd_parser.cpp" />
     <ClCompile Include="debug_utils.cpp" />
+    <ClCompile Include="display.cpp" />
     <ClCompile Include="error_class.cpp" />
     <ClCompile Include="file_parser.cpp" />
     <ClCompile Include="main.cpp" />

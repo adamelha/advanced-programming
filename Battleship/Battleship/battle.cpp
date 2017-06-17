@@ -195,19 +195,21 @@ EXIT:
 
 */
 
-int Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattleshipGameAlgo* _algoB)
+BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattleshipGameAlgo* _algoB)
 {	
 
 	
 	//load the players algorithms
 	//if (!loadDllFiles(path, board) )
 	//	return false;
+	BattleScore battleScore;
 	algoA = _algoA;
 	algoB = _algoB;
 	setBoard(player_A, board, algoA);  // setBoard to player A
 	setBoard(player_B, board, algoB);	// setBoard to player B
 
 	// Create local copy of board
+	// TODO - either free when finished or use smar pointer
 	char ***localBoard = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
 	copy3dArray(localBoard, board.board, board.rows(), board.cols(), board.depth());
 
@@ -427,18 +429,23 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattleshipGam
 	
 	
 	//game is over, print winners if there are
+	printMutex.lock();
 	if (this->numOfSquareB == 0)
 	{
 		std::cout << "Player A won" << std::endl; 
+		battleScore.winner = Winner::PlayerA;
 	}
 	else if(this->numOfSquareA == 0)
 	{
 		std::cout << "Player B won" << std::endl;
+		battleScore.winner = Winner::PlayerB;
 	}
 	
 	std::cout << "Points:"    << std::endl;
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
 	std::cout << "Player B: " << to_string(pointsB) << std::endl;
+
+	printMutex.unlock();
 
 	DEBUG_PRINT("Game took %d rounds to complete\n", roundCounter);
 	
@@ -454,8 +461,11 @@ int Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattleshipGam
 		delete shipListB[i];
 	}
 
+	
+	battleScore.playerAPoints = pointsA;
+	battleScore.playerBPoints = pointsB;
 
-	return 0;
+	return battleScore;
 }
 
 

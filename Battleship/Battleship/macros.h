@@ -1,23 +1,43 @@
 #pragma once
 
 #include <iostream>
+#include <mutex>
+
 #define DEBUG
+
+// Mutex for debug printing - debug and Display
+extern std::mutex printMutex;
+
 
 #ifdef DEBUG
 #include <stdio.h>
-#include <mutex>
 #include <thread>
 
-// Mutex for debug printing
-extern std::mutex debugPrintMutex;
-#define DEBUG_PRINT(format, ...) \
-debugPrintMutex.lock(); \
+// Print DEBUG_PRINT and INFO_PRINT
+#define PRIORITY_DEBUG	1
+// Print only INFO_PRINT
+#define PRIORITY_INFO	2
+
+#define BUILD_DEBUG_PRIORITY	PRIORITY_INFO
+
+
+#define DEBUG_PRINT(format, ...)	PRINT_LOG(PRIORITY_DEBUG, format, ##__VA_ARGS__)
+
+#define INFO_PRINT(format, ...)		PRINT_LOG(PRIORITY_INFO, format, ##__VA_ARGS__)
+
+#define PRINT_LOG(priority, format, ...) \
+do { \
+if(priority >= BUILD_DEBUG_PRIORITY) { \
+printMutex.lock(); \
 std::cout << "[Thread " << std::this_thread::get_id() << "]"; \
 printf(format, ##__VA_ARGS__); \
-debugPrintMutex.unlock()
+printMutex.unlock(); \
+} \
+} while(0)
 
 #else
 #define DEBUG_PRINT(format, ...)
+#define INFO_PRINT(format, ...)
 #endif // DEBUG
 
 

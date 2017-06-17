@@ -14,6 +14,19 @@
 
 #define IS_SQUARE_DOWN(c)				(c == SQUARE_BOMBED_MISS_SYMBOL || c == SQUARE_BOMBED_HIT_SYMBOL)
 
+enum class Winner
+{
+	PlayerA = PLAYER_A,
+	PlayerB = PLAYER_B,
+	Tie = PLAYER_B + 1
+};
+
+struct BattleScore
+{
+	Winner winner;
+	int playerAPoints;
+	int playerBPoints;
+};
 
 class Battle {
 public:
@@ -24,7 +37,7 @@ public:
 	void notifyOnAttackResult(int player, Coordinate p, AttackResult result);
 	virtual bool init(const std::string& path);	//TBD
 	//ALGO_API IBattleshipGameAlgo* GetAlgorithm() override;
-	int War(const Board &board, IBattleshipGameAlgo* algoA,  IBattleshipGameAlgo* algoB);      // note: no longger need here path to files!
+	BattleScore War(const Board &board, IBattleshipGameAlgo* algoA,  IBattleshipGameAlgo* algoB);      // note: no longger need here path to files!
 
 private:
 	//std::vector<HINSTANCE> dllList;

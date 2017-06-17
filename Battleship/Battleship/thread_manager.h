@@ -16,7 +16,7 @@
 #include <atomic>
 #include <vector>
 #include <chrono>
-
+#include "display.h"
 
 #define CANNOT_LOAD_DLL_MSG			"Cannot load dll: " + fullFileName + "\n"
 #define CANNOT_LOAD_DLL_IDX			0
@@ -29,10 +29,13 @@
 
 #define NUM_OF_DLL_ERR_MSGS			2
 
+#define TEMP_MAX_DLLS	10
+
 
 class ThreadManager {
 public:
 	ThreadManager(const string& _path, const Board& _board, int numberOfThreads);
+	~ThreadManager() { delete[] scoreTabel; }
 	status_t run();
 	
 private:
@@ -53,4 +56,12 @@ private:
 	//std::vector< std::unique_ptr<GetAlgoFuncType> > algoFuncInstance1;
 	std::vector< pair<int, int> > listOfGames;
 	void creatListOfGames();
+
+	// This is 2d tabel: scoreTabel[round][player]
+	PlayerScore **scoreTabel;
+
+	// For each dll tells round number
+	std::atomic<int> *playerRound;
+	int numberOfRounds, numberOfPlayers;
+	Display display;
 };
