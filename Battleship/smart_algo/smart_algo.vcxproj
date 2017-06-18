@@ -22,6 +22,7 @@
     <ProjectGuid>{05EF7828-E3B7-45CF-AA1B-9402AAA8FE54}</ProjectGuid>
     <RootNamespace>smart_algo</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>adam_smart_algo.smart</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

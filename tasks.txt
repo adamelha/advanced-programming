@@ -1,3 +1,8 @@
+* Check why we get <0,0,0> sometimes from other algos. 
+	this might be the key to understanding our problem.
+	Anyway - if we never understand this we must add a condition that ignores this,
+	or treat it as out of plays.
+	As long as we don't collapse.
 * Check aviv dll
 * unique pointer to get algo
 * change *** to vector
