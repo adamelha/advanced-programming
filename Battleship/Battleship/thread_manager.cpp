@@ -7,7 +7,8 @@ void ThreadManager::threadGameFunc()
 	BattleScore battleScore;
 	int indexOfGame, playerARound, playerBRound;
 	int playerAIndex, playerBIndex;
-
+	
+	
 	while( true )  // as long there are gamesto be played, play
 	{ 
 		indexOfGame = atomicCounter.fetch_add(1, std::memory_order_relaxed);
@@ -16,14 +17,15 @@ void ThreadManager::threadGameFunc()
 
 		playerAIndex = listOfGames[indexOfGame].first;
 		playerBIndex = listOfGames[indexOfGame].second;
-		IBattleshipGameAlgo * firstPlayer  =  ( (GetAlgoFuncType)GetProcAddress(dllList[playerAIndex], "GetAlgorithm") )  () ;
+		IBattleshipGameAlgo * firstPlayer  =  ((GetAlgoFuncType)GetProcAddress(dllList[playerAIndex], "GetAlgorithm") )  () ;
 		IBattleshipGameAlgo * secondPlayer =   ((GetAlgoFuncType)GetProcAddress(dllList[playerBIndex], "GetAlgorithm") ) () ;
 		
 		DEBUG_PRINT("Pointer to firstPlayer: %p\n", firstPlayer);
-		DEBUG_PRINT("Pointer to secondPlayer: %p'n", secondPlayer);
-
+		DEBUG_PRINT("Pointer to secondPlayer: %p\n", secondPlayer);
+		
 		// Play game get score
 		Battle battle(player_A);
+		
 		battleScore = battle.War(board, firstPlayer, secondPlayer);
 		
 		// Increment player rounds
@@ -35,8 +37,15 @@ void ThreadManager::threadGameFunc()
 		while (scoreTabel[playerARound - 1][playerAIndex].totalPointsAgainst == -1) {}
 		while (scoreTabel[playerBRound - 1][playerBIndex].totalPointsAgainst == -1) {}
 
+		if (playerBRound == 2 && playerBIndex == 0)
+		{
+			playerBIndex = playerBIndex;
+		}
 		if (battleScore.winner == Winner::PlayerA)
 		{
+			scoreTabel[playerARound][playerAIndex].wins = scoreTabel[playerARound - 1][playerAIndex].wins + 1;
+			scoreTabel[playerBRound][playerBIndex].losses = scoreTabel[playerBRound - 1][playerBIndex].losses + 1;
+
 			scoreTabel[playerARound][playerAIndex].wins = scoreTabel[playerARound - 1][playerAIndex].wins + 1;
 			scoreTabel[playerBRound][playerBIndex].losses = scoreTabel[playerBRound - 1][playerBIndex].losses + 1;
 		}
@@ -67,7 +76,7 @@ void ThreadManager::threadGameFunc()
 
 		scoreTabel[playerARound][playerAIndex].totalPointsAgainst = scoreTabel[playerARound - 1][playerAIndex].totalPointsAgainst + battleScore.playerBPoints;
 		scoreTabel[playerBRound][playerBIndex].totalPointsAgainst = scoreTabel[playerBRound - 1][playerBIndex].totalPointsAgainst + battleScore.playerAPoints;
-
+		
 	}
 }
 
@@ -91,12 +100,13 @@ ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numb
 // This methods creates and runs the threads that call Battle::war() which will create instances of the 2 algos it's supposed to use
 status_t ThreadManager::run()
 {
+	
 	// Create threads to run game
 	for (size_t i = 0; i < numberOfThreads; i++)
 	{
 		threadList[i] = std::thread(&ThreadManager::threadGameFunc, this);
 	}
-
+	
 	int curRound = 1;
 	// Here main thread should do his work printing scores
 	

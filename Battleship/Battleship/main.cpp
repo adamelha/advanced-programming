@@ -15,24 +15,28 @@ int main(int argc, char **argv) {
 	// Parse command line args
 	CmdParser cmd = CmdParser(argc, argv);
 	status = cmd.parse();
+	
 	if (status != STATUS_OK)
 	{
 		return EXIT_FAIL;
 	}
 
+	
 	threadNumber = cmd.getThreadNumber();
 
 	string filesPath = cmd.getFilesPath();
-
+	
 	// Parse files to strings
 	FileParser fileParser = FileParser(filesPath, PARSE_TYPE_BOARD);
 	status = fileParser.parse();
+	
 	if (status != STATUS_OK)
 	{
 		fileParser.printErrorMsg();
+		
 		return EXIT_FAIL;
 	}
-
+	
 	//TODO: Right now if some file parser error occres we do not continue to check board validity. Need to?
 	// Check board validity and parse
 	while (true)
@@ -51,7 +55,8 @@ int main(int argc, char **argv) {
 
 			ThreadManager threadManager(filesPath, board, threadNumber);
 			threadManager.run();
-
+			
+			while (true) {};
 			return EXIT_SUCCESS;
 		}
 		catch (BoardBadDimensions& bd)

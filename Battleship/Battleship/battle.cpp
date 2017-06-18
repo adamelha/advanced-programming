@@ -32,6 +32,7 @@ void Battle::setWhosTurn(int turn)
 void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo)
 {
 	algo->setPlayer(player);
+	
 	algo->setBoard(board);
 	
 	// Count number of squares for the player. TODO: do more efficiently?
@@ -113,7 +114,9 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	BattleScore battleScore;
 	algoA = _algoA;
 	algoB = _algoB;
+	
 	setBoard(player_A, board, algoA);  // setBoard to player A
+	
 	setBoard(player_B, board, algoB);	// setBoard to player B
 
 	// Create local copy of board

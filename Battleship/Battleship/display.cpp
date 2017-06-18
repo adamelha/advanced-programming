@@ -18,11 +18,16 @@ void Display::displayTabel(std::vector<PlayerScore> scoreArrayForRound)
 	{
 		scoreArrayForRound[i].percentage = ((double)scoreArrayForRound[i].wins / ((double)scoreArrayForRound[i].losses + (double)scoreArrayForRound[i].wins)) * 100;
 		scoreArrayForRound[i].name = teamNames[i];
-		scoreArrayForRound[i].rank = i + 1;
 	}
 	
 	// Sort by winning percentage in descending order
 	std::sort(scoreArrayForRound.begin(), scoreArrayForRound.end(), greater<PlayerScore>());
+	
+	// Update rank
+	for (size_t i = 0; i < scoreArrayForRound.size(); i++)
+	{
+		scoreArrayForRound[i].rank = i + 1;
+	}
 
 	printMutex.lock();
 

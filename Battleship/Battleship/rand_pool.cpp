@@ -7,15 +7,16 @@
 #include <ctime> 
 
 // Cntr Dtr
-RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentialMoves(), myBoard(myBoard), refTabel(), rows(_rows), cols(_cols), depth(_depth)
+RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentialMoves(), myBoard(myBoard), refTabel(), rows(_rows), cols(_cols), depth(_depth), potentialMovesSize(0)
 {
 	// Init potential moves
 	int index = 0;
+	
 	initIsPointLegal();
-
+	
 	// Allocate potential moves array to max size
 	potentialMoves = new Point[rows * cols * depth]();
-
+	
 	// Init potentialMoves list 
 	for (int x = 0; x < rows; x++)
 	{
@@ -37,15 +38,17 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 
 	// Allocate ref tabel
 	refTabel = alloc3dArray<Point *>(rows, cols, depth);
-
+	
 	// Nullify ref tabel
 	init3dArray<Point *>(refTabel, nullptr, rows, cols, depth);
 	//init ref tabel
+
 	for (size_t i = 0; i < potentialMovesSize; i++)
 	{
+		DEBUG_PRINT("refTabel[%d][%d][%d], i = %d, potentialMovesSize = %d\n", potentialMoves[i].row, potentialMoves[i].col, potentialMoves[i].depth, i, potentialMovesSize);
 		refTabel[potentialMoves[i].row][potentialMoves[i].col][potentialMoves[i].depth] = &potentialMoves[i];
-
 	}
+	
 
 	/* if in release mode - initialize random seed.
 	*  if DEBUG is defined - use seed 0 so random sequence remains the same during debug 
@@ -55,7 +58,8 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 #else
 	srand(time(NULL));
 #endif // DEBUG
-
+	
+	
 }
 RandPool::~RandPool()
 {

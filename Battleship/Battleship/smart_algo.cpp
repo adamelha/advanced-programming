@@ -13,9 +13,10 @@ SmartAlgo::SmartAlgo() : randPool(nullptr), randPoolTemp(), currentAttackIndex(0
 	
 	// Init board to be array of char pointers, each pointing to a row in _board matrix (avoids dynamic allocation)
 	// Now done in setBoard()
-
+	
 	// init directions
 	directions[0] = UP_POINT;
+	
 	directions[1] = DOWN_POINT;
 	directions[2] = RIGHT_POINT;
 	directions[3] = LEFT_POINT;
@@ -53,7 +54,7 @@ void SmartAlgo::setPlayer(int player)
 void SmartAlgo::setBoard(const BoardData& board)
 {
 	squareType_e sqaretTypeIs;
-
+	
 	// Allocate local board
 	//this->board = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
 
@@ -69,10 +70,10 @@ void SmartAlgo::setBoard(const BoardData& board)
 	rows = board.rows();
 	cols = board.cols();
 	depth = board.depth();
-
+	
 	// Make allocations for 3D array
 	setBoard(rows, cols, depth);
-
+	
 	this->player = player;
 	for (int x = 0; x < board.rows(); x++)
 	{
@@ -84,15 +85,17 @@ void SmartAlgo::setBoard(const BoardData& board)
 				{
 					this->board[x][y][z] = board.charAt(Coordinate(x + 1, y + 1, z + 1));
 					this->numOfSqares += 1;
+					
 				}
 				else
 					this->board[x][y][z] = ' ';       // initialize board to 
 			}
 		}
 	}
-
+	
 	// Set RandPool data structure
 	randPool = new RandPool(this->board, rows, cols, depth);
+	
 }
 
 void SmartAlgo::setBoard(int rows, int cols, int depth)
@@ -307,6 +310,7 @@ void SmartAlgo::notifyOnAttackResult(int player, Coordinate move, AttackResult r
 
 
 ALGO_API IBattleshipGameAlgo* GetAlgorithm() {
+	
 	return new SmartAlgo();
 }
 

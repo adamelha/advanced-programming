@@ -45,9 +45,6 @@
     <ClInclude Include="macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="battle_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>

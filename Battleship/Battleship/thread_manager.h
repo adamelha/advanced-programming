@@ -22,6 +22,8 @@
 #define NOT_ENOUGH_DLLS_IDX			0
 #define NUM_OF_DLL_ERR_MSGS			1
 
+typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
+
 struct notEnoughDlls {};
 
 class ThreadManager {
@@ -43,7 +45,7 @@ private:
 	std::vector<thread> threadList;
 	int numberOfThreads;
 	bool loadDllFiles();
-	typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
+	
 	GetAlgoFuncType getAlgoFunc;
 	//std::vector< std::unique_ptr<GetAlgoFuncType> > algoFuncInstance1;
 	std::vector< pair<int, int> > listOfGames;

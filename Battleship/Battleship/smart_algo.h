@@ -1,6 +1,5 @@
 #pragma once
 
-#include "state.h"
 #include "macros.h"
 #include "battle_utils.h"
 #include "rand_pool.h"
