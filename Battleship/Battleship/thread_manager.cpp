@@ -80,47 +80,11 @@ ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numb
 	std::cout << std::setprecision(2);
 	
 	threadList.resize(numberOfThreads); 
-	loadDllFiles();
+	if (!loadDllFiles()) {
+		throw notEnoughDlls();
+	}
 	creatListOfGames();
 	initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRound();
-	// just extract all of this code to initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRound function so it will look better
-
-	/*numberOfRounds = (dllList.size() - 1) * 2;
-	numberOfPlayers = dllList.size();
-	// init score tabel
-	
-	// size numberOfRounds + 1 because we allocate a round 0 where the scores are 0 (simplifies algorithm).
-	scoreTabel.resize(numberOfRounds + 1);
-	//scoreTabel = new std::vector<PlayerScore>[numberOfRounds + 1];
-	//scoreTabel = new PlayerScore*[numberOfRounds + 1];
-	for (size_t i = 0; i < numberOfRounds + 1; i++)
-	{
-		// Each vector is of the size of the amount of players
-		scoreTabel[i].resize(numberOfPlayers);
-		//scoreTabel[i] = new PlayerScore[numberOfPlayers];
-		for (size_t j = 0; j < numberOfPlayers; j++)
-		{
-			if (i == 0) {
-				scoreTabel[i][j].totalPointsFor = 0;
-				scoreTabel[i][j].totalPointsAgainst = 0;
-			}
-			else {
-				scoreTabel[i][j].totalPointsFor = -1;
-				scoreTabel[i][j].totalPointsAgainst = -1;
-			}
-			
-			scoreTabel[i][j].wins = 0;
-			scoreTabel[i][j].losses = 0;
-		}
-	}
-
-	playerRound = new std::atomic<int>[numberOfPlayers];
-	for (size_t i = 0; i < numberOfPlayers; i++)
-	{
-		playerRound[i] = 1;
-	}
-	// Init rounds
-	*/
 
 }
 
@@ -182,7 +146,7 @@ bool ThreadManager::loadDllFiles()
 {
 	HANDLE dir;
 	WIN32_FIND_DATAA fileData; //data struct for file
-	string fileName, fullFileName;
+	string fileName, fullFileName, teamName;
 	int playerNumber = 0;
 	bool init_failed;
 	bool status = true;
@@ -193,7 +157,7 @@ bool ThreadManager::loadDllFiles()
 	ErrorClass errmsgs(NUM_OF_DLL_ERR_MSGS);
 
 	// iterate over *.dll files in path
-	string s = "\\*.dll"; // only .dll endings
+	string s = "\\*.smart.dll"; // only .dll endings
 	dir = FindFirstFileA((path + s).c_str(), &fileData); // Notice: Unicode compatible version of FindFirstFile
 	if (dir == INVALID_HANDLE_VALUE) //check if the dir opened successfully
 	{
@@ -202,68 +166,33 @@ bool ThreadManager::loadDllFiles()
 	}
 
 	do {
-
-		fileName = fileData.cFileName;
-		fullFileName = path + "\\" + fileName;
-
+		fileName = string(fileData.cFileName);
+		fullFileName = string(path + "\\" + fileName);
+		teamName = fileName.substr(0, fileName.find("."));
+		INFO_PRINT("Team name is  = %s\n", teamName.c_str());
+		
 		// Load dynamic library
 		HINSTANCE hDll = LoadLibraryA(fullFileName.c_str()); // Notice: Unicode compatible version of LoadLibrary
 		if (!hDll) {
-			errmsgs.addErrorMsg(CANNOT_LOAD_DLL_IDX, CANNOT_LOAD_DLL_MSG);
 			status = false;
 			goto EXIT;
 		}
-
-		// Get function pointer
-		/* Should probably be done in battle*/
-		/*
-		getAlgoFunc = (GetAlgoFuncType)GetProcAddress(hDll, "GetAlgorithm");
-		if (!getAlgoFunc) {
-			errmsgs.addErrorMsg(CANNOT_LOAD_DLL_IDX, CANNOT_LOAD_DLL_MSG);
-			status = false;
-			goto EXIT;
-		}
-		*/
 
 		dllList.push_back(hDll);
-		//std::vector<IBattleshipGameAlgo *> players;
-		//playersList.push_back(getAlgoFunc());
 
-		//called once to notify player on his board
-		/*
+		// Push names to display object - player j name is display.teamNames[j]
+		display.teamNames.push_back(teamName);
 
-		//this section of code is no longer relevent, we will manage the 'setboards' and and competitions of diffrent players in 'war' function!!
+		playerNumber++;
 
-
-		if (playerNumber == PLAYER_A)
-		{
-		algoA = getAlgoFunc();
-		setBoard(playerNumber, board, algoA);
-		//init_failed = !algoA->init(path); // init A_Board
-		}
-		else
-		{
-		algoB = getAlgoFunc();
-		setBoard(playerNumber, board, algoB);
-		//init_failed = !algoB->init(path);       // init B_Board
-		}
-
-
-		init_failed = 0;
-		//call the players init function
-		if (init_failed) {
-		errmsgs.addErrorMsg(ALGO_INIT_FAIL_IDX, ALGO_INIT_FAIL_MSG);
-		status = false;
-		goto EXIT;
-		}
-
-		playerNumber+=1;
-
-		*/
-
-	} while (FindNextFileA(dir, &fileData) && playerNumber < 2); // Notice: Unicode compatible version of FindNextFile
+	} while (FindNextFileA(dir, &fileData)); // Notice: Unicode compatible version of FindNextFile
 
 EXIT:
+	if (playerNumber < 2)
+	{
+		errmsgs.addErrorMsg(NOT_ENOUGH_DLLS_IDX, NOT_ENOUGH_DLLS_MSG);
+		status = false;
+	}
 	errmsgs.printErrorMsg();
 	return status;
 }

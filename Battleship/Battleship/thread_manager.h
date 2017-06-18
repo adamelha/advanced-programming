@@ -18,17 +18,11 @@
 #include <chrono>
 #include "display.h"
 
-#define CANNOT_LOAD_DLL_MSG			"Cannot load dll: " + fullFileName + "\n"
-#define CANNOT_LOAD_DLL_IDX			0
+#define NOT_ENOUGH_DLLS_MSG			"Missing algorithm (dll) files looking in path: " + path + " (needs at least two)"
+#define NOT_ENOUGH_DLLS_IDX			0
+#define NUM_OF_DLL_ERR_MSGS			1
 
-#define ALGO_INIT_FAIL_MSG			"Algorithm initialization failed for dll: " + fullFileName + "\n"
-#define ALGO_INIT_FAIL_IDX			1
-
-
-#define ALGO_INIT_FAILED			"Cannot load dll: " << fullFileName << endl
-
-#define NUM_OF_DLL_ERR_MSGS			2
-
+struct notEnoughDlls {};
 
 class ThreadManager {
 public:
@@ -37,6 +31,7 @@ public:
 	
 private:
 	std::vector<HINSTANCE> dllList;
+	std::vector<std::string> teamNameList;
 	//std::vector<IBattleshipGameAlgo *> playersList;
 	const string& path;
 	const Board& board;

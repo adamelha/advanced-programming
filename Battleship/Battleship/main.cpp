@@ -66,6 +66,10 @@ int main(int argc, char **argv) {
 				return EXIT_FAIL;
 			}
 		}
+		catch (notEnoughDlls& e) 
+		{
+			return EXIT_FAIL;
+		}
 	}
 }
 

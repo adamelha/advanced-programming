@@ -12,17 +12,22 @@ Display::Display()
 // Gets list of scores of a single round and prints them in a thread safe manner
 void Display::displayTabel(std::vector<PlayerScore> scoreArrayForRound)
 {
-	// Calculate winning percentage for each player
+	// Calculate winning percentage for each player, and give name and rank
 	// Does everything on local copy
 	for (size_t i = 0; i < scoreArrayForRound.size(); i++)
 	{
 		scoreArrayForRound[i].percentage = ((double)scoreArrayForRound[i].wins / ((double)scoreArrayForRound[i].losses + (double)scoreArrayForRound[i].wins)) * 100;
+		scoreArrayForRound[i].name = teamNames[i];
+		scoreArrayForRound[i].rank = i + 1;
 	}
 	
 	// Sort by winning percentage in descending order
 	std::sort(scoreArrayForRound.begin(), scoreArrayForRound.end(), greater<PlayerScore>());
 
 	printMutex.lock();
+
+	cout << "#" << "\t";
+	cout << "Team Name" << "\t";
 	cout << "Wins" << "\t";
 	cout << "Losses" << "\t";
 	cout << "%" << "\t";
@@ -51,7 +56,8 @@ void Display::displayRow(PlayerScore row)
 	double pct;
 
 	// Must print team name
-
+	cout << row.rank << "\t";
+	cout << row.name << "\t";
 	cout << row.wins << "\t";
 	cout << row.losses << "\t";
 	cout << row.percentage << "\t";

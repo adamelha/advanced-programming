@@ -36,7 +36,7 @@ using namespace std;
 // Its main purpose is for the display of the results
 struct PlayerScore
 {
-	int totalPointsFor, totalPointsAgainst, wins, losses;
+	int totalPointsFor, totalPointsAgainst, wins, losses, rank;
 	double percentage;
 	string name;
 
@@ -55,6 +55,7 @@ public:
 	void updateSquare(int x, int y, char updatedChar);
 	Point getCursorPosition();
 	void displayTabel(std::vector<PlayerScore> scoreArrayForRound);
+	std::vector<std::string> teamNames;
 
 private:
 	void displayRow(PlayerScore row);
