@@ -4,14 +4,20 @@
 ErrorClass::ErrorClass(size_t num_of_err_msgs)
 {
 	this->num_of_err_msgs = num_of_err_msgs;
-	this->errorMsgs = new string*[num_of_err_msgs];
-	memset(this->errorMsgs, 0, this->num_of_err_msgs * sizeof(string*));
+	this->errorMsgs.resize(num_of_err_msgs);
+
+	// Nullify strings
+	for (size_t i = 0; i < errorMsgs.size(); i++)
+	{
+		errorMsgs[i] = "";
+	}
+
 }
 
 void ErrorClass::addErrorMsg(size_t index, string msg)
 {
-	if (errorMsgs[index] == nullptr) {
-		errorMsgs[index] = new string(msg);
+	if (errorMsgs[index] == "") {
+		errorMsgs[index] = msg;
 	}
 }
 
@@ -22,9 +28,9 @@ void ErrorClass::printErrorMsg()
 	// Print all error messages
 	for (i = 0; i < num_of_err_msgs; i++)
 	{
-		if (errorMsgs[i] != nullptr)
+		if (errorMsgs[i] != "")
 		{
-			cout << *errorMsgs[i];
+			cout << errorMsgs[i];
 		}
 	}
 
@@ -35,10 +41,9 @@ bool ErrorClass::errorMsgsExist()
 {
 	size_t i;
 
-	// Print all error messages
 	for (i = 0; i < num_of_err_msgs; i++)
 	{
-		if (errorMsgs[i] != nullptr) {
+		if (errorMsgs[i] != "") {
 			return true;
 		}
 	}
@@ -47,16 +52,5 @@ bool ErrorClass::errorMsgsExist()
 }
 ErrorClass::~ErrorClass()
 {
-	size_t i;
-
-	// Free allocated msg strings
-	for (i = 0; i < num_of_err_msgs; i++)
-	{
-		if (errorMsgs[i] != NULL)
-		{
-			delete errorMsgs[i];
-		}
-	}
-
-	delete[] errorMsgs;
+	
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-
+#include <vector>
 using namespace std;
 
 class ErrorClass
@@ -13,6 +13,6 @@ public:
 	bool errorMsgsExist();
 	~ErrorClass();
 	size_t num_of_err_msgs;
-	string **errorMsgs;
+	vector<string> errorMsgs;
 };
 
