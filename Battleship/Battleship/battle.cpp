@@ -218,6 +218,9 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	int pointsA = 0;
 	vector<Ship*> shipListB = deepCopyShipPointerVector(board.shipListB);
 	int pointsB = 0;
+	// each player potential number of moves under the assumptions: 1)player don't attack is own ships 2)that each player attacks a square at most once(whitch is not is own)
+	int NumnerOfPotentialMovesA = board.rows() + board.cols() + board.depth() - numOfSquareA;
+	int NumnerOfPotentialMovesB = board.rows() + board.cols() + board.depth() - numOfSquareB;
 
 	//war!!
 	setWhosTurn(player_A);						 //   set turn A
@@ -225,7 +228,6 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	int pointsReceived = 0;
 	int whoGotHit;
 	int x = -1, y = -1, z = -1;
-
 	int roundCounter = 0;
 	Point attackPoint;
 	AttackResult attackResult;
@@ -237,6 +239,14 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 		roundCounter++;
 		if (this->whosTurn)			//player B
 		{
+
+			if (NumnerOfPotentialMovesA <= 0 && NumnerOfPotentialMovesB <= 0)     //if both players out of moves(bug in algo which lead to draw)
+			{
+				battleScore.winner = Winner::Tie;
+				break;
+
+			}
+
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
 			attackPoint = attack(*algoB);
@@ -332,10 +342,18 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 				
 				alreadyGotHit = false;
 			}
+			NumnerOfPotentialMovesB -= 1;
 		}
 
 		else                       //player A
 		{
+			if (NumnerOfPotentialMovesA <= 0 && NumnerOfPotentialMovesB <= 0)     //if both players out of moves(bug in algo which lead to draw)
+			{
+				battleScore.winner = Winner::Tie;
+				break;
+
+			}
+
 			attackPoint = attack(*algoA);
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {
@@ -347,83 +365,85 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 			else
 			{
 
-			x = attackPoint.row;
-			y = attackPoint.col;
-			z = attackPoint.depth;
+				x = attackPoint.row;
+				y = attackPoint.col;
+				z = attackPoint.depth;
 
-			DEBUG_PRINT("A shot B at <%d,%d,%d>\n", x, y, z);
-			whoGotHit = isBelongToBoard(localBoard[x][y][z]);
-			if (whoGotHit == NO_SQUARE )                // miss
-			{
-				HitCorrectTarget = false;
-				attackResult = AttackResult::Miss;
-				if (!IS_SQUARE_DOWN(localBoard[x][y][z]))
+				DEBUG_PRINT("A shot B at <%d,%d,%d>\n", x, y, z);
+				whoGotHit = isBelongToBoard(localBoard[x][y][z]);
+				if (whoGotHit == NO_SQUARE )                // miss
 				{
-					localBoard[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
+					HitCorrectTarget = false;
+					attackResult = AttackResult::Miss;
+					if (!IS_SQUARE_DOWN(localBoard[x][y][z]))
+					{
+						localBoard[x][y][z] = SQUARE_BOMBED_MISS_SYMBOL;
+					}
 				}
-			}
-			else if (whoGotHit == B_SQUARE)		  // player A Hit player B
-			{
-				attackResult = AttackResult::Hit;
-				alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
-
-				if (!alreadyGotHit)
+				else if (whoGotHit == B_SQUARE)		  // player A Hit player B
 				{
+					attackResult = AttackResult::Hit;
+					alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
+
+					if (!alreadyGotHit)
+					{
 					
-					pointsReceived = shootShip(Point(x, y, z), shipListB);
-					pointsA += pointsReceived;
-					DEBUG_PRINT("A shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
-					DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
+						pointsReceived = shootShip(Point(x, y, z), shipListB);
+						pointsA += pointsReceived;
+						DEBUG_PRINT("A shot B at point <%d,%d,%d>. Now A has %d points ", x, y, z, pointsA);
+						DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
 
 					// Need to notify
-					this->numOfSquareB -= 1;
-					localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
-				}
+						this->numOfSquareB -= 1;
+						localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark as hit
+					}
 
 				// If ship sank
-				if (pointsReceived > 0)
-				{
-					DEBUG_PRINT("Ship sank!\n");
-					attackResult = AttackResult::Sink;
-				}
-
-				
-			}
-			else               //A Hit himself!!
-			{
-				alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
-				if (!alreadyGotHit)
-				{
-					// If ship sank - notify as miss because did not hit correct ship 
-					attackResult = AttackResult::Miss;
-					pointsReceived = shootShip(Point(x, y, z), shipListA);
-					pointsB += pointsReceived;
-
-					DEBUG_PRINT("A shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
-					DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
-
-					this->numOfSquareA -= 1;
-
-					localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
-					HitCorrectTarget = false;
-					
 					if (pointsReceived > 0)
 					{
 						DEBUG_PRINT("Ship sank!\n");
+						attackResult = AttackResult::Sink;
+					}
+
+				
+				}
+				else               //A Hit himself!!
+				{
+					alreadyGotHit = (IS_SQUARE_DOWN(localBoard[x][y][z]));
+					if (!alreadyGotHit)
+					{
+						// If ship sank - notify as miss because did not hit correct ship 
+						attackResult = AttackResult::Miss;
+						pointsReceived = shootShip(Point(x, y, z), shipListA);
+						pointsB += pointsReceived;
+
+						DEBUG_PRINT("A shot A at point <%d,%d,%d>. Now B has %d points ", x, y, z, pointsB);
+						DEBUG_PRINT("Ship hit is %c\n", localBoard[x][y][z]);
+
+						this->numOfSquareA -= 1;
+
+						localBoard[x][y][z] = SQUARE_BOMBED_HIT_SYMBOL;   //mark has hit
+						HitCorrectTarget = false;
+					
+						if (pointsReceived > 0)
+						{
+							DEBUG_PRINT("Ship sank!\n");
 						
+						}
 					}
 				}
-			}
 
-			notifyOnAttackResult(PLAYER_A, attackPoint, attackResult);
-			//if ( (!playerBOutOfPlays && !HitCorrectTarget ) || alreadyGotHit)
-			if (!playerBOutOfPlays && attackResult == AttackResult::Miss)
-				setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
+				notifyOnAttackResult(PLAYER_A, attackPoint, attackResult);
+				//if ( (!playerBOutOfPlays && !HitCorrectTarget ) || alreadyGotHit)
+				if (!playerBOutOfPlays && attackResult == AttackResult::Miss)
+					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
 			
-			alreadyGotHit = false;
+				alreadyGotHit = false;
 
 		    }
-	    }
+	    
+			NumnerOfPotentialMovesA -= 1;       
+		}
 
 	}
 	
@@ -440,6 +460,11 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 		std::cout << "Player B won" << std::endl;
 		battleScore.winner = Winner::PlayerB;
 	}
+	else
+	{
+		std::cout << "Draw" << std::endl;
+	}
+
 	
 	std::cout << "Points:"    << std::endl;
 	std::cout << "Player A: " << to_string(pointsA) << std::endl;
@@ -460,10 +485,19 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	{
 		delete shipListB[i];
 	}
+	// in case of a draw no points will be counted as pointed out in forum
+	if (battleScore.winner == Winner::Tie)       
+	{
+		battleScore.playerAPoints = 0;
+		battleScore.playerBPoints = 0;
 
+	}
+	else
+	{
+		battleScore.playerAPoints = pointsA;
+		battleScore.playerBPoints = pointsB;
+	}
 	
-	battleScore.playerAPoints = pointsA;
-	battleScore.playerBPoints = pointsB;
 
 	return battleScore;
 }
