@@ -50,7 +50,7 @@ private:
 	void threadGameFunc();
 
 	// Use  std::atomic_fetch_add
-	std::atomic<int> atomicCounter = -1;
+	std::atomic<int> atomicCounter;
 	std::vector<thread> threadList;
 	int numberOfThreads;
 	bool loadDllFiles();

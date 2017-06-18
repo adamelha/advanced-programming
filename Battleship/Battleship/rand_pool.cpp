@@ -15,8 +15,7 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 	initIsPointLegal();
 	
 	// Allocate potential moves array to max size
-	potentialMoves = new Point[rows * cols * depth]();
-	
+	potentialMoves = new Point[rows * cols * depth];
 	// Init potentialMoves list 
 	for (int x = 0; x < rows; x++)
 	{

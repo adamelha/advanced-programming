@@ -56,11 +56,6 @@ int main(int argc, char **argv) {
 			}
 			boards.push_back(board);
 			throw BoardBadDimensionsOrHasMoreBoardsInFile();  //go to next board in file
-			//ThreadManager threadManager(filesPath, board, threadNumber);
-			//threadManager.run();
-			
-			while (true) {};
-			//return EXIT_SUCCESS;
 		}
 		catch (BoardBadDimensionsOrHasMoreBoardsInFile& bd)
 		{
@@ -71,16 +66,20 @@ int main(int argc, char **argv) {
 			if (status != STATUS_OK)
 			{
 				fileParser.printErrorMsg();
-				//return EXIT_FAIL;
 			}
 		}
-		catch (notEnoughDlls& e) 
-		{
-			return EXIT_FAIL;
-		}
 	}
-	ThreadManager threadManager(filesPath, boards, threadNumber);
-	threadManager.run();
+
+	try
+	{
+		ThreadManager threadManager(filesPath, boards, threadNumber);
+		threadManager.run();
+		 
+	}
+	catch (notEnoughDlls& e)
+	{
+		return EXIT_FAIL;
+	}
 
 	return EXIT_SUCCESS;
 }

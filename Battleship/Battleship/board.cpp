@@ -76,7 +76,7 @@ Board::Board(int rows, int cols, int depth) : ErrorClass(NUM_OF_BOARD_ERR_MSGS),
 
 Board::~Board()
 {
-	delete board;
+	//delete board;
 	// TODO: must delete board 3d array!!!
 }
 

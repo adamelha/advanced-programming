@@ -217,8 +217,10 @@ void ThreadManager::creatListOfGames()
 		{
 			for(int indexOfBoard = 0 ; indexOfBoard < boards.size() ; indexOfBoard++)
 			{
-				if (i != j){}
-					listOfGames.push_back(gameInfo(i , j , indexOfBoard));
+				if (i != j) 
+				{
+					listOfGames.push_back(gameInfo(i, j, indexOfBoard));
+				}
 			}
 			
 		}
@@ -228,14 +230,15 @@ void ThreadManager::creatListOfGames()
 	INFO_PRINT("list of games is: \n");
 	for (size_t i = 0; i < listOfGames.size(); i++)
 	{
-		INFO_PRINT("<%d,%d>\n", listOfGames[i].firstPlayer, listOfGames[i].secondPlayer);
+		INFO_PRINT("<%d,%d,%d>\n", listOfGames[i].firstPlayer, listOfGames[i].secondPlayer, listOfGames[i].boardIndex);
 	}
 }
 
 void ThreadManager::initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRound()
 {
-	numberOfRounds = (dllList.size() - 1) * 2;
+	
 	numberOfPlayers = dllList.size();
+	numberOfRounds = (numberOfPlayers - 1) * 2 * boards.size();
 
 	// init score tabel
 
