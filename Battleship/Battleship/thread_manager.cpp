@@ -6,7 +6,7 @@ void ThreadManager::threadGameFunc()
 {
 	BattleScore battleScore;
 	int indexOfGame, playerARound, playerBRound;
-	int playerAIndex, playerBIndex;
+	int playerAIndex, playerBIndex , boardIndex;
 	
 	
 	while( true )  // as long there are gamesto be played, play
@@ -15,8 +15,9 @@ void ThreadManager::threadGameFunc()
 		if (indexOfGame >= listOfGames.size())
 			break;
 
-		playerAIndex = listOfGames[indexOfGame].first;
-		playerBIndex = listOfGames[indexOfGame].second;
+		playerAIndex = listOfGames[indexOfGame].firstPlayer;
+		playerBIndex = listOfGames[indexOfGame].secondPlayer;
+		boardIndex = listOfGames[indexOfGame].boardIndex;
 		IBattleshipGameAlgo * firstPlayer  =  ((GetAlgoFuncType)GetProcAddress(dllList[playerAIndex], "GetAlgorithm") )  () ;
 		IBattleshipGameAlgo * secondPlayer =   ((GetAlgoFuncType)GetProcAddress(dllList[playerBIndex], "GetAlgorithm") ) () ;
 		
@@ -26,7 +27,7 @@ void ThreadManager::threadGameFunc()
 		// Play game get score
 		Battle battle(player_A);
 		
-		battleScore = battle.War(board, firstPlayer, secondPlayer);
+		battleScore = battle.War(boards[boardIndex], firstPlayer, secondPlayer);
 		
 		// Increment player rounds
 		playerARound = playerRound[playerAIndex].fetch_add(1, std::memory_order_relaxed);
@@ -81,7 +82,7 @@ void ThreadManager::threadGameFunc()
 }
 
 
-ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numberOfThreads) : path(_path), board(_board), numberOfThreads(_numberOfThreads)
+ThreadManager::ThreadManager(const string& _path, const vector<Board>& _boards, int _numberOfThreads) : path(_path), boards(_boards), numberOfThreads(_numberOfThreads)
 {
 	
 	// Set precision for double prints
@@ -209,12 +210,17 @@ EXIT:
 
 void ThreadManager::creatListOfGames()
 {
+	//gameInfo gi;
 	for (int i = 0; i < dllList.size(); i++)
 	{
 		for (int j = 0; j < dllList.size(); j++)
 		{
-			if (i != j)
-				listOfGames.push_back(std::make_pair(i, j));
+			for(int indexOfBoard = 0 ; indexOfBoard < boards.size() ; indexOfBoard++)
+			{
+				if (i != j){}
+					listOfGames.push_back(gameInfo(i , j , indexOfBoard));
+			}
+			
 		}
 	}
 
@@ -222,7 +228,7 @@ void ThreadManager::creatListOfGames()
 	INFO_PRINT("list of games is: \n");
 	for (size_t i = 0; i < listOfGames.size(); i++)
 	{
-		INFO_PRINT("<%d,%d>\n", listOfGames[i].first, listOfGames[i].second);
+		INFO_PRINT("<%d,%d>\n", listOfGames[i].firstPlayer, listOfGames[i].secondPlayer);
 	}
 }
 

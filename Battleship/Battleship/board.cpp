@@ -44,7 +44,7 @@ Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), nu
 	if (dimensions.size() < 3)
 	{
 		DEBUG_PRINT("Only %d dimensions found\n", (int)dimensions.size());
-		throw BoardBadDimensions();
+		throw BoardBadDimensionsOrHasMoreBoardsInFile();
 	}
 
 	// Parse dimensions
@@ -57,7 +57,7 @@ Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), nu
 	catch (...)
 	{
 		DEBUG_PRINT("Unable to parse dimension provided, make sure you provide an integer");
-		throw BoardBadDimensions();
+		throw BoardBadDimensionsOrHasMoreBoardsInFile();
 	}
 	
 	// Init board - a dynamic 3 dimensional array

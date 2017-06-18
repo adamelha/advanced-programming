@@ -51,4 +51,5 @@ private:
 	int retryBoard;
 	// Content of the file as a c++ string
 	string board, attack;
+	std::vector<string> boards;
 };

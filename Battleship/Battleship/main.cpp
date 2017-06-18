@@ -37,29 +37,32 @@ int main(int argc, char **argv) {
 		return EXIT_FAIL;
 	}
 	
+	//Board board;
+	std::vector<Board> boards;
 	//TODO: Right now if some file parser error occres we do not continue to check board validity. Need to?
 	// Check board validity and parse
-	while (true)
+	while (status != STATUS_NO_MORE_BOARDS)
 	{
 		try
 		{
 			Board board = Board(fileParser.getBoard());
-
 			status = board.parse();
 			if (status != STATUS_OK)
 			{
-				if (status == STATUS_INVALID_BOARD) board.printErrorMsg();
-
-				throw BoardBadDimensions();
+				if (status == STATUS_INVALID_BOARD) 
+					board.printErrorMsg();
+				throw BoardBadDimensionsOrHasMoreBoardsInFile();  // bad dimentions- serch next board
+				
 			}
-
-			ThreadManager threadManager(filesPath, board, threadNumber);
-			threadManager.run();
+			boards.push_back(board);
+			throw BoardBadDimensionsOrHasMoreBoardsInFile();  //go to next board in file
+			//ThreadManager threadManager(filesPath, board, threadNumber);
+			//threadManager.run();
 			
 			while (true) {};
-			return EXIT_SUCCESS;
+			//return EXIT_SUCCESS;
 		}
-		catch (BoardBadDimensions& bd)
+		catch (BoardBadDimensionsOrHasMoreBoardsInFile& bd)
 		{
 			DEBUG_PRINT("Bad Board.\n");
 			
@@ -68,7 +71,7 @@ int main(int argc, char **argv) {
 			if (status != STATUS_OK)
 			{
 				fileParser.printErrorMsg();
-				return EXIT_FAIL;
+				//return EXIT_FAIL;
 			}
 		}
 		catch (notEnoughDlls& e) 
@@ -76,5 +79,9 @@ int main(int argc, char **argv) {
 			return EXIT_FAIL;
 		}
 	}
+	ThreadManager threadManager(filesPath, boards, threadNumber);
+	threadManager.run();
+
+	return EXIT_SUCCESS;
 }
 

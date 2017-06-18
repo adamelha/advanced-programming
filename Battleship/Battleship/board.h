@@ -24,7 +24,7 @@
 #define BOARD_DEPTH	10
 using namespace std;
 
-struct BoardBadDimensions {};
+struct BoardBadDimensionsOrHasMoreBoardsInFile {};
 //struct BoardNoMoreBoards {};
 
 /**** Board Class *****/
@@ -40,6 +40,7 @@ public:
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;
 	char ***board;
+	
 
 private:
 	char _board[BOARD_SIZE][BOARD_SIZE];

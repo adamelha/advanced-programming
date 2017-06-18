@@ -25,10 +25,18 @@
 typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
 
 struct notEnoughDlls {};
+struct gameInfo
+{
+public:
+	gameInfo(int firstPlayer_ , int secondPlayer_ , int boardIndex_) : firstPlayer(firstPlayer_) , secondPlayer(secondPlayer_) , boardIndex(boardIndex_){}
+	int firstPlayer;
+	int secondPlayer;
+	int boardIndex;
+};
 
 class ThreadManager {
 public:
-	ThreadManager(const string& _path, const Board& _board, int numberOfThreads);
+	ThreadManager(const string& _path, const vector<Board>& _boards, int numberOfThreads);
 	status_t run();
 	
 private:
@@ -36,7 +44,8 @@ private:
 	std::vector<std::string> teamNameList;
 	//std::vector<IBattleshipGameAlgo *> playersList;
 	const string& path;
-	const Board& board;
+	//const Board& board;
+	const vector<Board>& boards;
 	int numOfSquareA = 0, numOfSquareB = 0;
 	void threadGameFunc();
 
@@ -48,7 +57,7 @@ private:
 	
 	GetAlgoFuncType getAlgoFunc;
 	//std::vector< std::unique_ptr<GetAlgoFuncType> > algoFuncInstance1;
-	std::vector< pair<int, int> > listOfGames;
+	std::vector< gameInfo > listOfGames;
 	void creatListOfGames();
 	void initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRound();
 
