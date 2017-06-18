@@ -240,6 +240,9 @@ void ThreadManager::initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRoun
 	numberOfPlayers = dllList.size();
 	numberOfRounds = (numberOfPlayers - 1) * 2 * boards.size();
 
+	// Print message
+	cout << "Number of legal players: " << numberOfPlayers << "\n";
+	cout << "Number of legal boards : " << boards.size() << "\n";
 	// init score tabel
 
 	// size numberOfRounds + 1 because we allocate a round 0 where the scores are 0 (simplifies algorithm).
