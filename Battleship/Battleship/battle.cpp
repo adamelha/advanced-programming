@@ -219,8 +219,8 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	vector<Ship*> shipListB = deepCopyShipPointerVector(board.shipListB);
 	int pointsB = 0;
 	// each player potential number of moves under the assumptions: 1)player don't attack is own ships 2)that each player attacks a square at most once(whitch is not is own)
-	int NumnerOfPotentialMovesA = board.rows() + board.cols() + board.depth() - numOfSquareA;
-	int NumnerOfPotentialMovesB = board.rows() + board.cols() + board.depth() - numOfSquareB;
+	int NumnerOfPotentialMovesA = (board.rows() * board.cols() * board.depth() ) - numOfSquareA;
+	int NumnerOfPotentialMovesB = (board.rows() * board.cols() * board.depth() ) - numOfSquareB;
 
 	//war!!
 	setWhosTurn(player_A);						 //   set turn A
@@ -245,7 +245,7 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 				battleScore.winner = Winner::Tie;
 				break;
 
-			}
+			} 
 
 			attackResult = AttackResult::Miss;
 			// Get attack move from player B
@@ -347,13 +347,14 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 
 		else                       //player A
 		{
+			
 			if (NumnerOfPotentialMovesA <= 0 && NumnerOfPotentialMovesB <= 0)     //if both players out of moves(bug in algo which lead to draw)
 			{
 				battleScore.winner = Winner::Tie;
 				break;
 
 			}
-
+			
 			attackPoint = attack(*algoA);
 			// If player B out of moves
 			if (attackPoint.row == BATTLE_OUT_OF_MOVES) {

@@ -55,6 +55,7 @@ private:
 	//std::vector< std::unique_ptr<GetAlgoFuncType> > algoFuncInstance1;
 	std::vector< pair<int, int> > listOfGames;
 	void creatListOfGames();
+	void initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRound();
 
 	// This is 2d tabel: scoreTabel[round][player]
 	//PlayerScore **scoreTabel;
