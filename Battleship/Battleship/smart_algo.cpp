@@ -49,12 +49,13 @@ int SmartAlgo::getPotentialMovesSize()
 void SmartAlgo::setPlayer(int player)
 {
 	this->player = player;
+	DEBUG_PRINT("I am player %d!!!\n", player);
 }
 
 void SmartAlgo::setBoard(const BoardData& board)
 {
 	squareType_e sqaretTypeIs;
-	
+	DEBUG_PRINT("IN SET BOARD\n");
 	// Allocate local board
 	//this->board = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
 
@@ -85,7 +86,7 @@ void SmartAlgo::setBoard(const BoardData& board)
 				{
 					this->board[x][y][z] = board.charAt(Coordinate(x + 1, y + 1, z + 1));
 					this->numOfSqares += 1;
-					
+					DEBUG_PRINT("this->board[%d][%d][%d] = %c\n", x,y,z, board.charAt(Coordinate(x + 1, y + 1, z + 1)));
 				}
 				else
 					this->board[x][y][z] = ' ';       // initialize board to 
@@ -270,6 +271,7 @@ void SmartAlgo::notifyOnAttackResult(int player, Coordinate move, AttackResult r
 	int adjustedCol = move.col -1;
 	int adjustedDepth = move.depth - 1;
 
+	DEBUG_PRINT("NOTIFY: player = %d, move = <%d,%d,%d>, result = %d\n", player, adjustedRow, adjustedCol, adjustedDepth, result);
 	// If opponent attacked
 	if (player != this->player)
 	{

@@ -18,7 +18,7 @@ extern std::mutex printMutex;
 // Print only INFO_PRINT
 #define PRIORITY_INFO	2
 
-#define BUILD_DEBUG_PRIORITY	PRIORITY_INFO
+#define BUILD_DEBUG_PRIORITY	PRIORITY_DEBUG
 
 
 #define DEBUG_PRINT(format, ...)	PRINT_LOG(PRIORITY_DEBUG, format, ##__VA_ARGS__)

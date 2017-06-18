@@ -23,8 +23,8 @@ public:
 	virtual Point getNextPotentialPoint();
 	virtual  Point * potentialLegalMoves();
 	int getPotentialMovesSize();
-	void setPlayer(int player);
-	void setBoard(const BoardData & board);
+	void setPlayer(int player) override;
+	void setBoard(const BoardData & board) override;
 	//virtual bool init(const std::string& path) override; //TBD
 	Coordinate attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, Coordinate move, AttackResult result) override;

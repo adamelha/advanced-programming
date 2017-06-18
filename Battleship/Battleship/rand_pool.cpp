@@ -4,7 +4,6 @@
 #include "battle_utils.h"
 #include "macros.h"
 #include "battle_utils.h"
-#include <ctime> 
 
 // Cntr Dtr
 RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentialMoves(), myBoard(myBoard), refTabel(), rows(_rows), cols(_cols), depth(_depth), potentialMovesSize(0)
@@ -47,15 +46,13 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 		refTabel[potentialMoves[i].row][potentialMoves[i].col][potentialMoves[i].depth] = &potentialMoves[i];
 	}
 	
-
+	for (size_t i = 0; i < potentialMovesSize; i++)
+	{
+		DEBUG_PRINT("potentialMoves[%d] = <%d,%d,%d>\n", i, potentialMoves[i].row, potentialMoves[i].col, potentialMoves[i].depth);
+	}
 	/* if in release mode - initialize random seed.
 	*  if DEBUG is defined - use seed 0 so random sequence remains the same during debug 
 	*/
-#if RANDOM_TRUE == 0
-	srand(0);
-#else
-	srand(time(NULL));
-#endif // DEBUG
 	
 	
 }
@@ -82,7 +79,9 @@ Point RandPool::getNextRandPoint()
 	}
 
 	// Gen random point from potentialMovesSize
-	r = rand() % potentialMovesSize;
+	int randomInt = dist(engine);
+	DEBUG_PRINT("randomInt = %d\n", randomInt);
+	r = randomInt % potentialMovesSize;
 	retPoint = potentialMoves[r];
 
 	//replace the removed point with the last one and update the size 

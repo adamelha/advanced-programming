@@ -33,8 +33,10 @@ void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo
 {
 	algo->setPlayer(player);
 	
-	algo->setBoard(board);
+	Board playerBoard(board.rows(), board.cols(), board.depth());
 	
+	
+
 	// Count number of squares for the player. TODO: do more efficiently?
 	if (player)					//set Board to Player B
 	{
@@ -46,7 +48,12 @@ void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo
 				{
 					if (isBelongToBoard(board.charAt(Coordinate(x + 1, y + 1, z + 1))) == B_SQUARE)
 					{
+						playerBoard.board[x][y][z] = board.charAt(Coordinate(x + 1, y + 1, z + 1));
 						numOfSquareB += 1;
+					}
+					else
+					{
+						playerBoard.board[x][y][z] = ' ';
 					}
 				}
 				
@@ -64,13 +71,20 @@ void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo
 				{
 					if (isBelongToBoard(board.charAt(Coordinate(x + 1, y + 1, z + 1))) == A_SQUARE)
 					{
+						playerBoard.board[x][y][z] = board.charAt(Coordinate(x + 1, y + 1, z + 1));
 						numOfSquareA += 1;
+					}
+					else
+					{
+						playerBoard.board[x][y][z] = ' ';
 					}
 				}
 				
 			}
 		}
 	}
+
+	algo->setBoard(playerBoard);
 	
 }
 

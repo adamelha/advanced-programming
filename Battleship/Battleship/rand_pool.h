@@ -1,6 +1,8 @@
 #pragma once
 #include "point.h"
 #include "macros.h"
+#include <random>
+#include <ctime> 
 
 class RandPool {
 public:
@@ -19,6 +21,12 @@ private:
 	void initIsPointLegal();
 	void changeEnvalopPointsToFalse(bool ***arr, Point p);
 	bool isPointPartOfShip(Point p);
+#if RANDOM_TRUE == 0
 
+	std::mt19937 engine{ 0 };
+#else
+	std::mt19937 engine{ time(NULL) };
+#endif
+	std::uniform_int_distribution<> dist;
 };
 
