@@ -7,4 +7,3 @@
 * score table printing
 * make sure bad load of dll does not prevent us from loading next dlls and does not enter vector.
 * move to smart pointers when possible
-* Error on tie 

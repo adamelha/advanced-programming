@@ -375,6 +375,7 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	else
 	{
 		std::cout << "Draw" << std::endl;
+		battleScore.winner = Winner::Tie;
 	}
 
 	

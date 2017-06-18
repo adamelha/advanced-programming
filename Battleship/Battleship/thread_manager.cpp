@@ -69,7 +69,6 @@ void ThreadManager::threadGameFunc()
 			scoreTabel[playerARound][playerAIndex].losses = scoreTabel[playerARound - 1][playerAIndex].losses;
 			scoreTabel[playerARound][playerAIndex].wins = scoreTabel[playerARound - 1][playerAIndex].wins;
 
-			return;
 		}
 
 		scoreTabel[playerARound][playerAIndex].totalPointsFor = scoreTabel[playerARound - 1][playerAIndex].totalPointsFor + battleScore.playerAPoints;

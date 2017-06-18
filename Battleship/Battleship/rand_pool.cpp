@@ -44,7 +44,6 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 
 	for (size_t i = 0; i < potentialMovesSize; i++)
 	{
-		DEBUG_PRINT("refTabel[%d][%d][%d], i = %d, potentialMovesSize = %d\n", potentialMoves[i].row, potentialMoves[i].col, potentialMoves[i].depth, i, potentialMovesSize);
 		refTabel[potentialMoves[i].row][potentialMoves[i].col][potentialMoves[i].depth] = &potentialMoves[i];
 	}
 	
