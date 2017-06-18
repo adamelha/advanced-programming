@@ -40,6 +40,10 @@ printMutex.unlock(); \
 #define INFO_PRINT(format, ...)
 #endif // DEBUG
 
+// Define 1 - random seed from clock ticks.
+// Define 0 - random seed 0.
+// Better to define 0 when debugging for easier debg
+#define RANDOM_TRUE		0
 
 #define ARRAY_LENGTH(arr)	(sizeof(arr) / sizeof((arr[0])))
 

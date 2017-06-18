@@ -80,9 +80,9 @@ void SmartAlgo::setBoard(const BoardData& board)
 		{
 			for (int z = 0; z < board.depth(); z++)
 			{
-				if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == sqaretTypeIs)
+				if (isBelongToBoard(board.charAt(Coordinate(x + 1, y + 1, z + 1))) == sqaretTypeIs)
 				{
-					this->board[x][y][z] = board.charAt(Coordinate(x, y, z));
+					this->board[x][y][z] = board.charAt(Coordinate(x + 1, y + 1, z + 1));
 					this->numOfSqares += 1;
 				}
 				else

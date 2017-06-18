@@ -1,5 +1,5 @@
 #include "thread_manager.h"
-
+#include <iomanip>
 
 // Thread that should take one game from the list, instantiate the algorithms and and manage the game
 void ThreadManager::threadGameFunc()
@@ -74,6 +74,11 @@ void ThreadManager::threadGameFunc()
 
 ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numberOfThreads) : path(_path), board(_board), numberOfThreads(_numberOfThreads)
 {
+	
+	// Set precision for double prints
+	std::cout << std::fixed;
+	std::cout << std::setprecision(2);
+	
 	threadList.resize(numberOfThreads); 
 	loadDllFiles();
 	creatListOfGames();
@@ -82,7 +87,6 @@ ThreadManager::ThreadManager(const string& _path, const Board& _board, int _numb
 
 	/*numberOfRounds = (dllList.size() - 1) * 2;
 	numberOfPlayers = dllList.size();
-
 	// init score tabel
 	
 	// size numberOfRounds + 1 because we allocate a round 0 where the scores are 0 (simplifies algorithm).

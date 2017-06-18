@@ -82,7 +82,14 @@ Board::~Board()
 
 char Board::charAt(Coordinate c) const
 {
-	return board[c.row][c.col][c.depth];
+	// Return ' ' if index out of range
+	if (c.row < 1 || c.row > rows() ||
+		c.col < 1 || c.col > cols() ||
+		c.depth < 1 || c.depth > depth())
+	{
+		return ' ';
+	}
+	return board[c.row - 1][c.col - 1][c.depth - 1];
 }
 
 status_t Board::parse()

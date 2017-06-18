@@ -29,8 +29,6 @@
 
 #define NUM_OF_DLL_ERR_MSGS			2
 
-#define TEMP_MAX_DLLS	10
-
 
 class ThreadManager {
 public:

@@ -6,9 +6,6 @@
 #include "macros.h"
 #include "thread_manager.h"
 
-// This is temporary - must parse from command line with CmdParser
-#define NUMBER_OF_THREADS	5
-
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -54,9 +51,6 @@ int main(int argc, char **argv) {
 
 			ThreadManager threadManager(filesPath, board, threadNumber);
 			threadManager.run();
-			//Battle battle(10);
-			//battle.War(filesPath, board);
-
 
 			return EXIT_SUCCESS;
 		}

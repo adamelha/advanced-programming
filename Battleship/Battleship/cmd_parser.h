@@ -2,8 +2,7 @@
 
 #include <string>
 #include "status.h"
-
-#define DEFAULT_THREAD_NUMBER	4
+#include "config.h"
 
 using namespace std;
 

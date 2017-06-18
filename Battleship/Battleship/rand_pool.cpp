@@ -50,7 +50,7 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 	/* if in release mode - initialize random seed.
 	*  if DEBUG is defined - use seed 0 so random sequence remains the same during debug 
 	*/
-#ifdef DEBUG
+#if RANDOM_TRUE == 0
 	srand(0);
 #else
 	srand(time(NULL));

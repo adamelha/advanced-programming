@@ -27,7 +27,7 @@ void Display::displayTabel(std::vector<PlayerScore> scoreArrayForRound)
 	cout << "Losses" << "\t";
 	cout << "%" << "\t";
 	cout << "Pts For" << "\t";
-	cout << "Pts Against" << "\t\n";
+	cout << "Pts Against" << "\t\n\n";
 
 	for (size_t i = 0; i < scoreArrayForRound.size(); i++)
 	{

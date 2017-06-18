@@ -43,7 +43,7 @@ void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo
 			{
 				for (int z = 0; z < board.depth(); z++)
 				{
-					if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == B_SQUARE)
+					if (isBelongToBoard(board.charAt(Coordinate(x + 1, y + 1, z + 1))) == B_SQUARE)
 					{
 						numOfSquareB += 1;
 					}
@@ -61,7 +61,7 @@ void Battle::setBoard(int player, const Board &board, IBattleshipGameAlgo * algo
 			{
 				for (int z = 0; z < board.depth(); z++)
 				{
-					if (isBelongToBoard(board.charAt(Coordinate(x, y, z))) == A_SQUARE)
+					if (isBelongToBoard(board.charAt(Coordinate(x + 1, y + 1, z + 1))) == A_SQUARE)
 					{
 						numOfSquareA += 1;
 					}
