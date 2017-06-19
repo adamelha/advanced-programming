@@ -135,8 +135,12 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 
 	// Create local copy of board
 	// TODO - either free when finished or use smar pointer
-	char ***localBoard = alloc3dArray<char>(board.rows(), board.cols(), board.depth());
-	copy3dArray(localBoard, board.board, board.rows(), board.cols(), board.depth());
+	//std::vector < std::vector< std::vector<char> > > localBoard (2 , 2, vector<char>(6 ) );
+	std::vector < std::vector< std::vector<char> > > localBoard;
+	alloc3dVector<char>(localBoard, board.rows(), board.cols(), board.depth());;
+
+	//char ***localBoard = alloc3dArray<char>(board.rows(), board.cols(), board.depth(board.depth()));
+	copy3dVector(localBoard, board.board, board.rows(), board.cols(), board.depth());
 
 	// Deep copy ship lists
 	vector<Ship*> shipListA = deepCopyShipPointerVector(board.shipListA);
