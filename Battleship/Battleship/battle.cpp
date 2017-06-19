@@ -379,29 +379,27 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	
 	
 	//game is over, print winners if there are
-	printMutex.lock();
 	if (this->numOfSquareB == 0)
 	{
-		std::cout << "Player A won" << std::endl; 
+		//std::cout << "Player A won" << std::endl; 
 		battleScore.winner = Winner::PlayerA;
 	}
 	else if(this->numOfSquareA == 0)
 	{
-		std::cout << "Player B won" << std::endl;
+		//std::cout << "Player B won" << std::endl;
 		battleScore.winner = Winner::PlayerB;
 	}
 	else
 	{
-		std::cout << "Draw" << std::endl;
+		//std::cout << "Draw" << std::endl;
 		battleScore.winner = Winner::Tie;
 	}
 
 	
-	std::cout << "Points:"    << std::endl;
-	std::cout << "Player A: " << to_string(pointsA) << std::endl;
-	std::cout << "Player B: " << to_string(pointsB) << std::endl;
+	//std::cout << "Points:"    << std::endl;
+	//std::cout << "Player A: " << to_string(pointsA) << std::endl;
+	//std::cout << "Player B: " << to_string(pointsB) << std::endl;
 
-	printMutex.unlock();
 
 	DEBUG_PRINT("Game took %d rounds to complete\n", roundCounter);
 	

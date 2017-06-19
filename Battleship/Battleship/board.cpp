@@ -7,6 +7,8 @@
 #include "ships.h"
 #include "macros.h"
 #include "battle_utils.h"
+#include <ctype.h>
+#include <algorithm>
 
 #define NUM_OF_SHIPS_PER_PLAYER	5
 #define IS_POINT_IN_POINT_LIST(pointList, pointListSize, point)	(std::find(pointList, pointList + pointListSize, point) != (pointList + pointListSize))
@@ -17,7 +19,7 @@
 
 // Start with boardNumber = 1 and increment and reiterate until get a board that is good
 // boardNumber will return the boardNumber board available lexicographically 
-Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile)
+Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS, ErrorPrintType::LogfilePrint), numberOfPlayerAShips(0), numberOfPlayerBShips(0), boardStringFromFile(boardStringFromFile)
 {
 	std::istringstream f(boardStringFromFile);
 	std::string line;
@@ -27,7 +29,6 @@ Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), nu
 	//Parse first line - dimensions
 	//std::getline(f, line); 
 	safeGetline(f, line);
-	std::cout << line << std::endl;
 
 	// Add delimiter at the end of the line in order to work properly
 	line += BOARD_DIMENSIONS_DELIMITER;
@@ -203,6 +204,7 @@ status_t Board::parse()
 	}
 	// Check board for errors and collect error messages
 	status = isBoardValid(board);
+
 
 	return status;
 }
@@ -425,9 +427,35 @@ status_t const Board::isBoardValid(std::vector < std::vector< std::vector<char> 
 		return STATUS_INVALID_BOARD;
 	}
 
+	isSameShips(shipListA, shipListB);
+	
 	return STATUS_OK;
 }
 
+// must be of same length!!
+void Board::isSameShips(const vector<Ship*> &shipA, const vector<Ship*> &shipB)
+{
+	vector<char> charListA, charListB;
+
+	for (size_t i = 0; i < shipA.size(); i++)
+	{
+		charListA.push_back(tolower(shipA[i]->charSymbol));
+		charListB.push_back(tolower(shipB[i]->charSymbol));
+	}
+
+	std::sort(charListA.begin(), charListA.end());
+	std::sort(charListB.begin(), charListB.end());
+
+	for (size_t i = 0; i < charListA.size(); i++)
+	{
+		if (charListA[i] != charListB[i])
+		{
+			this->printSingleMsg(MSG_WARN_DIFFERENT_SHIPS);
+			return;
+		}
+	}
+
+}
 bool Board::checkSurroundingPoint(const Ship &ship, Point surroundingPoint)
 {
 	bool ret = true;

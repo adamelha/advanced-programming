@@ -41,6 +41,7 @@ set (SMART_ALGO_SOURCE_FILES
 	battle_utils.h
 	board.h
 	cmd_parser.h
+	config.h
 	error_class.h
 	file_parser.h
 	IBattleshipGameAlgo.h

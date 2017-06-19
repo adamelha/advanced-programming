@@ -31,7 +31,7 @@ void Display::displayTabel(std::vector<PlayerScore> scoreArrayForRound)
 
 	printMutex.lock();
 
-	cout << "#" << "\t";
+	cout << "\n#" << "\t";
 	cout << "Team Name" << "\t";
 	cout << "Wins" << "\t";
 	cout << "Losses" << "\t";

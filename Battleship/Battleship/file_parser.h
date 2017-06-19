@@ -13,7 +13,7 @@
 #define WRONG_PATH_MSG			"Wrong path: " + this->filesPath + "\n"
 #define WRONG_PATH_IDX			0
 
-#define MISSING_BOARD_MSG		"Missing board file (*.sboard) looking in path: " + this->filesPath + "\n"
+#define MISSING_BOARD_MSG		"No board files (*.sboard) looking in path: " + this->filesPath + "\n"
 #define MISSING_BOARD_IDX		1
 
 #define MISSING_ATTACK_MSG		"Missing attack file for player (*.attack) looking in path: " + this->filesPath + "\n"
@@ -38,7 +38,7 @@ public:
 	string getBoard();
 	string getAttack();
 	string getAttackFileName() const;
-	FileParser(string filesPath, parseType_e parseType) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS), filesPath(filesPath), parseType(parseType), retryBoard(0){}
+	FileParser(string filesPath, parseType_e parseType) : ErrorClass(NUM_OF_FILE_PARSER_ERR_MSGS, ErrorPrintType::CoutPrint), filesPath(filesPath), parseType(parseType), retryBoard(0){}
 	status_t parseAttack();
 private:
 	status_t parsePaths();

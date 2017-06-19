@@ -1,9 +1,15 @@
 #include "error_class.h"
 #include <iostream>
+#include <fstream>
 
-ErrorClass::ErrorClass(size_t num_of_err_msgs)
+// Default does not print
+ErrorClass::ErrorClass(size_t num_of_err_msgs) : ErrorClass(num_of_err_msgs, ErrorPrintType::NoPrint)
 {
-	this->num_of_err_msgs = num_of_err_msgs;
+	
+}
+
+ErrorClass::ErrorClass(size_t num_of_err_msgs, ErrorPrintType type) : printType(type), num_of_err_msgs(num_of_err_msgs), logFilePath(DEFAULT_LOG_FILE)
+{
 	this->errorMsgs.resize(num_of_err_msgs);
 
 	// Nullify strings
@@ -13,7 +19,6 @@ ErrorClass::ErrorClass(size_t num_of_err_msgs)
 	}
 
 }
-
 void ErrorClass::addErrorMsg(size_t index, string msg)
 {
 	if (errorMsgs[index] == "") {
@@ -30,12 +35,14 @@ void ErrorClass::printErrorMsg()
 	{
 		if (errorMsgs[i] != "")
 		{
-			cout << errorMsgs[i];
+			printSingleMsg(errorMsgs[i]);
 		}
 	}
 
 
 }
+
+
 
 bool ErrorClass::errorMsgsExist()
 {
@@ -53,4 +60,24 @@ bool ErrorClass::errorMsgsExist()
 ErrorClass::~ErrorClass()
 {
 	
+}
+
+void ErrorClass::printSingleMsg(string msg)
+{
+	std::ofstream outfile;
+
+	switch (printType)
+	{
+	case ErrorPrintType::NoPrint:
+		break;
+	case ErrorPrintType::CoutPrint:
+		cout << msg;
+		break;
+	case ErrorPrintType::LogfilePrint:
+		outfile.open(logFilePath, std::ios_base::app);
+		outfile << msg;
+		break;
+	default:
+		break;
+	}
 }

@@ -19,17 +19,22 @@ using namespace std;
 #define NUM_OF_DIFFERENT_SHIPS	4
 #define NUM_OF_PLAYERS			2
 
-#define MSG_MANY_SHIPS_A		"Too many ships for player A\n"
+#define MSG_MANY_SHIPS_A		"Bad Board: Too many ships for player A\n"
 #define MSG_MANY_SHIPS_A_IDX	(NUM_OF_DIFFERENT_SHIPS * NUM_OF_PLAYERS)
-#define MSG_FEW_SHIPS_A			"Too few ships for player A\n"
+#define MSG_FEW_SHIPS_A			"Bad Board:Too few ships for player A\n"
 #define MSG_FEW_SHIPS_A_IDX		(MSG_MANY_SHIPS_A_IDX + 1)
-#define MSG_MANY_SHIPS_B		"Too many ships for player B\n"
+#define MSG_MANY_SHIPS_B		"Bad Board:Too many ships for player B\n"
 #define MSG_MANY_SHIPS_B_IDX	(MSG_FEW_SHIPS_A_IDX + 1)
-#define MSG_FEW_SHIPS_B			"Too few ships for player B\n"
+#define MSG_FEW_SHIPS_B			"Bad Board:Too few ships for player B\n"
 #define MSG_FEW_SHIPS_B_IDX		(MSG_MANY_SHIPS_B_IDX + 1)
 
-#define MSG_ADJACENT_SHIPS		"Adjacent Ships on Board\n"
+#define MSG_ADJACENT_SHIPS		"Bad Board:Adjacent Ships on Board\n"
 #define MSG_ADJACENT_SHIPS_IDX	(MSG_FEW_SHIPS_B_IDX + 1)
+
+#define MSG_WARN_DIFFERENT_SHIPS		"WARNING: Players don't have same ships\n"
+#define MSG_WARN_DIFFERENT_SHIPS_IDX	(MSG_ADJACENT_SHIPS_IDX + 1)
+
+
 #define NUMBER_OF_BOARD_MSGS	(MSG_ADJACENT_SHIPS_IDX + 1)
 
 

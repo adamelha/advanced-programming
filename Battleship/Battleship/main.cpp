@@ -72,9 +72,13 @@ int main(int argc, char **argv) {
 
 	try
 	{
+		if (boards.size() < 1)
+		{
+			cout << "No board files (*.sboard) looking in path: " << filesPath << "\n";
+			return EXIT_FAIL;
+		}
 		ThreadManager threadManager(filesPath, boards, threadNumber);
 		threadManager.run();
-		 
 	}
 	catch (notEnoughDlls& e)
 	{

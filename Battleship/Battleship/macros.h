@@ -3,7 +3,7 @@
 #include <iostream>
 #include <mutex>
 
-#define DEBUG
+//#define DEBUG
 
 // Mutex for debug printing - debug and Display
 extern std::mutex printMutex;
@@ -43,7 +43,7 @@ printMutex.unlock(); \
 // Define 1 - random seed from clock ticks.
 // Define 0 - random seed 0.
 // Better to define 0 when debugging for easier debg
-#define RANDOM_TRUE		0
+#define RANDOM_TRUE		1
 
 #define ARRAY_LENGTH(arr)	(sizeof(arr) / sizeof((arr[0])))
 

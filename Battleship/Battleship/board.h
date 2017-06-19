@@ -19,9 +19,9 @@
 #define BOARD_DIMENSIONS_EXCEPTIONS		1
 
 #define BOARD_NUMBER_OF_DIMENSIONS		3
-#define BOARD_ROWS	10
-#define BOARD_COLS	10
-#define BOARD_DEPTH	10
+
+
+
 using namespace std;
 
 struct BoardBadDimensionsOrHasMoreBoardsInFile {};
@@ -52,4 +52,6 @@ private:
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
 	bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB);
 	int boardNumber;
+	void Board::isSameShips(const vector<Ship*> &shipA, const vector<Ship*> &shipB);
+
 };

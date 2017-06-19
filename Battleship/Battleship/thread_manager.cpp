@@ -168,7 +168,7 @@ bool ThreadManager::loadDllFiles()
 	//typedef IBattleshipGameAlgo *(*GetAlgoFuncType)();
 	//GetAlgoFuncType getAlgoFunc;
 
-	ErrorClass errmsgs(NUM_OF_DLL_ERR_MSGS);
+	ErrorClass errmsgs(NUM_OF_DLL_ERR_MSGS, ErrorPrintType::CoutPrint);
 
 	// iterate over *.dll files in path
 	string s = "\\*.smart.dll"; // only .dll endings
@@ -245,7 +245,7 @@ void ThreadManager::initial_numberOfRounds_numberOfPlayers_scoreTabel_playerRoun
 
 	// Print message
 	cout << "Number of legal players: " << numberOfPlayers << "\n";
-	cout << "Number of legal boards : " << boards.size() << "\n";
+	cout << "Number of legal boards: " << boards.size() << "\n";
 	// init score tabel
 
 	// size numberOfRounds + 1 because we allocate a round 0 where the scores are 0 (simplifies algorithm).

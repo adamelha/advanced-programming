@@ -117,6 +117,7 @@
     <ClInclude Include="..\Battleship\battle_utils.h" />
     <ClInclude Include="..\Battleship\board.h" />
     <ClInclude Include="..\Battleship\cmd_parser.h" />
+    <ClInclude Include="..\Battleship\config.h" />
     <ClInclude Include="..\Battleship\error_class.h" />
     <ClInclude Include="..\Battleship\file_parser.h" />
     <ClInclude Include="..\Battleship\IBattleshipGameAlgo.h" />
