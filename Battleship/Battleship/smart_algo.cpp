@@ -101,7 +101,7 @@ void SmartAlgo::setBoard(const BoardData& board)
 
 void SmartAlgo::setBoard(int rows, int cols, int depth)
 {
-	board = alloc3dArray<char>(rows, cols, depth);
+	alloc3dVector<char>(board,rows, cols, depth);
 }
 
 Point SmartAlgo::getLowestPointIncurrentAttackArr()

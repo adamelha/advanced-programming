@@ -29,9 +29,10 @@ public:
 	Coordinate attack() override; // ask player for his move
 	virtual void notifyOnAttackResult(int player, Coordinate move, AttackResult result) override;
 	void initPotentialMoves();
-	//char *board[BOARD_SIZE];
-	char ***board;
-	//	Point * getPotentialMoves();
+	
+	
+	std::vector < std::vector< std::vector<char> > > board;
+	
 
 private:
 	char _board[BOARD_SIZE][BOARD_SIZE];
@@ -49,9 +50,7 @@ private:
 	Point getHighestPointIncurrentAttackArr();
 
 
-	void initIsPointLegal();
-	bool isPointPartOfShip(Point p);
-	void changeEnvalopPointsToFalse(bool arr[][BOARD_SIZE], int x, int y);
+
 	player_is lastPlayerFormNotifyed = player_A;
 	Point lastPointFormNotifyed;
 	int player;
@@ -60,8 +59,6 @@ private:
 	int dirState2Points;
 	void setBoard(int rows, int cols, int depth);
 	int rows, cols, depth;
-	//void initPotentialMovesSize();
-	//void initPotentialMoves(const vector<Ship*>& shipList);
-	//void initIsPointLegal(const vector<Ship*> &shipList);
+	
 
 };

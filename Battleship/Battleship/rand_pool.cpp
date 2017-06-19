@@ -6,8 +6,11 @@
 #include "battle_utils.h"
 
 // Cntr Dtr
-RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentialMoves(), myBoard(myBoard), refTabel(), rows(_rows), cols(_cols), depth(_depth), potentialMovesSize(0)
+RandPool::RandPool(std::vector < std::vector< std::vector<char> > > & _myBoard, int _rows, int _cols, int _depth) : potentialMoves(), myBoard(_myBoard), refTabel(), rows(_rows), cols(_cols), depth(_depth), potentialMovesSize(0)
 {
+	//init 3dVector
+	//alloc3dVector<char>(myBoard, rows, cols, depth);
+//	copy3dVector(myBoard, _myBoard, rows, cols, depth);
 	// Init potential moves
 	int index = 0;
 	
@@ -35,10 +38,12 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 	}
 
 	// Allocate ref tabel
-	refTabel = alloc3dArray<Point *>(rows, cols, depth);
+	//refTabel = alloc3dArray<Point *>(rows, cols, depth);
+	alloc3dVector<Point *>(refTabel, rows, cols, depth);
+
 	
 	// Nullify ref tabel
-	init3dArray<Point *>(refTabel, nullptr, rows, cols, depth);
+	init3dVector<Point *>(refTabel, nullptr, rows, cols, depth);
 	//init ref tabel
 
 	for (size_t i = 0; i < potentialMovesSize; i++)
@@ -56,6 +61,7 @@ RandPool::RandPool(char ***myBoard, int _rows, int _cols, int _depth) : potentia
 	
 	
 }
+
 RandPool::~RandPool()
 {
 	delete[] potentialMoves;
@@ -131,7 +137,7 @@ bool RandPool::isPointPartOfShip(Point p)
 }
 
 //changes unvalid points near a point with player ship
-void RandPool::changeEnvalopPointsToFalse(bool ***arr, Point p)
+void RandPool::changeEnvalopPointsToFalse(std::vector < std::vector< std::vector<bool> > > &arr, Point p)
 {
 	if (isPointPartOfShip(p))
 	{
@@ -156,10 +162,10 @@ void RandPool::changeEnvalopPointsToFalse(bool ***arr, Point p)
 void RandPool::initIsPointLegal()
 {
 	// Allocate isPointLegal
-	isPointLegal = alloc3dArray<bool>(rows, cols, depth);
+	alloc3dVector<bool>(isPointLegal, rows, cols, depth);
 	
 	// Initialize all to true
-	init3dArray<bool>(isPointLegal, true, rows, cols, depth);
+	init3dVector<bool>(isPointLegal, true, rows, cols, depth);
 
 	for (int x = 0; x < rows; x++)
 	{

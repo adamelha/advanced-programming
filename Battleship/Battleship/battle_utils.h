@@ -17,7 +17,11 @@ template <class T>
 void alloc3dVector(std::vector < std::vector< std::vector<T> > > & arr, int rows, int cols, int depth);
 
 template <class T>
+void init3dVector(std::vector < std::vector< std::vector<T> > > &arr, T value, int rows, int cols, int depth);
+
+template <class T>
 void copy3dVector(std::vector < std::vector< std::vector<T> > > &dst, std::vector < std::vector< std::vector<T> > >src, int rows, int cols, int depth);
+
 
 template <class T>
 T*** alloc3dArray(int rows, int cols, int depth)
@@ -86,6 +90,20 @@ void alloc3dVector(std::vector < std::vector< std::vector<T> > > & arr, int rows
 	//return arr;
 }
 
+template <class T>
+void init3dVector(std::vector < std::vector< std::vector<T> > > &arr, T value, int rows, int cols, int depth)
+{
+	for (size_t x = 0; x < rows; x++)
+	{
+		for (size_t y = 0; y < cols; y++)
+		{
+			for (size_t z = 0; z < depth; z++)
+			{
+				arr[x][y][z] = value;
+			}
+		}
+	}
+}
 
 
 // Copy from on board to another. Dimensions must match
