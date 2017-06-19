@@ -39,7 +39,7 @@ public:
 	~Board();
 	int numberOfPlayerAShips, numberOfPlayerBShips;
 	vector<Ship*> shipListA, shipListB;
-	char ***board;
+	std::vector < std::vector< std::vector<char> > > board;
 	
 
 private:
@@ -48,7 +48,7 @@ private:
 	void setCharOnBoard(Point p, char val);
 	bool checkAdjacentShips(const Ship &ship);
 	bool checkSurroundingPoint(const Ship &ship, Point surroundingPoint);
-	status_t const isBoardValid(char ***parsedBoard);
+	status_t const isBoardValid(std::vector < std::vector< std::vector<char> > > & parsedBoard);
 	std::istream& Board::safeGetline(std::istream& is, std::string& t);
 	bool isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const vector<Ship*> &shipListB);
 	int boardNumber;

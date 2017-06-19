@@ -61,7 +61,8 @@ Board::Board(string boardStringFromFile) : ErrorClass(NUM_OF_BOARD_ERR_MSGS), nu
 	}
 	
 	// Init board - a dynamic 3 dimensional array
-	board = alloc3dArray<char>(_rows, _cols, _depth);	
+	alloc3dVector<char>(board, _rows, _cols, _depth);
+
 }
 
 // Overloading of Board constructor - if no parsing
@@ -71,7 +72,7 @@ Board::Board(int rows, int cols, int depth) : ErrorClass(NUM_OF_BOARD_ERR_MSGS),
 	_rows = rows;
 	_cols = cols;
 	_depth = depth;
-	board = alloc3dArray<char>(rows, cols, depth);
+	alloc3dVector<char>(board,rows, cols, depth);
 }
 
 Board::~Board()
@@ -229,7 +230,7 @@ bool Board::isPartOfFoundList(Point point, const vector<Ship*> &shipListA, const
 	return false;
 }
 
-status_t const Board::isBoardValid(char ***parsedBoard)
+status_t const Board::isBoardValid(std::vector < std::vector< std::vector<char> > > & parsedBoard)
 {
 	Ship *ship;
 	char part, nextPart;
