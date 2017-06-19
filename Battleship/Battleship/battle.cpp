@@ -93,6 +93,11 @@ Coordinate Battle::attack(IBattleshipGameAlgo &algo)
 
 	Coordinate attackPoint = algo.attack();
 
+	if (attackPoint.row <= 0 || attackPoint.col <= 0 || attackPoint.depth <= 0)
+	{
+		attackPoint = Coordinate(ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES, ALGO_OUT_OF_MOVES);
+	}
+
 	attackPoint.row -= 1;
 	attackPoint.col -= 1;
 	attackPoint.depth -= 1;
@@ -364,7 +369,6 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 				}
 
 				notifyOnAttackResult(PLAYER_A, attackPoint, attackResult);
-				//if ( (!playerBOutOfPlays && !HitCorrectTarget ) || alreadyGotHit)
 				if (!playerBOutOfPlays && attackResult == AttackResult::Miss)
 					setWhosTurn((this->whosTurn + 1) % 2);          //change turn to next player if possibale and the player missed (to player B)
 			
@@ -396,11 +400,6 @@ BattleScore Battle::War(const Board &board,  IBattleshipGameAlgo* _algoA, IBattl
 	}
 
 	
-	//std::cout << "Points:"    << std::endl;
-	//std::cout << "Player A: " << to_string(pointsA) << std::endl;
-	//std::cout << "Player B: " << to_string(pointsB) << std::endl;
-
-
 	DEBUG_PRINT("Game took %d rounds to complete\n", roundCounter);
 	
 
