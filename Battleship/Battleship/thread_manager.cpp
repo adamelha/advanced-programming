@@ -29,6 +29,10 @@ void ThreadManager::threadGameFunc()
 		
 		battleScore = battle.War(boards[boardIndex], firstPlayer, secondPlayer);
 		
+		//move firstPlayer and secondPlayer for better managment of memory to unique_ptr- makes sure that pointer will not get released premturely in battle.War 
+		//now in the the end of scope threadGameFunc() the new alocation we got from getAlgorhitem will be freed!
+		std::unique_ptr<IBattleshipGameAlgo> firstPlayerQnique(firstPlayer);
+		std::unique_ptr<IBattleshipGameAlgo> secondPlayerQnique(secondPlayer);
 		// Increment player rounds
 		playerARound = playerRound[playerAIndex].fetch_add(1, std::memory_order_relaxed);
 		playerBRound = playerRound[playerBIndex].fetch_add(1, std::memory_order_relaxed);
