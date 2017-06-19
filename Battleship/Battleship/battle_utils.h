@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 typedef enum player { player_A = 0, player_B = 1 } player_is;
 typedef enum squareType { NO_SQUARE = 0, A_SQUARE = 1, B_SQUARE = 2 } squareType_e;
 int isBelongToBoard(const char c);
@@ -79,7 +80,7 @@ void alloc3dVector(std::vector < std::vector< std::vector<T> > > & arr, int rows
 		arr[i].resize(cols);
 
 		for (int k = 0; k < cols; ++k)
-			arr[i][k].resize(defth);
+			arr[i][k].resize(depth);
 	}
 
 	//return arr;
