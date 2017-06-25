@@ -1,3 +1,50 @@
+#include <iostream>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <functional>
+#include <string>
+#include <cstring>
+//using namespace std;
+template <typename T>
+using deref_iter_t = std::remove_reference_t<decltype(*std::declval<T>())>;
+template<class Iterator, class GroupingFunc>
+auto groupValues(Iterator begin, Iterator end, GroupingFunc groupingFunc) {
+	using T = deref_iter_t<Iterator>;
+	using GroupingType = std::result_of_t<GroupingFunc(T&)>;
+	std::map<GroupingType, std::list<T>> groups;
+	std::for_each(begin, end, [&groups, groupingFunc](const auto& val) {
+		groups[groupingFunc(val)].push_back(val);
+	});
+	return groups;
+}
+template<class MapOfLists>
+void print(const MapOfLists& m) {
+	for (const auto& p : m) {
+		std::cout << p.first << std::endl << "-----" << std::endl;
+		for (const auto& val : p.second) {
+			std::cout << val << std::endl;
+		}
+		std::cout << "-----" << std::endl;
+	}
+}
+int main() {
+	/*std::list<std::string> strs = { "hello", "world", "Hello", "World" };
+	auto groupOfStrings = groupValues(strs.begin(), strs.end(), [](auto& val) {
+		return (char)std::toupper(val.at(0));
+	});
+	print(groupOfStrings);
+	*/
+	std::list<int> numbers = { 1, 5, 10, 24, 13 };
+	auto groupOfNumbers = groupValues(numbers.begin(), numbers.end(), [](int val) {
+		int decile = int(val / 10) * 10;
+		return std::to_string(decile) + '-' + std::to_string(decile + 9);
+	});
+	print(groupOfNumbers);
+}
+
+
+/*
 #include "matrix.h"
 
 template<typename Groups>
@@ -21,12 +68,12 @@ int mainFromLecture()
 {
 	Matrix<int, 1> m0 = { 25, 10, 15 };
 
-	cout << m0 << endl;
+	//cout << m0[0] << endl;
 
 
 	Matrix<int, 3> m1 = { { { 10, 20, 30 },{ 10, 20 },{ 11, 22, 33 } },{ { 40, 50, 60 },{ 80, 90 },{ 51, 52, 53 } } };
-
-	cout << m1 << endl;
+	for (int i = 0 ; i < m1.size() ; i++)
+		cout << m1[i] << endl;
 
 
 
@@ -63,9 +110,12 @@ int main() {
 
 	// Main that we must support - Matrix2d<char> m works.
 	// Must do the rest
-	//Matrix2d<char> m = { { 'a', 'A', 'a' },{ 'B', 'a', 'B' },{ 'B', 'a', 'B' } };
+	Matrix2d<char> m = { { 'a', 'A', 'a' },{ 'B', 'a', 'B' },{ 'B', 'a', 'B' } };
+	//m.groupValues([](auto i) {return islower(i) ? "L" : "U"; });
+
 	//auto all_groups = m.groupValues([](auto i) {return islower(i) ? "L" : "U"; });
 	//print(all_groups);
 
 	mainFromLecture();
 }
+*/

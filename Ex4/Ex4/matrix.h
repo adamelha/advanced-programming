@@ -132,7 +132,10 @@ public:
 	size_t size() const { return _size; }
 
 	Matrix() {}
-
+	T operator[] (int i)
+	{
+		return _array[i];
+	}
 
 
 	// DIMENSIONS == 1
