@@ -5,6 +5,8 @@
 #include <functional>
 #include <string>
 #include <cstring>
+#include "matrix.h"
+
 //using namespace std;
 template <typename T>
 using deref_iter_t = std::remove_reference_t<decltype(*std::declval<T>())>;
@@ -13,6 +15,9 @@ auto groupValues(Iterator begin, Iterator end, GroupingFunc groupingFunc) {
 	using T = deref_iter_t<Iterator>;
 	using GroupingType = std::result_of_t<GroupingFunc(T&)>;
 	std::map<GroupingType, std::list<T>> groups;
+
+
+
 	std::for_each(begin, end, [&groups, groupingFunc](const auto& val) {
 		groups[groupingFunc(val)].push_back(val);
 	});
@@ -35,6 +40,31 @@ int main() {
 	});
 	print(groupOfStrings);
 	*/
+
+	//Point<2> p = { 0,0 };
+	char c;
+	//Matrix2d<char> m = { { 'a', 'A', 'a' },{ 'B', 'a', 'B' },{ 'B', 'a', 'B' } };
+	Matrix2d<char> m = { { 'a', 'b', 'c' ,'1' },{ 'd', 'e', 'f', '2' },{ 'g', 'h', 'i', '3' } };
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			Point<2> p = { i, j };
+			c = m[p];
+
+			cout << c << "\n";
+			
+		}
+
+	}
+
+	
+
+	//char c = m[p];
+
+	//MatrixPrinter<int, 2>::print()
+	cout << m;
+
 	std::list<int> numbers = { 1, 5, 10, 24, 13 };
 	auto groupOfNumbers = groupValues(numbers.begin(), numbers.end(), [](int val) {
 		int decile = int(val / 10) * 10;

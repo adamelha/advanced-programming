@@ -14,6 +14,7 @@
 
 #include <memory>
 
+#include "point.h"
 
 using std::cout;
 
@@ -119,24 +120,42 @@ class Matrix {
 
 	constexpr static size_t NUM_DIMENSIONS = DIMENSIONS;
 
-	std::unique_ptr<T[]> _array = nullptr;
+	
 
-	size_t _dimensions[DIMENSIONS] = {};
+	
 
-	const size_t _size = 0;
 
 	friend class Matrix<T, DIMENSIONS + 1>;
 
 public:
+	const size_t _size = 0;
 
+	size_t _dimensions[DIMENSIONS] = {};
+	std::unique_ptr<T[]> _array = nullptr;
 	size_t size() const { return _size; }
 
+	
 	Matrix() {}
-	T operator[] (int i)
-	{
-		return _array[i];
-	}
 
+	T operator[] (Point<DIMENSIONS> p)
+	{
+		
+		int idx = 0;
+		int sizeOfSmallerList;
+		for (size_t i = 0; i < DIMENSIONS ; i++)
+		{
+			sizeOfSmallerList = 1;
+			for (size_t j = DIMENSIONS - 1; j > i; j--)
+			{
+				sizeOfSmallerList *= _dimensions[j];
+			}
+			idx += (sizeOfSmallerList * p.coordinates[i]);
+		}
+
+		return _array[idx];
+
+	}
+	
 
 	// DIMENSIONS == 1
 
@@ -243,8 +262,14 @@ public:
 
 	}
 
+	// Copy 
 
+	void copyFromLargerMatrix(const Matrix<T, DIMENSIONS + 1> &m, int idx) {
+		size_t dest_size = _size / _dimensions[0];
 
+		MatrixCopier<T, DIMENSIONS>::copy(&(_array[idx * dest_size]), dest_size, _dimensions + 1, m._array.get(), m._size, m._dimensions);
+		
+	}
 	auto& operator=(Matrix&& m) {
 
 		std::swap(_array, m._array);
