@@ -58,7 +58,8 @@ int main() {
 
 	}
 
-	
+	auto all_groups = m.groupValues([](auto i) {return islower(i) ? "L" : "U"; });
+
 
 	//char c = m[p];
 

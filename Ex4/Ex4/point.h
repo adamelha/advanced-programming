@@ -19,7 +19,7 @@ public:
 			coordinates[i++] = val;
 		}
 	}
-	Point() { coordinates.resize(DIMENSIONS); }
+	Point() : coordinates{} { coordinates.resize(DIMENSIONS); }
 
 	void invalidatePoint() { for (int i = 0; i < DIMENSIONS; i++) {coordinates[i] = INVALID_POINT}; }
 	//bool isPointValid() { return (row == INVALID_POINT) && (col == INVALID_POINT) && (depth == INVALID_POINT); }

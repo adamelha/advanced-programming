@@ -289,6 +289,18 @@ public:
 
 	}
 
+	void iterate(int d, int n, size_t size[], Point<DIMENSIONS> res) {
+		if (d >= n) { //stop clause
+			cout << this->operator[](res) << " ";
+			// Here we do the work!
+			//print(res, n);
+			return;
+		}
+		for (int i = 0; i < size[d]; i++) {
+			res.coordinates[d] = i;
+			iterate(d + 1, n, size, res);
+		}
+	}
 
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& m) {
 
@@ -296,6 +308,50 @@ public:
 
 		return out;
 
+	}
+
+	template<class GroupingFunc>
+	auto groupValues(GroupingFunc groupingFunc) {
+		//using T = deref_iter_t<Iterator>;
+		using GroupingType = std::result_of_t<GroupingFunc(T&)>;
+		std::map<GroupingType, std::list<T>> groups;
+
+		// Iterate matrix
+		// TODO: Create iterator
+		Point<DIMENSIONS> point;
+		
+		iterate(0, DIMENSIONS, _dimensions, point);
+
+
+
+		/*
+		while (1)
+		{
+			// Print
+			for (int i = 0; i < DIMENSIONS; i++)
+			{
+				//std::cout << this->operator[](point) << " ";
+			}
+			std::cout << "\n";
+
+			// Update
+			int j;
+			for (j = 0; j < DIMENSIONS; j++)
+			{	
+				
+				point.coordinates[j]++;
+				if (point.coordinates[j] < _dimensions[j]) break;
+				point.coordinates[j] = 0;
+			}
+			if (j == DIMENSIONS) break;
+		}
+		*/
+		/*
+		std::for_each(begin, end, [&groups, groupingFunc](const auto& val) {
+			groups[groupingFunc(val)].push_back(val);
+		});
+		*/
+		return groups;
 	}
 
 };
