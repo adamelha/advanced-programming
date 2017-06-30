@@ -16,6 +16,8 @@
 
 #include "point.h"
 
+
+
 using std::cout;
 
 using std::endl;
@@ -117,6 +119,9 @@ struct MatrixPrinter<T, 1> {
 template<class T, size_t DIMENSIONS>
 
 class Matrix {
+
+
+	
 
 	constexpr static size_t NUM_DIMENSIONS = DIMENSIONS;
 
@@ -288,17 +293,19 @@ public:
 		return _dimensions[i];
 
 	}
-
-	void iterate(int d, int n, size_t size[], Point<DIMENSIONS> res) {
+	
+	template<class A>
+	void iterate(int d, int n, size_t size[], Point<DIMENSIONS> res, std::function<void(Point<DIMENSIONS>, A&)> iterFunc, A &callbackArg) {
 		if (d >= n) { //stop clause
 			cout << this->operator[](res) << " ";
 			// Here we do the work!
+			iterFunc(res, callbackArg);
 			//print(res, n);
 			return;
 		}
 		for (int i = 0; i < size[d]; i++) {
 			res.coordinates[d] = i;
-			iterate(d + 1, n, size, res);
+			iterate(d + 1, n, size, res, iterFunc, callbackArg);
 		}
 	}
 
@@ -309,18 +316,35 @@ public:
 		return out;
 
 	}
+	//void doGroupVals(Point<DIMENSIONS> point, std::map<H, std::list<T>> map)
+	template<class A>
+	void doGroupVals(Point<DIMENSIONS> point, A &callbackArg)
+	{
+		cout << "hi";
+	}
+
+	struct doWork
+	{
+		int y = 0;
+		doWork(int y_) : y(y_) {}
+		int operator()(int x) { return y * x; }
+	};
+
 
 	template<class GroupingFunc>
 	auto groupValues(GroupingFunc groupingFunc) {
 		//using T = deref_iter_t<Iterator>;
 		using GroupingType = std::result_of_t<GroupingFunc(T&)>;
 		std::map<GroupingType, std::list<T>> groups;
-
+		
+		std::function<void(Point<DIMENSIONS>, std::map<GroupingType, std::list<T>>&)> iterFunc = [=](Point<DIMENSIONS> point, std::map<GroupingType, std::list<T>> &map) {
+			this->doGroupVals(point, map);
+		};
 		// Iterate matrix
 		// TODO: Create iterator
 		Point<DIMENSIONS> point;
 		
-		iterate(0, DIMENSIONS, _dimensions, point);
+		iterate(0, DIMENSIONS, _dimensions, point, iterFunc, groups);
 
 
 
