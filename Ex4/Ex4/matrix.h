@@ -16,7 +16,7 @@
 
 #include "point.h"
 
-
+#include <utility>
 
 using std::cout;
 
@@ -133,16 +133,35 @@ class Matrix {
 	friend class Matrix<T, DIMENSIONS + 1>;
 
 public:
+
+	// TODO: somehow keep const?
 	const size_t _size = 0;
 
+	unique_ptr<Matrix<bool, DIMENSIONS>> markMatrix;
+	vector<Point<DIMENSIONS>> directions;
 	size_t _dimensions[DIMENSIONS] = {};
 	std::unique_ptr<T[]> _array = nullptr;
 	size_t size() const { return _size; }
 
 	
-	Matrix() {}
+	Matrix() { initDirections(); }
+	
+	
+	Matrix(size_t dimensions[DIMENSIONS]) { 
+		
+		int cntr = 1;
+		for (size_t i = 0; i < DIMENSIONS; i++)
+		{
+			_dimensions[i] = dimensions[i];
+			cntr *= dimensions[i];
+		}
 
-	T operator[] (Point<DIMENSIONS> p)
+		const_cast<size_t&>(_size) = cntr;
+		_array = std::make_unique<T[]>(_size);
+		initDirections();
+	}
+	
+	T& operator[] (Point<DIMENSIONS> p)
 	{
 		
 		int idx = 0;
@@ -161,6 +180,20 @@ public:
 
 	}
 	
+
+	void initDirections()
+	{
+		for (size_t i = 0; i < DIMENSIONS; i++)
+		{
+			Point<DIMENSIONS> p;
+
+			p.coordinates[i] = 1;
+			directions.push_back(p);
+
+			p.coordinates[i] = -1;
+			directions.push_back(p);
+		}
+	}
 
 	// DIMENSIONS == 1
 
@@ -189,6 +222,7 @@ public:
 			_array[i++] = val;
 
 		}
+		initDirections();
 
 	}
 
@@ -258,8 +292,9 @@ public:
 
 		}
 
+		initDirections();
+		
 	}
-
 
 	Matrix(Matrix&& m) {
 
@@ -294,18 +329,19 @@ public:
 
 	}
 	
+	// taken from stackoverflow with some modifications
 	template<class A>
-	void iterate(int d, int n, size_t size[], Point<DIMENSIONS> res, std::function<void(Point<DIMENSIONS>, A&)> iterFunc, A &callbackArg) {
+	void iterate(int d, int n, size_t size[], Point<DIMENSIONS> point, std::function<void(Point<DIMENSIONS>, A&)> iterFunc, A &callbackArg) {
 		if (d >= n) { //stop clause
-			cout << this->operator[](res) << " ";
-			// Here we do the work!
-			iterFunc(res, callbackArg);
+
+		    // Here we call the callback on the point!
+			iterFunc(point, callbackArg);
 			//print(res, n);
 			return;
 		}
 		for (int i = 0; i < size[d]; i++) {
-			res.coordinates[d] = i;
-			iterate(d + 1, n, size, res, iterFunc, callbackArg);
+			point.coordinates[d] = i;
+			iterate(d + 1, n, size, point, iterFunc, callbackArg);
 		}
 	}
 
@@ -316,66 +352,106 @@ public:
 		return out;
 
 	}
-	//void doGroupVals(Point<DIMENSIONS> point, std::map<H, std::list<T>> map)
-	template<class A>
-	void doGroupVals(Point<DIMENSIONS> point, A &callbackArg)
+
+	bool pointInMatrix(Point<DIMENSIONS> point)
 	{
-		cout << "hi";
+		for (size_t i = 0; i < DIMENSIONS; i++)
+		{
+			if (point.coordinates[i] >= _dimensions[i] || point.coordinates[i] < 0)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
-	struct doWork
+	template<class GroupingType, class GroupingFunc>
+	void doGroupRec(Point<DIMENSIONS> point, GroupingType groupType, vector<Point<DIMENSIONS>> &groupVec, GroupingFunc groupingFunc)
 	{
-		int y = 0;
-		doWork(int y_) : y(y_) {}
-		int operator()(int x) { return y * x; }
-	};
+		
+		//cout << point << "\n";
+		//cout << groupingFunc((*this)[point]) << "\n";
+		//cout << (*markMatrix)[point] << "\n";
+		
+		// if wrong group type or already marked - return
+		if (groupingFunc((*this)[point]) != groupType || (*markMatrix)[point])
+		{
+			return;
+		}
+
+		// Mark and push to vector
+		(*markMatrix)[point] = true;
+		groupVec.push_back(point);
+
+		Point<DIMENSIONS> neighbor;
+		// Check neighbors
+		for (auto &dir: directions)
+		{
+			neighbor = point + dir;
+			if (pointInMatrix(neighbor))
+			{
+				doGroupRec(neighbor, groupType, groupVec, groupingFunc);
+			}
+		}
+	}
+
+	template<class GroupingType, class GroupingFunc>
+	void doGroupVals(Point<DIMENSIONS> point, std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>> &groupMap, GroupingFunc groupingFunc)
+	{
+		//cout << "in callback\n";
+		GroupingType groupType;
+		vector<Point<DIMENSIONS>> groupVec;
+
+		typedef std::vector<vector<Point<DIMENSIONS>>>      MapVal;
+		typedef std::map<GroupingType, MapVal> Map;
+
+		// If not marked - not in a group yet
+		if (!(*markMatrix)[point])
+		{
+			groupType = groupingFunc((*this)[point]);
+			doGroupRec(point, groupType, groupVec, groupingFunc);
+			if (groupVec.size() > 0)
+			{
+				// If key does not yet exist
+				if (groupMap.find(groupType) == groupMap.end())
+				{
+					groupMap.insert(Map::value_type(groupType, MapVal()));
+					
+					// make sure vector is sorted
+					std::sort(groupVec.begin(), groupVec.end());
+					groupMap[groupType].push_back(groupVec);
+				}
+				else
+				{
+					// make sure vector is sorted
+					std::sort(groupVec.begin(), groupVec.end());
+					groupMap[groupType].push_back(groupVec);
+				}
+			}
+		}
+	}
 
 
 	template<class GroupingFunc>
 	auto groupValues(GroupingFunc groupingFunc) {
 		//using T = deref_iter_t<Iterator>;
 		using GroupingType = std::result_of_t<GroupingFunc(T&)>;
-		std::map<GroupingType, std::list<T>> groups;
+		std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>> groupsMap;
 		
-		std::function<void(Point<DIMENSIONS>, std::map<GroupingType, std::list<T>>&)> iterFunc = [=](Point<DIMENSIONS> point, std::map<GroupingType, std::list<T>> &map) {
-			this->doGroupVals(point, map);
+		vector<pair<GroupingType, vector<vector<Point<DIMENSIONS>>>>> allGroups;
+
+		// Init mark matrix
+		markMatrix = std::make_unique<Matrix<bool, DIMENSIONS>>(_dimensions);
+		std::function<void(Point<DIMENSIONS>, std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>>&)> doGroupFunc = [=](Point<DIMENSIONS> point, std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>> &map) {
+			this->doGroupVals(point, map, groupingFunc);
 		};
-		// Iterate matrix
-		// TODO: Create iterator
 		Point<DIMENSIONS> point;
 		
-		iterate(0, DIMENSIONS, _dimensions, point, iterFunc, groups);
+		iterate(0, DIMENSIONS, _dimensions, point, doGroupFunc, groupsMap);
 
-
-
-		/*
-		while (1)
-		{
-			// Print
-			for (int i = 0; i < DIMENSIONS; i++)
-			{
-				//std::cout << this->operator[](point) << " ";
-			}
-			std::cout << "\n";
-
-			// Update
-			int j;
-			for (j = 0; j < DIMENSIONS; j++)
-			{	
-				
-				point.coordinates[j]++;
-				if (point.coordinates[j] < _dimensions[j]) break;
-				point.coordinates[j] = 0;
-			}
-			if (j == DIMENSIONS) break;
-		}
-		*/
-		/*
-		std::for_each(begin, end, [&groups, groupingFunc](const auto& val) {
-			groups[groupingFunc(val)].push_back(val);
-		});
-		*/
-		return groups;
+		//delete markMatrix;
+		return groupsMap;
 	}
 
 };

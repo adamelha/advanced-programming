@@ -1,7 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include <vector>
-#define INVALID_POINT	-1
+#include <iostream>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -9,9 +11,7 @@ using namespace std;
 template <int DIMENSIONS>
 class Point{
 public:
-	int dimensions = DIMENSIONS;
 	vector<int> coordinates;
-	Point(int coordinates[DIMENSIONS]) {};
 	Point(const std::initializer_list<int>& values) {
 		coordinates.resize(DIMENSIONS);
 		int i = 0;
@@ -21,29 +21,57 @@ public:
 	}
 	Point() : coordinates{} { coordinates.resize(DIMENSIONS); }
 
-	void invalidatePoint() { for (int i = 0; i < DIMENSIONS; i++) {coordinates[i] = INVALID_POINT}; }
-	//bool isPointValid() { return (row == INVALID_POINT) && (col == INVALID_POINT) && (depth == INVALID_POINT); }
 	Point& operator= (const Point<DIMENSIONS>&rhs) {
-		for (int i = 0; i < DIMENSIONS; i++) {
-			rhs.coordinates[i] = coordinates[i];
-		}
+		coordinates = rhs.coordinates;
+		return *this;
 	}
-	// Don't copy the 0 index
-	Point& operator= (const Point<DIMENSIONS + 1>&rhs) { 
-		for (int i = 0; i < DIMENSIONS; i++) { 
-			coordinates[i] = rhs.coordinates[i + 1];
+
+	bool operator < (const Point<DIMENSIONS>& point) const
+	{
+		for (size_t i = 0; i < DIMENSIONS; i++)
+		{
+			if (coordinates[i] < point.coordinates[i])
+			{
+				return true;
+			}
+			if (coordinates[i] > point.coordinates[i])
+			{
+				return false;
+			}
 		}
+
+		return false;
 	}
+
+	typedef vector<int>::const_iterator const_iterator;
+	const_iterator begin() const { return coordinates.begin(); }
+	const_iterator end() const { return coordinates.end(); }
+
 };
 
-template <int DIMENSIONS>
-inline bool operator==(const Point<DIMENSIONS>& lhs, const Point<DIMENSIONS>& rhs) {
-	for (int i = 0; i < DIMENSIONS; i++) {
-		if (lhs.coordinates[i] != rhs.coordinates[i])
-			return false;  
-	} 
-	return true;
-}
 
 template <int DIMENSIONS>
-inline bool operator!=(const Point<DIMENSIONS>& lhs, const Point<DIMENSIONS>& rhs) { return !(lhs == rhs); }
+inline Point<DIMENSIONS> operator+(const Point<DIMENSIONS>& lhs, const Point<DIMENSIONS>& rhs) {
+	Point<DIMENSIONS> retPoint;
+	for (size_t i = 0; i < DIMENSIONS; i++)
+	{
+		retPoint.coordinates[i] = lhs.coordinates[i] + rhs.coordinates[i];
+	}
+
+	return retPoint;
+}
+
+// For debug use!!
+template <int DIMENSIONS>
+std::ostream &operator<<(std::ostream &os, Point<DIMENSIONS> const &p) {
+	os << "<";
+	for (size_t i = 0; i < DIMENSIONS; i++)
+	{
+		os << " " << p.coordinates[i];
+	}
+	os << ">";
+
+	return os;
+}
+
+
