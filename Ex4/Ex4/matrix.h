@@ -120,15 +120,11 @@ template<class T, size_t DIMENSIONS>
 
 class Matrix {
 
-
-	
-
 	constexpr static size_t NUM_DIMENSIONS = DIMENSIONS;
-
-	
-
-	
-
+	unique_ptr<Matrix<bool, DIMENSIONS>> markMatrix;
+	vector<Point<DIMENSIONS>> directions;
+	size_t _dimensions[DIMENSIONS] = {};
+	std::unique_ptr<T[]> _array = nullptr;
 
 	friend class Matrix<T, DIMENSIONS + 1>;
 
@@ -136,20 +132,14 @@ public:
 
 	// TODO: somehow keep const?
 	const size_t _size = 0;
-
-	unique_ptr<Matrix<bool, DIMENSIONS>> markMatrix;
-	vector<Point<DIMENSIONS>> directions;
-	size_t _dimensions[DIMENSIONS] = {};
-	std::unique_ptr<T[]> _array = nullptr;
 	size_t size() const { return _size; }
-
 	
 	Matrix() { initDirections(); }
 	
 	
 	Matrix(size_t dimensions[DIMENSIONS]) { 
 		
-		int cntr = 1;
+		size_t cntr = 1;
 		for (size_t i = 0; i < DIMENSIONS; i++)
 		{
 			_dimensions[i] = dimensions[i];
@@ -164,8 +154,8 @@ public:
 	T& operator[] (Point<DIMENSIONS> p)
 	{
 		
-		int idx = 0;
-		int sizeOfSmallerList;
+		size_t idx = 0;
+		size_t sizeOfSmallerList;
 		for (size_t i = 0; i < DIMENSIONS ; i++)
 		{
 			sizeOfSmallerList = 1;
