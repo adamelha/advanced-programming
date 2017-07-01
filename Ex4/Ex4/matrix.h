@@ -130,7 +130,6 @@ class Matrix {
 
 public:
 
-	// TODO: somehow keep const?
 	const size_t _size = 0;
 	size_t size() const { return _size; }
 	
@@ -326,7 +325,6 @@ public:
 
 		    // Here we call the callback on the point!
 			iterFunc(point, callbackArg);
-			//print(res, n);
 			return;
 		}
 		for (int i = 0; i < size[d]; i++) {
@@ -360,9 +358,6 @@ public:
 	void doGroupRec(Point<DIMENSIONS> point, GroupingType groupType, vector<Point<DIMENSIONS>> &groupVec, GroupingFunc groupingFunc)
 	{
 		
-		//cout << point << "\n";
-		//cout << groupingFunc((*this)[point]) << "\n";
-		//cout << (*markMatrix)[point] << "\n";
 		
 		// if wrong group type or already marked - return
 		if (groupingFunc((*this)[point]) != groupType || (*markMatrix)[point])
@@ -389,7 +384,6 @@ public:
 	template<class GroupingType, class GroupingFunc>
 	void doGroupVals(Point<DIMENSIONS> point, std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>> &groupMap, GroupingFunc groupingFunc)
 	{
-		//cout << "in callback\n";
 		GroupingType groupType;
 		vector<Point<DIMENSIONS>> groupVec;
 
@@ -407,17 +401,11 @@ public:
 				if (groupMap.find(groupType) == groupMap.end())
 				{
 					groupMap.insert(Map::value_type(groupType, MapVal()));
-					
-					// make sure vector is sorted
-					std::sort(groupVec.begin(), groupVec.end());
-					groupMap[groupType].push_back(groupVec);
 				}
-				else
-				{
-					// make sure vector is sorted
-					std::sort(groupVec.begin(), groupVec.end());
-					groupMap[groupType].push_back(groupVec);
-				}
+
+				// make sure vector is sorted
+				std::sort(groupVec.begin(), groupVec.end());
+				groupMap[groupType].push_back(groupVec);
 			}
 		}
 	}
@@ -425,7 +413,6 @@ public:
 
 	template<class GroupingFunc>
 	auto groupValues(GroupingFunc groupingFunc) {
-		//using T = deref_iter_t<Iterator>;
 		using GroupingType = std::result_of_t<GroupingFunc(T&)>;
 		std::map<GroupingType, std::vector<vector<Point<DIMENSIONS>>>> groupsMap;
 		
@@ -440,7 +427,6 @@ public:
 		
 		iterate(0, DIMENSIONS, _dimensions, point, doGroupFunc, groupsMap);
 
-		//delete markMatrix;
 		return groupsMap;
 	}
 
